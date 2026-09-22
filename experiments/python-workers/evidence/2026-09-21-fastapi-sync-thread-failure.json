@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-09-22T05:56:24.557Z",
+  "workerd": "1.20260922.1",
+  "referenceDate": "2025-06-01",
+  "responses": [
+    {
+      "path": "/sync/11",
+      "init": {},
+      "actual": {
+        "status": 500,
+        "text": "Internal Server Error"
+      }
+    }
+  ],
+  "logs": "<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T05:56:24.572584Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld dev\n  Project  /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-ShUXKf/wrangler.json\n  State    /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-ShUXKf/.celld/dev\n  Watch    disabled\n  ● opening the local storage\n  ● building the application\n celld 0.5.1\n───────────────────────────────────────────────\nTotal Upload: 31549.42 KiB / gzip: 13410.11 KiB\nYour Worker has no bindings.\nBundled python-runtime-probe (2.60 sec)\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T05:56:32.750769Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld listening on 127.0.0.1:52375 (ownership=dev)\ncelld internal listening on 127.0.0.1:52396 (advertise=127.0.0.1:52396)\n  ready  http://127.0.0.1:52375\n"
+}

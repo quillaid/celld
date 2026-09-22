@@ -19,8 +19,12 @@ The archive now participates in the lock, hash validation, dependency order,
 safe extraction and immutable Wasm packaging. Historical failure evidence is
 retained under `evidence/2026-09-21-fastapi-archive-rejection.txt`.
 
-The fixture compares async HTTP routes, body/path/query validation errors,
+The fixture compares async and synchronous HTTP routes, synchronous dependencies
+and background-task completion, body/path/query validation errors,
 OpenAPI and Pydantic/_ssl extension digests against pinned workerd. The same
 requests also pass with celld runtime networking disabled. SSLContext construction
-is tested; TLS networking, synchronous endpoints/thread pools, background tasks,
-framework WebSockets and broad framework compatibility remain unqualified.
+is tested; TLS networking, thread-pool cancellation/fairness, framework
+WebSockets and broad framework compatibility remain unqualified. Synchronous
+calls use the unchanged SDK's AnyIO inline-execution patch; both engines report
+its module name and source hash. The reference explicitly installs that patch
+through workerd's own import manager around application imports.

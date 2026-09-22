@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs && npm run build:sdk",
-    "test": "node --test --test-concurrency=2 smoke.test.mjs async-wasm.test.mjs resources.test.mjs pool-lifecycle.test.mjs durable.test.mjs persistence.test.mjs transaction-contract.test.mjs workflow-regression.test.mjs sdk.test.mjs native.test.mjs reload.test.mjs native-durable.test.mjs microtask-contract.test.mjs native-packages.test.mjs package-reload.test.mjs package-reference.test.mjs native-extension.test.mjs native-rpc.test.mjs websocket-pair-contract.test.mjs native-websocket.test.mjs socket-eviction.test.mjs socket-idle.test.mjs native-pressure.test.mjs shared-heap.test.mjs proxy-lifecycle.test.mjs finalizer-limit.test.mjs native-asgi.test.mjs native-fastapi.test.mjs",
+    "test": "node --test --test-concurrency=2 smoke.test.mjs async-wasm.test.mjs resources.test.mjs pool-lifecycle.test.mjs durable.test.mjs persistence.test.mjs transaction-contract.test.mjs workflow-regression.test.mjs sdk.test.mjs native.test.mjs reload.test.mjs native-durable.test.mjs microtask-contract.test.mjs native-packages.test.mjs package-reload.test.mjs package-reference.test.mjs native-extension.test.mjs native-rpc.test.mjs websocket-pair-contract.test.mjs native-websocket.test.mjs socket-eviction.test.mjs socket-idle.test.mjs native-pressure.test.mjs shared-heap.test.mjs proxy-lifecycle.test.mjs finalizer-limit.test.mjs native-asgi.test.mjs native-fastapi.test.mjs import-patches.test.mjs",
     "test:durable": "node --test durable.test.mjs",
     "test:smoke": "node --test smoke.test.mjs",
     "test:wasm": "node --test async-wasm.test.mjs",
@@ -28,7 +28,8 @@
     "test:proxy-lifecycle": "node --test proxy-lifecycle.test.mjs",
     "test:finalizer-limit": "node --test finalizer-limit.test.mjs",
     "test:asgi": "node --test native-asgi.test.mjs",
-    "test:fastapi": "node --test native-fastapi.test.mjs"
+    "test:fastapi": "node --test native-fastapi.test.mjs",
+    "test:import-patches": "node --test import-patches.test.mjs"
   },
   "dependencies": {
     "pyodide": "0.28.3"

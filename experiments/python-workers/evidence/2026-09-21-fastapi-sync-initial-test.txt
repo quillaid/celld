@@ -1,0 +1,33 @@
+TAP version 13
+# Subtest: FastAPI validation and compiled Pydantic/OpenSSL match pinned workerd
+not ok 1 - FastAPI validation and compiled Pydantic/OpenSSL match pinned workerd
+  ---
+  duration_ms: 11996.814334
+  type: 'test'
+  location: '/Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/native-fastapi.test.mjs:16:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Internal Server Error
+    
+    500 !== 200
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 200
+  actual: 500
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/native-fastapi.test.mjs:41:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 12273.917042

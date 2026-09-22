@@ -6,7 +6,7 @@ from workers import WorkerEntrypoint, python_from_rpc, python_to_rpc
 
 
 def load_worker(module_name, class_name):
-    module = importlib.import_module(module_name)
+    module = _load_application(module_name)
     entrypoint = getattr(module, class_name)
     if not isinstance(entrypoint, type) or not issubclass(entrypoint, WorkerEntrypoint):
         raise TypeError(f'{module_name}.{class_name} must extend workers.WorkerEntrypoint')
@@ -24,7 +24,7 @@ def load_worker(module_name, class_name):
 
 def load_durable(module_name, class_name, ctx, env):
     from workers import DurableObject
-    entrypoint = getattr(importlib.import_module(module_name), class_name)
+    entrypoint = getattr(_load_application(module_name), class_name)
     if not isinstance(entrypoint, type) or not issubclass(entrypoint, DurableObject):
         raise TypeError(f'{module_name}.{class_name} must extend workers.DurableObject')
     instance = entrypoint(ctx, env)

@@ -473,13 +473,20 @@ network fetch disabled, and the pinned workerd reference compare successful
 JSON coercion, body/path/query validation errors, generated OpenAPI, and an
 SSLContext with certificate verification enabled. The compiled Pydantic core
 and `_ssl` module digests must match the locked artifacts. This is not a TLS
-networking test, synchronous-endpoint/thread-pool qualification, or broad
-FastAPI compatibility claim.
+networking test or broad FastAPI compatibility claim. Synchronous route handlers
+and dependencies execute inline on the main thread through the released SDK's
+AnyIO patch. A synchronous framework background task also completes and is
+observed by a subsequent request; that in-memory marker is not durability proof.
 The historical workerd reference preloads its bundled SSL module. The reference
 bootstrap removes `ssl` and `_ssl` from Python's module cache before application
 import; otherwise its `_ssl` digest differs, a retained failed comparison.
 This verifies the application extension bytes, not identical underlying
 interpreter or preloaded shared-library state between the two runtimes.
+The reference explicitly loads the same SDK package-patch module through
+workerd's import manager before application imports. Mounting only `workers/`
+left its synchronous route failing under this historical envelope; that failure
+is retained. Both engines report the applied function's module and the SDK
+patch source digest.
 
 AnyIO brings in Pyodide's SSL module and the OpenSSL shared-library archive.
 The lock marks archives as `shared-library`; consumers accept them only when
@@ -492,3 +499,25 @@ are unpacked before loading; `/packages` is added to `LD_LIBRARY_PATH` so the
 linker can find dependencies within an archive. Dependency cycles currently
 fail explicitly. This verifies the libcrypto/libssl/_ssl/Pydantic graph;
 general graph/layout support, upgrades and rollback remain unfinished.
+
+### SDK package import patches
+
+`sdk-import-patches.py` supplies the `register_exec_patch` host seam used by the
+pinned SDK's `_workers_sdk_package_patches.py`. It loads that module directly
+from the verified SDK directory, so an application module with the same name
+cannot replace it. The SDK owns the AnyIO adaptation; the host wraps module
+execution in the registered context manager while loading Worker and Durable
+Object application modules. Finders are removed in `finally`, including nested
+or failed imports, and cached imports are not patched again.
+
+`npm run test:import-patches` checks those cleanup and caching properties, loader
+delegation, SDK shadowing resistance, and that imports outside the application
+load scope remain unpatched. This is a bounded host adapter for the current
+non-snapshot SDK patch module. It does not run arbitrary package `.pth` files or
+implement create-module/snapshot/entropy hooks. Celld initializes this interpreter
+inside admitted guest work and does not take Cloudflare-style Python snapshots.
+The import phases follow the upstream
+[workerd import manager](https://github.com/cloudflare/workerd/blob/c22e7ae3b5e2fc5fc1cf382eee0110550497668d/src/pyodide/internal/topLevelEntropy/import_patch_manager.py),
+but the local adapter is its own limited implementation. Snapshot behavior,
+late-import patch coverage, thread-pool cancellation/fairness and other SDK
+package patches need separate qualification.

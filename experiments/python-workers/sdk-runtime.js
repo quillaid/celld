@@ -3,6 +3,7 @@ import { loadPyodide } from 'pyodide';
 import lockFileContents from 'pyodide/pyodide-lock.json';
 import wheel from './.celld/workers_runtime_sdk-1.9.0-py3-none-any.whl';
 import adapter from './sdk-dispatch.py';
+import importPatches from './sdk-import-patches.py';
 import { DurableObject as HostDurableObject } from 'cloudflare:workers';
 import * as cloudflareWorkers from 'cloudflare:workers';
 
@@ -51,6 +52,7 @@ async function initialize({ files, packages = [], dynamicLibraries = [] }) {
     python.FS.writeFile('/app/' + name, contents);
   }
   python.runPython("sys.path.insert(0, '/app')");
+  python.runPython(importPatches);
   python.runPython(adapter);
   return { loadWorker: python.globals.get('load_worker'), loadDurable: python.globals.get('load_durable') };
 }

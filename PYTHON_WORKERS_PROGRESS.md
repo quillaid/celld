@@ -1002,3 +1002,40 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   Our SDK .pth hooks/import-patch manager are not installed yet. Qualify that
   contract and synchronous framework paths rather than stopping at async routes.
   Broader original goal requirements remain unfinished; goal stays active.
+
+## SDK package import patches and synchronous FastAPI (2026-09-21)
+
+- Previous turn was verified progress (1a6811a): archive packaging and bounded
+  async FastAPI qualification. Added a synchronous route with a synchronous
+  dependency; baseline native celld returned a generic framework HTTP 500.
+  The pinned SDK's non-snapshot package patch replaces AnyIO's OS-thread path
+  with inline execution. Retained the baseline response rather than inferring
+  an exception type from the framework's generic error body.
+- Added sdk-import-patches.py: a register_exec_patch bridge loads the exact
+  _workers_sdk_package_patches.py from /sdk and wraps application imports for
+  Worker and Durable Object classes. It delegates loader behavior, handles
+  nested scopes and removes only its own finder in finally. The SDK file is
+  loaded by explicit path so application files cannot shadow the patch module.
+  The adapter does not install arbitrary .pth or snapshot/entropy/create hooks.
+- Native and offline synchronous requests then passed, but the old reference
+  setup returned 500 because only the workers/ portion of the SDK was mounted
+  and its package patch was not activated there. Retained that reference failure.
+  The reference now mounts the same pinned package-patch module and uses
+  workerd's own PatchFinder around application import, removing its finder in
+  finally. Both engines report the applied function's module and identical
+  patch source hash 5dbb2e92bfa5dbf481591275684ad0edea06a38b2a0c51437c75926d6136597e.
+- Nine HTTP cases now compare native celld, offline generated bundle and the
+  historical workerd reference: prior validation/OpenAPI/compiled-module cases,
+  synchronous route/dependency on the main thread, and synchronous framework
+  background-task completion observed by polling. The in-memory completion
+  marker is not persistence evidence. No OS thread-pool behavior is claimed.
+- Unit test covers nested/cached imports, loader delegation, exception cleanup,
+  SDK shadowing and imports outside the patch scope. Its initial synthetic
+  late-created-file lookup needed importlib.invalidate_caches; corrected the
+  test setup without changing the import bridge for that issue.
+- Rebuilt fixtures. All 39 full-suite test records pass, including new import
+  cleanup and FastAPI cases plus CPU, pressure, restart, RPC and socket coverage.
+  Retained date-prefixed initial failures, passing nine-case JSON, unit and
+  full-suite logs. No Rust changes; diff checks pass. Goal remains active, with
+  cancellation/ASGI streaming, broader bindings/RPC, cross-node ownership and
+  production distribution among the original unfinished requirements.
