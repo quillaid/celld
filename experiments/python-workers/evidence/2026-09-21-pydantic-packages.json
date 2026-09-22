@@ -1,0 +1,93 @@
+{
+  "timestamp": "2026-09-22T05:44:59.497Z",
+  "lock": {
+    "schema": 1,
+    "pyodide": "0.28.3",
+    "python": "3.13.2",
+    "resolver": {
+      "name": "micropip",
+      "version": "0.10.1"
+    },
+    "manifest": {
+      "name": "requirements.txt",
+      "sha256": "6560f131b6d82cef455b70cd8952a814dd3811dec73108d69b3d9206c95c9573"
+    },
+    "requirements": [
+      "pydantic==2.10.6"
+    ],
+    "roots": [
+      "pydantic"
+    ],
+    "abi": {
+      "abi_version": "2025_0",
+      "arch": "wasm32",
+      "platform": "emscripten_4_0_9",
+      "python": "3.13.2",
+      "version": "0.28.0.dev0"
+    },
+    "packages": [
+      {
+        "name": "annotated-types",
+        "version": "0.7.0",
+        "filename": "annotated_types-0.7.0-py3-none-any.whl",
+        "url": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/annotated_types-0.7.0-py3-none-any.whl",
+        "sha256": "f2cffbe760f3c616b680279d54d4ae97185c69f6d68eb5b94675f73a834efb67",
+        "depends": []
+      },
+      {
+        "name": "pydantic",
+        "version": "2.10.6",
+        "filename": "pydantic-2.10.6-py3-none-any.whl",
+        "url": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/pydantic-2.10.6-py3-none-any.whl",
+        "sha256": "6773062f6635c42f052e4e836edd4ff433c0718b2dee6714d684786e59b756eb",
+        "depends": [
+          "annotated-types",
+          "pydantic-core",
+          "typing-extensions"
+        ]
+      },
+      {
+        "name": "pydantic-core",
+        "version": "2.27.2",
+        "filename": "pydantic_core-2.27.2-cp313-cp313-pyodide_2025_0_wasm32.whl",
+        "url": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/pydantic_core-2.27.2-cp313-cp313-pyodide_2025_0_wasm32.whl",
+        "sha256": "3695112ef99b222e48e0a2837b055ec818b43ff5e2e0802e99f5d6d2dd36af7b",
+        "depends": [
+          "typing-extensions"
+        ]
+      },
+      {
+        "name": "typing-extensions",
+        "version": "4.14.1",
+        "filename": "typing_extensions-4.14.1-py3-none-any.whl",
+        "url": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/typing_extensions-4.14.1-py3-none-any.whl",
+        "sha256": "cacfad0508850d9e87aaa4ba2af8c8fcd392cbb5a3c7ad33e76ab907da34544c",
+        "depends": []
+      }
+    ]
+  },
+  "validation": {
+    "valid": {
+      "name": "café",
+      "count": 3
+    },
+    "invalid": [
+      {
+        "type": "greater_than",
+        "loc": [
+          "count"
+        ],
+        "msg": "Input should be greater than 0",
+        "input": 0,
+        "ctx": {
+          "gt": 0
+        }
+      }
+    ],
+    "extension": "/packages/pydantic_core/_pydantic_core.cpython-313-wasm32-emscripten.so"
+  },
+  "reproducible": true,
+  "anyioRejection": "Shared-library archives are not yet supported: libopenssl (libopenssl-1.1.1w.zip)\n",
+  "priorLockPreserved": true,
+  "qualification": "Node-hosted pinned Pyodide only; celld/workerd framework qualification remains pending"
+}

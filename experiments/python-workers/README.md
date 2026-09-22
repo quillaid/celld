@@ -372,6 +372,11 @@ requirements, extras, markers and Requires-Python before writing the lock. This
 rejects conflicting roots that the pinned micropip accepted in testing. Micropip
 is not a general backtracking solver; a resolution failure may require choosing
 compatible explicit versions even when a different dependency solution exists.
+The resolver also installs active wheel-metadata dependencies omitted by the
+Pyodide index, and records their edges alongside runtime-index dependencies.
+Names are canonicalized across both graphs (for example, `pydantic_core` becomes
+`pydantic-core`). Runtime-only dependencies without distribution metadata must
+match the pinned runtime index.
 
 The command writes `celld-python.lock.json` with the input manifest hash, target
 ABI, resolver identity, selected package closure, versions, HTTPS wheel URLs
@@ -387,6 +392,12 @@ unsupported. Native-extension qualification is described below.
 locks, target markers, corrupt-cache/conflict rejection and imports directly from
 the locked wheel bytes with networking disabled. This is currently a separate
 package-tool test, not part of the celld HTTP suite.
+It additionally locks Pydantic 2.10.6 and its compiled core, checks repeatability,
+and runs successful coercion and rejected validation offline in Node-hosted
+Pyodide. That does not yet qualify Pydantic HTTP execution on celld or workerd.
+The candidate FastAPI manifest in `fastapi/` currently fails explicitly at the
+OpenSSL shared-library archive pulled in by AnyIO. Shared-library archives need
+packaging and dependency-ordered loading support before framework qualification.
 
 Native dev/deploy now consumes this lock from the project root, including when
 the Python entry lives in a subdirectory. The builder rejects missing/stale

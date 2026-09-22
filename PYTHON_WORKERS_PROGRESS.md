@@ -940,3 +940,29 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   markers, finalizer CPU containment, shared-interpreter cleanup, pressure and
   socket lifecycle. Retained date-prefixed native-asgi failure/passing JSON and
   full-suite log. No new Rust changes. Diff checks pass. Goal remains active.
+
+## Framework dependency closure (2026-09-21)
+
+- Previous checkpoint f66a7e6 qualified the released SDK's bare ASGI adapter.
+  Added a pending FastAPI 0.115.12 / Starlette 0.46.2 manifest with Pydantic
+  2.10.6 and AnyIO 4.9.0 matching the pinned Pyodide index. No framework HTTP
+  success is claimed and no incomplete lock was published.
+- Initial resolution failed with PackageNotFoundError for idna: the AnyIO
+  wheel requires it but Pyodide's index omits that edge. The resolver now
+  completes active wheel-metadata dependencies, verifies their versions and
+  merges those edges into the frozen runtime graph. Canonicalized names across
+  graphs also handle pydantic_core versus pydantic-core. Runtime-only modules
+  without distribution metadata must match the pinned index version and hash.
+- FastAPI now reaches a precise unsupported-archive rejection for libopenssl:
+  AnyIO requires runtime SSL, which pulls in libopenssl-1.1.1w.zip. Keep that
+  dependency; next implement safe pinned archive packaging and dependency-ordered
+  shared-library loading, then run the native/workerd framework comparison.
+  This is unfinished engineering work, not a user-input blocker.
+- Pydantic-only lock is reproducible and its compiled core performs valid
+  coercion and rejects an invalid value offline in Node-hosted Pyodide. This
+  does not establish celld/workerd Pydantic parity. AnyIO archive rejection
+  preserves a pre-existing valid lock.
+- Both package-tool tests and all four affected native package/extension,
+  reload and workerd regression tests pass. Retained date-prefixed resolver,
+  Pydantic, archive-rejection and regression evidence. No Rust/runtime changes;
+  prior 37-record full-suite result remains the broader baseline. Goal active.

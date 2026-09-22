@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: target package resolution pins transitive wheels and supports offline target imports
+ok 1 - target package resolution pins transitive wheels and supports offline target imports
+  ---
+  duration_ms: 11787.431
+  type: 'test'
+  ...
+# Subtest: bundled Pydantic locks canonical compiled dependencies and validates offline
+ok 2 - bundled Pydantic locks canonical compiled dependencies and validates offline
+  ---
+  duration_ms: 6592.744166
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 18431.781125

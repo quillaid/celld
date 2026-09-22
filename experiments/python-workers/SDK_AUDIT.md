@@ -55,8 +55,9 @@ header and response bytes compare exactly for JSON and binary cases. Background
 KV completion is polled independently in both engines before asserting the same
 final value, because completion times need not be identical.
 
-Native build/dev/deploy inputs, dependency resolution/locks, older-node feature
-fencing, reload, and the larger compatibility matrix remain unimplemented here.
+Native build/dev/deploy inputs, dependency locks, older-node feature fencing
+and reload have bounded fixtures in this experiment. Distribution of the
+production toolchain and the larger compatibility matrix remain unfinished.
 
 The dispatch comparison additionally checks eight concurrent requests with
 instance-local state, application exceptions, successful calls after an error,

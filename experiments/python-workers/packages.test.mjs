@@ -61,3 +61,58 @@ test('target package resolution pins transitive wheels and supports offline targ
   await mkdir(join(root, 'results'), { recursive: true });
   await writeFile(join(root, 'results/packages.json'), JSON.stringify({ timestamp: new Date().toISOString(), lock, targetMarkerRoots: targetLock.roots, importedOffline: imported, reproducible: true, corruptCacheRejected: true, conflictingRequirementsRejected: true, dynamicDependenciesRejected: true, priorLockPreserved: true }, null, 2) + '\n');
 });
+
+test('bundled Pydantic locks canonical compiled dependencies and validates offline', { timeout: 60000 }, async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), 'celld-pydantic-lock-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const lockPath = join(directory, 'celld-python.lock.json');
+  const run = () => exec(process.execPath, [join(root, 'lock-packages.mjs'), directory], { timeout: 30000 });
+  await writeFile(join(directory, 'requirements.txt'), 'pydantic==2.10.6\n');
+  await run();
+  const first = await readFile(lockPath, 'utf8');
+  await run();
+  assert.equal(await readFile(lockPath, 'utf8'), first);
+  const lock = JSON.parse(first);
+  assert.deepEqual(lock.packages.map(item => item.name), ['annotated-types', 'pydantic', 'pydantic-core', 'typing-extensions']);
+  assert.deepEqual(lock.packages.find(item => item.name === 'pydantic').depends, ['annotated-types', 'pydantic-core', 'typing-extensions']);
+  const python = await loadPyodide({ indexURL: join(root, 'node_modules/pyodide/') });
+  for (const entry of lock.packages) {
+    const bytes = await readFile(join(directory, '.celld/python-wheels', entry.sha256 + '.whl'));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), entry.sha256);
+    python.unpackArchive(new Uint8Array(bytes), 'zip', { extractDir: '/packages' });
+  }
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = () => { throw new Error('Offline Pydantic validation attempted a network request'); };
+  let validation;
+  try {
+    validation = JSON.parse(python.runPython(`
+import sys, json
+sys.path.insert(0, '/packages')
+from pydantic import BaseModel, Field, ValidationError
+import pydantic_core._pydantic_core as core
+class Item(BaseModel):
+    name: str
+    count: int = Field(gt=0)
+valid = Item.model_validate({'name': 'café', 'count': '3'}).model_dump()
+try:
+    Item.model_validate({'name': 'bad', 'count': 0})
+except ValidationError as error:
+    invalid = error.errors(include_url=False)
+json.dumps({'valid': valid, 'invalid': invalid, 'extension': core.__file__})
+`));
+  } finally { globalThis.fetch = originalFetch; }
+  assert.deepEqual(validation.valid, { name: 'café', count: 3 });
+  assert.equal(validation.invalid[0].type, 'greater_than');
+  assert.match(validation.extension, /pydantic_core\/.*\.so$/);
+  // AnyIO's Pyodide index omits idna even though its wheel requires it. Resolve
+  // that missing wheel, then reject the still-unsupported OpenSSL archive.
+  await writeFile(join(directory, 'requirements.txt'), 'anyio==4.9.0\n');
+  let rejection;
+  await assert.rejects(run(), error => {
+    rejection = error.stderr;
+    return /Shared-library archives are not yet supported: libopenssl/.test(error.stderr);
+  });
+  assert.equal(await readFile(lockPath, 'utf8'), first);
+  await mkdir(join(root, 'results'), { recursive: true });
+  await writeFile(join(root, 'results/pydantic-packages.json'), JSON.stringify({ timestamp: new Date().toISOString(), lock, validation, reproducible: true, anyioRejection: rejection, priorLockPreserved: true, qualification: 'Node-hosted pinned Pyodide only; celld/workerd framework qualification remains pending' }, null, 2) + '\n');
+});

@@ -68,10 +68,17 @@ _pending = list(_active)
 _seen = set()
 _required = set()
 _versions = {}
+_dependencies = {}
 while _pending:
     _req = _pending.pop()
     _name = canonicalize_name(_req.name)
-    _dist = importlib.metadata.distribution(_name)
+    try:
+        _dist = importlib.metadata.distribution(_name)
+    except importlib.metadata.PackageNotFoundError:
+        # Pyodide's index can omit dependencies declared by the wheel itself.
+        # Complete that metadata closure in the target before freezing it.
+        await micropip.install(str(_req))
+        _dist = importlib.metadata.distribution(_name)
     if _req.specifier and not _req.specifier.contains(_dist.version, prereleases=True):
         raise ValueError(f'Unsatisfied requirement {_req}: installed {_name}=={_dist.version}')
     _python = _dist.metadata.get('Requires-Python')
@@ -83,18 +90,35 @@ while _pending:
     _seen.add(_key)
     _required.add(_name)
     _versions[_name] = _dist.version
+    _dependencies.setdefault(_name, set())
     for _raw in _dist.requires or []:
         _child = Requirement(_raw)
         if _child.marker is None or any(_child.marker.evaluate({'extra': extra}) for extra in {'', *_req.extras}):
+            _dependencies[_name].add(canonicalize_name(_child.name))
             _pending.append(_child)
-json.dumps({'roots': sorted(set(canonicalize_name(req.name) for req in _active)), 'required': sorted(_required), 'versions': _versions, 'frozen': json.loads(micropip.freeze())})
+json.dumps({'roots': sorted(set(canonicalize_name(req.name) for req in _active)), 'required': sorted(_required), 'versions': _versions, 'dependencies': {name: sorted(children) for name, children in _dependencies.items()}, 'frozen': json.loads(micropip.freeze())})
 `));
+  const canonicalize = name => name.toLowerCase().replace(/[-_.]+/g, '-');
+  const frozen = new Map();
+  for (const [rawName, entry] of Object.entries(resolution.frozen.packages)) {
+    const name = canonicalize(rawName);
+    if (frozen.has(name)) throw new Error('Duplicate canonical frozen dependency: ' + name);
+    frozen.set(name, { ...entry, depends: [...new Set([...entry.depends.map(canonicalize), ...(resolution.dependencies[name] || [])])].sort() });
+  }
   const selected = new Map();
   function visit(name) {
     if (selected.has(name)) return;
-    const entry = resolution.frozen.packages[name];
+    const entry = frozen.get(name);
     if (!entry) throw new Error('Resolved dependency missing from freeze: ' + name);
-    if (resolution.versions[name] !== entry.version) throw new Error('Frozen dependency does not match verified installed version: ' + name);
+    const filename = basename(entry.file_name.startsWith('https://') ? new URL(entry.file_name).pathname : entry.file_name);
+    if (!filename.endsWith('.whl')) throw new Error('Shared-library archives are not yet supported: ' + name + ' (' + filename + ')');
+    // Runtime dependencies such as ssl may have no distribution metadata.
+    // They are still required by, and pinned to, the verified runtime index.
+    if (resolution.versions[name] !== undefined && resolution.versions[name] !== entry.version) throw new Error('Frozen dependency does not match verified installed version: ' + name);
+    if (resolution.versions[name] === undefined) {
+      const bundled = runtimeIndex.packages[name];
+      if (!bundled || bundled.version !== entry.version || bundled.sha256 !== entry.sha256) throw new Error('Unverified runtime dependency: ' + name);
+    }
     selected.set(name, entry);
     for (const dependency of entry.depends) visit(dependency);
   }

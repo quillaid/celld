@@ -1,0 +1,9 @@
+Loading micropip
+Loaded micropip
+Loading annotated-types, anyio, libopenssl, pydantic, pydantic_core, sniffio, ssl, typing-extensions
+Loaded annotated-types, anyio, libopenssl, pydantic, pydantic_core, sniffio, ssl, typing-extensions
+Loading idna
+Didn't find package idna-3.10-py3-none-any.whl locally, attempting to load from https://cdn.jsdelivr.net/pyodide/v0.28.3/full/
+Package idna-3.10-py3-none-any.whl loaded from https://cdn.jsdelivr.net/pyodide/v0.28.3/full/, caching the wheel in node_modules for future use.
+Loaded idna
+Shared-library archives are not yet supported: libopenssl (/Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/resolver-packages/libopenssl-1.1.1w.zip)
