@@ -1,0 +1,26 @@
+
+> test:socket-lifecycle
+> node --test --test-concurrency=2 socket-eviction.test.mjs socket-idle.test.mjs
+
+TAP version 13
+# Subtest: Python Durable Object reconstructs around a live socket after forced eviction
+ok 1 - Python Durable Object reconstructs around a live socket after forced eviction
+  ---
+  duration_ms: 10388.893209
+  type: 'test'
+  ...
+# Subtest: Python live sockets hibernate through the automatic idle policy
+ok 2 - Python live sockets hibernate through the automatic idle policy
+  ---
+  duration_ms: 17312.096958
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 17368.815417

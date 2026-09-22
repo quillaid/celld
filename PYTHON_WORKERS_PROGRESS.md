@@ -782,3 +782,26 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   socket-autoresponse-passing.json and socket-autoresponse-test.txt. Previous full
   regression baseline remains applicable; this is local residency/SDK proof, not
   automatic idle/pressure eviction or ownership migration. Goal remains active.
+
+## Automatic idle hibernation with Python socket keepalives (2026-09-21)
+
+- Prior turn was verified progress (89cc87f): forced eviction plus auto-response
+  no-wake evidence. Added the automatic idle-policy variant using the existing
+  CELLD_IDLE_EVICT_S=1 control. Source confirms this policy is disabled by default.
+- Both forced and automatic tests now share socket-lifecycle-probe.mjs. The idle
+  branch never calls /evict: it observes /state until the object is no longer
+  resident, retaining the same reconstruction/attachment/tag/SQL/close checks.
+- Matching ping/pong traffic continues every polling interval while waiting for
+  idle eviction. In the passing run, 70 such replies did not pin the Python
+  object; four automatic evictions were observed in roughly 1-2 seconds each.
+  Six additional replies after dormancy retained the no-wake guarantee. Nine
+  application messages alone reached Python/SQL. Each application wake creates
+  a new instance, restores the expected connections and retains timestamps.
+- Both focused lifecycle tests pass after the shared-helper change. No runtime
+  modifications; prior full regression baseline remains applicable. Retained
+  socket-idle-passing.json and socket-lifecycle-test.txt under date-prefixed
+  evidence names. The new idle test joins the default suite.
+- This qualifies the configured local idle policy, not default-policy changes,
+  pressure eviction, process survival of live connections, workerd's eviction
+  policy or cross-node ownership. Those and other original requirements remain
+  open. Goal active; no public or fleet changes.

@@ -263,8 +263,14 @@ must restore only the survivor. Between evictions and application messages, both
 sockets receive automatic pong replies while the resident-instance census stays
 empty for that object. Application messages then restore residency; auto-response
 timestamps survive and fall within the observed ping/reply interval. This does
-not qualify automatic idle hibernation, memory-pressure eviction, or ownership
-migration.
+not qualify memory-pressure eviction or ownership migration.
+
+`npm run test:socket-lifecycle` also runs those checks with `CELLD_IDLE_EVICT_S=1`.
+This variant never calls the eviction endpoint: it waits for the residency census
+to become empty while continuing matching ping/pong traffic. Automatic idle
+eviction, reconstruction, attachment/timestamp preservation, SQL continuity and
+closed-socket removal all pass. The one-second policy is a test configuration;
+celld leaves idle eviction disabled unless explicitly configured.
 Lifecycle event arguments bypass SDK RPC conversion to preserve their FFI types.
 The pair contract test also checks `Object.values(new WebSocketPair())` has two
 entries: celld previously included an enumerable `length` property.
