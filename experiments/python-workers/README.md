@@ -123,8 +123,8 @@ SDK classes but does not provide native Python deployment.
   to an instance. The stdlib zip is embedded in JS for this fixture only.
 - The build extracts Pyodide's pinned sentinel Wasm from the dependency and
   verifies its exports, then packages it as another compiled-module import.
-  The lexical compile adapter recognizes only those exact sentinel bytes and
-  rejects unbundled modules. Both sentinel and interpreter use native async
+  The lexical async compile adapter recognizes the exact sentinel bytes and
+  emitted wheel-library bytes and rejects other inputs. Both sentinel and interpreter use native async
   instantiation of compiled modules. The separate raw-byte compile stall remains
   a celld issue; it is no longer required by this fixture's startup path.
 - Initialization is lazy and cached per adapter instance, including failure.
@@ -273,7 +273,7 @@ with exactly those six bytes observed, release its lock, and report from finally
 Both engines pass and serve a follow-up request. This tests abrupt socket closure;
 graceful EOF and application-driven cancellation are separate contracts.
 
-### Locked pure Python packages
+### Locked Python packages
 
 `node lock-packages.mjs /absolute/path/to/project` resolves one `pyproject.toml`
 (`[project].dependencies`) or `requirements.txt` (one PEP 508 requirement per
@@ -291,8 +291,9 @@ ABI, resolver identity, selected package closure, versions, HTTPS wheel URLs
 and SHA-256 hashes. Verified wheel bytes go into `.celld/python-wheels/` under
 their hashes. A successful resolution atomically replaces the lock; a failure
 preserves the previous lock. Resolution may contact the pinned Pyodide CDN and
-PyPI. The current artifact consumer accepts pure Python wheels only; native
-PyEmscripten wheels still need loader and ABI qualification.
+PyPI. The consumer accepts pure Python wheels and exactly
+`cp313-cp313-pyodide_2025_0_wasm32` wheels; build-machine platform wheels are
+unsupported. Native-extension qualification is described below.
 
 `npm run test:packages` checks a PyPI wheel (`humanize`), a runtime-index wheel
 (`python-dateutil`) and its transitive dependency (`six`). It verifies repeatable
@@ -330,6 +331,26 @@ Cache hits verify without rewriting files. Missing wheels are verified and
 published by atomic rename, so concurrent readers cannot see partial cache
 contents. Corrupt cached artifacts remain errors.
 
-Compiled extensions, package startup hooks, broader wheel layouts and framework
-behavior remain unqualified. The builder is still a local experimental helper,
-not a published distribution.
+Package startup hooks, broader wheel layouts and framework behavior remain
+unqualified. The builder is still a local experimental helper, not a published
+distribution.
+
+### Compiled extension checkpoint
+
+The native builder verifies target wheel tags and Wasm magic, extracts `.so`
+modules, and emits content-addressed Wasm imports alongside the interpreter.
+Their names and digests are checked again by celld before packaging. The lexical
+async Wasm compiler matches exact library bytes to those immutable modules.
+After unpacking, the SDK adapter preloads their paths through Pyodide's pinned
+private `_api.loadDynlib` hook, then imports the application. This internal hook
+is part of the pinned 0.28.3 integration and needs review on runtime upgrades.
+
+`npm run test:native-extension` calls MarkupSafe 3.0.2's `_speedups._escape_inner`
+through real HTTP. The test requires the `.so` module path and builtin-function
+identity, so the package's pure-Python fallback cannot satisfy it. The generated
+bundle also starts and executes the extension with global fetch disabled.
+
+This proves one C-extension wheel on celld. Compiled-package workerd comparison,
+multi-library dependency graphs, package-provided shared-library archives,
+NumPy-style workloads, extension reload and resource-pressure behavior remain
+unqualified. Pure-package workerd evidence does not cover these cases.

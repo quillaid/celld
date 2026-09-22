@@ -1,0 +1,20 @@
+
+> test:native-extension
+> node --test native-extension.test.mjs
+
+TAP version 13
+# Subtest: native Python executes the compiled MarkupSafe extension from a pinned Wasm wheel
+ok 1 - native Python executes the compiled MarkupSafe extension from a pinned Wasm wheel
+  ---
+  duration_ms: 20010.01425
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 20050.454958

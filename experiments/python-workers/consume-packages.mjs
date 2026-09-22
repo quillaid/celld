@@ -23,7 +23,7 @@ export async function consumePackages(directory) {
   if (!Array.isArray(lock.packages) || !Array.isArray(lock.roots)) throw new Error('Invalid Python package lock');
   const seen = new Set();
   for (const entry of lock.packages) {
-    if (!/^[a-z0-9][a-z0-9.-]*$/.test(entry.name) || seen.has(entry.name) || typeof entry.version !== 'string' || !/^[a-f0-9]{64}$/.test(entry.sha256) || !/^[^/\\]+-(?:py3|py2\.py3)-none-any\.whl$/.test(entry.filename) || !Array.isArray(entry.depends)) throw new Error('Invalid or unsupported locked Python wheel');
+    if (!/^[a-z0-9][a-z0-9.-]*$/.test(entry.name) || seen.has(entry.name) || typeof entry.version !== 'string' || !/^[a-f0-9]{64}$/.test(entry.sha256) || !/^[^/\\]+-(?:(?:py3|py2\.py3)-none-any|cp313-cp313-pyodide_2025_0_wasm32)\.whl$/.test(entry.filename) || !Array.isArray(entry.depends)) throw new Error('Invalid or unsupported locked Python wheel');
     const url = new URL(entry.url);
     if (url.protocol !== 'https:' || url.username || url.password) throw new Error('Locked Python wheels require HTTPS origins without credentials');
     seen.add(entry.name);
@@ -34,7 +34,7 @@ export async function consumePackages(directory) {
   const artifacts = [];
   for (const entry of lock.packages) {
     const path = join(wheelDirectory, entry.sha256 + '.whl');
-    artifacts.push({ path, bytes: await verifiedDownload(entry.url, entry.sha256, path) });
+    artifacts.push({ path, filename: entry.filename, bytes: await verifiedDownload(entry.url, entry.sha256, path) });
   }
   return { artifacts, descriptor: { sha256: digest(lockBytes), lock } };
 }

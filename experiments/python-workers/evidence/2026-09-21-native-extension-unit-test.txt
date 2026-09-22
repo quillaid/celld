@@ -1,0 +1,18 @@
+   Compiling celld v0.5.1 (/Users/kylekelley/.codex/worktrees/celld-python-workers/celld/crates/celld)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.19s
+     Running unittests lib.rs (target/debug/deps/celld-5aaa038271bd83bc)
+<jemalloc>: option background_thread currently supports pthread only
+
+running 2 tests
+test deploy::python_deployment_tests::python_manifest_requires_host_lifecycle_support ... ok
+test deploy::python_deployment_tests::python_extension_assets_require_matching_names_and_digests ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests main.rs (target/debug/deps/celld-f2f58d49abf7b44a)
+<jemalloc>: option background_thread currently supports pthread only
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -108,9 +108,9 @@ json.dumps({'roots': sorted(set(canonicalize_name(req.name) for req in _active))
       ? cdn + bundled.file_name : entry.file_name;
     if (typeof url !== 'string' || !url.startsWith('https://')) throw new Error('Package has no reproducible HTTPS origin: ' + name);
     const filename = basename(new URL(url).pathname);
-    // The initial consumer supports pure Python wheels. Compiled PyEmscripten
-    // wheels require a separate shared-library loader and ABI qualification.
-    if (!/-(?:py3|py2\.py3)-none-any\.whl$/.test(filename)) throw new Error('Only pure Python wheels are supported yet: ' + filename);
+    // Native wheels must match the pinned CPython and Pyodide ABI exactly.
+    // Platform wheels for the build machine are never deployment artifacts.
+    if (!/-(?:(?:py3|py2\.py3)-none-any|cp313-cp313-pyodide_2025_0_wasm32)\.whl$/.test(filename)) throw new Error('Wheel does not match the supported Python/Pyodide ABI: ' + filename);
     if (!/^[a-f0-9]{64}$/.test(entry.sha256)) throw new Error('Package lacks a SHA-256 digest: ' + name);
     await verifiedDownload(url, entry.sha256, join(wheelDirectory, entry.sha256 + '.whl'));
     packages.push({ name, version: entry.version, filename, url, sha256: entry.sha256, depends: [...entry.depends].sort() });

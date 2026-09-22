@@ -10,6 +10,7 @@ const outdir = process.env.PYTHON_BUILD_OUTPUT_DIR || 'dist';
 await mkdir(outdir, { recursive: true });
 let generatedEntry, projectSources, packageDescriptor;
 let packageArtifacts = [];
+const dynamicLibraries = [];
 if (process.env.PYTHON_PROJECT_FILE) {
   const main = resolve(process.env.PYTHON_PROJECT_FILE);
   const directory = dirname(main);
@@ -35,9 +36,9 @@ if (process.env.PYTHON_PROJECT_FILE) {
   if (!(basename(main) in projectSources)) throw new Error('Python entry was not collected');
   const classes = JSON.parse(process.env.PYTHON_DURABLE_CLASSES || '[]');
   if (!Array.isArray(classes) || classes.some(name => typeof name !== 'string' || !/^[A-Za-z_][A-Za-z_0-9]*$/.test(name) || name === 'default')) throw new Error('Invalid Python Durable Object class names');
-  generatedEntry = "import { createPythonDeployment } from './sdk-runtime.js';\n";
+  generatedEntry = "import { createPythonDeployment } from './sdk-runtime.js';\nimport { paths as _dylibs } from 'celld-python-dylibs';\n";
   packageArtifacts.forEach((artifact, index) => { generatedEntry += `import _wheel${index} from ${JSON.stringify('celld-python-wheel/' + basename(artifact.path))};\n`; });
-  generatedEntry += 'const deployment = createPythonDeployment({...' + JSON.stringify({ moduleName, files: projectSources }) + ', packages: [' + packageArtifacts.map((_, index) => '_wheel' + index).join(',') + ']});\nexport default deployment.worker();\n';
+  generatedEntry += 'const deployment = createPythonDeployment({...' + JSON.stringify({ moduleName, files: projectSources }) + ', dynamicLibraries: _dylibs, packages: [' + packageArtifacts.map((_, index) => '_wheel' + index).join(',') + ']});\nexport default deployment.worker();\n';
   classes.forEach((name, index) => {
     generatedEntry += 'const _durable' + index + ' = deployment.durableObject(' + JSON.stringify(name) + ');\nexport { _durable' + index + ' as ' + name + ' };\n';
   });
@@ -60,8 +61,18 @@ if (projectSources) {
   validator.FS.mkdirTree('/wheel-input');
   packageArtifacts.forEach((artifact, index) => validator.FS.writeFile(`/wheel-input/${index}.whl`, artifact.bytes));
   validator.globals.set('_celld_wheel_count', packageArtifacts.length);
-  validator.runPython(await readFile('validate-wheels.py', 'utf8'));
+  validator.globals.set('_celld_wheel_filenames', JSON.stringify(packageArtifacts.map(item => item.filename)));
+  const nativePaths = JSON.parse(validator.runPython(await readFile('validate-wheels.py', 'utf8')));
   for (const artifact of packageArtifacts) validator.unpackArchive(new Uint8Array(artifact.bytes), 'zip', { extractDir: '/packages' });
+  for (const path of nativePaths) {
+    const bytes = validator.FS.readFile('/packages/' + path);
+    const sha256 = createHash('sha256').update(bytes).digest('hex');
+    // Validate the module before emitting an immutable compiled-module import.
+    new WebAssembly.Module(bytes);
+    const module = 'python-extension-' + sha256 + '.wasm';
+    await writeFile(join(outdir, module), bytes);
+    dynamicLibraries.push({ path, module, sha256, bytes });
+  }
   for (const [name, source] of Object.entries(projectSources)) {
     if (!/^(?:[A-Za-z_][A-Za-z_0-9]*\/)*[A-Za-z_][A-Za-z_0-9]*\.py$/.test(name)) throw new Error('Invalid Python module path: ' + name);
     validator.FS.mkdirTree('/app/' + name.split('/').slice(0, -1).join('/'));
@@ -85,12 +96,23 @@ await build({
   ...(generatedEntry ? { stdin: { contents: generatedEntry, resolveDir: process.cwd(), sourcefile: 'python-entry.js' } } : { entryPoints: [process.env.PYTHON_FIXTURE_ENTRY || 'worker.js'] }),
   outfile: process.env.PYTHON_FIXTURE_OUTPUT || join(outdir, 'index.js'), bundle: true,
   format: 'esm', platform: 'browser', target: 'es2022',
-  external: ['node:*', './pyodide.asm.wasm', './sentinel.wasm'],
+  external: ['node:*', './pyodide.asm.wasm', './sentinel.wasm', './python-extension-*.wasm'],
   loader: { '.zip': 'binary', '.py': 'text', '.whl': 'binary' },
   // These definitions affect only this generated fixture, not host globals.
   define: { process: 'undefined', location: '"https://python-runtime.invalid/"' },
   inject: ['./runtime-assets.js'],
   plugins: [{ name: 'sentinel-bytes', setup(builder) {
+    builder.onResolve({ filter: /^celld-python-dylibs$/ }, () => ({ path: 'libraries', namespace: 'python-dylibs' }));
+    builder.onLoad({ filter: /.*/, namespace: 'python-dylibs' }, () => ({ contents:
+      dynamicLibraries.map((item, index) => `import m${index} from ${JSON.stringify('./' + item.module)};\nimport b${index} from ${JSON.stringify('celld-python-dylib-bytes/' + item.sha256)};\n`).join('') +
+      'export const paths = ' + JSON.stringify(dynamicLibraries.map(item => item.path)) + ';\n' +
+      'export const artifacts = [' + dynamicLibraries.map((_, index) => `{module:m${index},bytes:b${index}}`).join(',') + '];', loader: 'js' }));
+    builder.onResolve({ filter: /^celld-python-dylib-bytes\// }, args => ({ path: args.path.slice('celld-python-dylib-bytes/'.length), namespace: 'python-dylib-bytes' }));
+    builder.onLoad({ filter: /.*/, namespace: 'python-dylib-bytes' }, args => {
+      const artifact = dynamicLibraries.find(item => item.sha256 === args.path);
+      if (!artifact) throw new Error('Unknown Python dynamic library');
+      return { contents: artifact.bytes, loader: 'binary' };
+    });
     builder.onResolve({ filter: /^pyodide-sentinel-bytes$/ }, () => ({ path: 'sentinel', namespace: 'sentinel' }));
     builder.onLoad({ filter: /.*/, namespace: 'sentinel' }, () => ({ contents: sentinel, loader: 'binary' }));
     // Stable content-addressed module names keep local cache paths out of the
@@ -115,6 +137,7 @@ await writeFile(join(outdir, 'runtime-manifest.json'), JSON.stringify({
   pyodide: '0.28.3',
   sdk: generatedEntry ? JSON.parse(await readFile('sdk-lock.json', 'utf8')) : undefined,
   packages: packageDescriptor,
+  dynamicLibraries: dynamicLibraries.length ? dynamicLibraries.map(({ bytes, ...entry }) => entry) : undefined,
   sources: projectSources ? Object.fromEntries(Object.entries(projectSources).map(([name, contents]) => [name, createHash('sha256').update(contents).digest('hex')])) : undefined,
   pythonAbi: JSON.parse(await readFile(runtime + 'pyodide-lock.json', 'utf8')).info,
   packaging: generatedEntry ? 'experimental-native-python-v1' : 'fixture-only; stdlib embedded in JS', assets,

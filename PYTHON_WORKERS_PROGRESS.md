@@ -592,3 +592,34 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   package-reload-passing.json, package-reference-passing.json,
   package-lifecycle-test.txt and package-lifecycle-resolver-test.txt are retained
   under experiment evidence/. Goal active; no fleet/public changes.
+
+## First compiled Python extension (2026-09-21)
+
+- Package resolution/consumption now accepts the exact
+  cp313-cp313-pyodide_2025_0_wasm32 wheel tag in addition to pure wheels. Native
+  WHEEL metadata must contain the target tag; extracted .so files must be Wasm.
+  Existing path/layout/collision checks remain in place.
+- The builder extracts .so bytes, validates them with the build-time Wasm
+  compiler, and emits content-addressed immutable Wasm modules. The deployment
+  descriptor includes their paths, module names and SHA-256 digests. Celld checks
+  module names against those digests and verifies bytes before including them.
+  Host unit tests reject changed bytes, path-like names and malformed digests.
+- The lexical async Wasm compiler matches exact wheel-library bytes to compiled
+  imports. The SDK initializer unpacks wheels, then preloads library paths with
+  pinned Pyodide 0.28.3's private _api.loadDynlib hook before importing the app.
+  This does not repair the separate generic raw-byte Wasm compile stall.
+- A real native Python Worker calls MarkupSafe 3.0.2's compiled
+  _speedups._escape_inner. The test requires its .so filename and builtin-function
+  identity and checks escaped results, preventing the pure-Python fallback from
+  satisfying the test. Generated-bundle startup with global fetch disabled also
+  executes the C function successfully.
+- One native extension is qualified on celld, not the compiled-package matrix.
+  Workerd comparison, multi-library graphs/shared-library archives, extension
+  reload, NumPy-style workloads and resource pressure remain open. The loader
+  hook must be re-audited when the pinned runtime changes. Other original goal
+  requirements remain intact; no fleet/public changes.
+- Rebuilt the native binary and fixtures. All 27 records in the full HTTP suite
+  pass, plus both Python deployment unit tests and diff checks. Evidence includes
+  date-prefixed native-extension-passing.json, native-extension-test.txt,
+  native-extension-full-suite.txt, native-extension-unit-test.txt and
+  native-extension-build.sha256 under experiment evidence/. Goal remains active.

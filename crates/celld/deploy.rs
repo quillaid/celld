@@ -2898,16 +2898,41 @@ fn run_python_builder(
     }
     let bundle =
         std::fs::read(outdir.path().join("index.js")).context("read Python entry bundle")?;
+    let wasm = read_python_wasm_assets(outdir.path(), &descriptor)?;
+    Ok((BundleOutput { bundle, wasm }, descriptor))
+}
+
+fn read_python_wasm_assets(outdir: &Path, descriptor: &Value) -> anyhow::Result<Vec<(String, Vec<u8>)>> {
     let mut wasm = Vec::new();
     for name in ["pyodide.asm.wasm", "sentinel.wasm"] {
-        let bytes = std::fs::read(outdir.path().join(name))?;
+        let bytes = std::fs::read(outdir.join(name))?;
         let digest = format!("{:x}", Sha256::digest(&bytes));
         if descriptor["assets"][name]["sha256"].as_str() != Some(digest.as_str()) {
             bail!("Python builder asset digest mismatch for {name}");
         }
         wasm.push((name.to_string(), bytes));
     }
-    Ok((BundleOutput { bundle, wasm }, descriptor))
+    if let Some(libraries) = descriptor.get("dynamicLibraries") {
+        for library in libraries.as_array().context("Python dynamicLibraries must be an array")? {
+            let digest = library["sha256"].as_str().context("Python extension needs a digest")?;
+            if digest.len() != 64 || !digest.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+                bail!("Python extension has an invalid digest");
+            }
+            let name = format!("python-extension-{digest}.wasm");
+            if library["module"].as_str() != Some(name.as_str()) {
+                bail!("Python extension module name must match its digest");
+            }
+            if wasm.iter().any(|(existing, _)| existing == &name) {
+                continue;
+            }
+            let bytes = std::fs::read(outdir.join(&name))?;
+            if format!("{:x}", Sha256::digest(&bytes)) != digest {
+                bail!("Python extension asset digest mismatch for {name}");
+            }
+            wasm.push((name, bytes));
+        }
+    }
+    Ok(wasm)
 }
 
 fn run_esbuild(root: &Path, entry: &str, config: &BundleConfig) -> anyhow::Result<BundleOutput> {
@@ -3085,6 +3110,36 @@ mod deploy_contract {
 #[cfg(test)]
 mod python_deployment_tests {
     use super::*;
+
+    #[test]
+    fn python_extension_assets_require_matching_names_and_digests() -> anyhow::Result<()> {
+        let directory = tempfile::tempdir()?;
+        let bytes = b"\0asm\x01\0\0\0";
+        let digest = format!("{:x}", Sha256::digest(bytes));
+        let module = format!("python-extension-{digest}.wasm");
+        let mut descriptor = json!({
+            "assets": {
+                "pyodide.asm.wasm": {"sha256": digest},
+                "sentinel.wasm": {"sha256": digest}
+            },
+            "dynamicLibraries": [{"sha256": digest, "module": module}]
+        });
+        for name in ["pyodide.asm.wasm", "sentinel.wasm", &module] {
+            std::fs::write(directory.path().join(name), bytes)?;
+        }
+        assert_eq!(read_python_wasm_assets(directory.path(), &descriptor)?.len(), 3);
+        std::fs::write(directory.path().join(&module), b"corrupt")?;
+        assert!(read_python_wasm_assets(directory.path(), &descriptor)
+            .unwrap_err().to_string().contains("extension asset digest mismatch"));
+        std::fs::write(directory.path().join(&module), bytes)?;
+        descriptor["dynamicLibraries"][0]["module"] = json!("../outside.wasm");
+        assert!(read_python_wasm_assets(directory.path(), &descriptor)
+            .unwrap_err().to_string().contains("module name must match"));
+        descriptor["dynamicLibraries"][0]["sha256"] = json!("not-a-digest");
+        assert!(read_python_wasm_assets(directory.path(), &descriptor)
+            .unwrap_err().to_string().contains("invalid digest"));
+        Ok(())
+    }
 
     #[test]
     fn python_manifest_requires_host_lifecycle_support() -> anyhow::Result<()> {

@@ -3,6 +3,7 @@ import interpreter from './pyodide.asm.wasm';
 import sentinel from './sentinel.wasm';
 import sentinelBytes from 'pyodide-sentinel-bytes';
 import stdlib from 'pyodide/python_stdlib.zip';
+import { artifacts as dynamicLibraries } from 'celld-python-dylibs';
 
 const wasmResponse = new WeakSet();
 // Select Pyodide's worker environment without exposing a global script loader.
@@ -32,12 +33,15 @@ export async function fetch(input, init) {
 // celld provides a compiled-module import, so use its shared code cache.
 // The object is lexical to the generated bundle; global WebAssembly is untouched.
 export const WebAssembly = Object.create(globalThis.WebAssembly);
-// Only the pinned loader's sentinel is supported. Arbitrary runtime compilation
-// is not a fallback: both runtimes receive precompiled immutable artifacts.
+// The async compiler bridge only accepts the pinned sentinel and emitted wheel
+// libraries. Every match returns an immutable compiled-module import.
 WebAssembly.compile = async (input) => {
   const bytes = ArrayBuffer.isView(input)
     ? new Uint8Array(input.buffer, input.byteOffset, input.byteLength) : new Uint8Array(input);
   if (bytes.length === sentinelBytes.length && bytes.every((byte, i) => byte === sentinelBytes[i])) return sentinel;
+  for (const artifact of dynamicLibraries) {
+    if (bytes.length === artifact.bytes.length && bytes.every((byte, i) => byte === artifact.bytes[i])) return artifact.module;
+  }
   throw new globalThis.WebAssembly.CompileError('Python runtime requested an unbundled Wasm module');
 };
 WebAssembly.instantiate = async (input, imports) => {
