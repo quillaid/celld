@@ -862,3 +862,30 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   pressure-recovery-full-suite.txt and pressure-recovery-build.sha256 under the
   date-prefixed experiment evidence paths. Rust formatting and diff checks pass.
   Original delayed-recovery evidence remains. Goal active; no public/fleet changes.
+
+## Shared-interpreter Python handler proxy cleanup (2026-09-21)
+
+- Prior turn made verified progress (8e86812), with 34 full-suite records passing
+  and prompt whole-heap recovery. A new WeakSet probe exposes a separate problem:
+  evicting one of two Python objects retains its instance through the JS handler
+  proxy even after Python gc.collect(). The census remained two rather than one.
+  Retained the failing observation in proxy-lifecycle-failure.json.
+- Host residency release now marks the old DurableObjectState as released using
+  a JS boolean only. The SDK adapter tracks owned handler proxies and destroys
+  released/aborted ones at its next invoke. Python __del__ can execute during
+  proxy destruction, so it deliberately does not run from native teardown,
+  including teardown after hard termination. Ordinary event admission and the
+  existing invalidated-runtime gate remain responsible for guest entry.
+- The focused shared-interpreter fixture keeps a witness object resident while
+  repeatedly constructing/evicting a second object. The witness keeps its UUID
+  and the Python WeakSet returns to one survivor after each of eight cycles.
+  Added an exactly-once __del__ count for the final regression run.
+- Cleanup is deferred until the next Python event if the heap remains shared;
+  otherwise heap retirement frees it. This does not qualify returned RPC
+  capabilities, retained exception tracebacks, adversarial finalizer behavior,
+  or long-run memory bounds. All original goal requirements remain in scope.
+- Rebuilt celld and fixtures. All 35 full-suite records pass, including eight
+  cleanup cycles with live=1 and finalized=1..8, CPU termination, abort/restart,
+  pressure/shared-heap recovery and socket hibernation. Date-prefixed evidence
+  retains failure/passing proxy observations, full-suite log and binary hash.
+  Diff checks pass. Goal remains active; no public or fleet changes.

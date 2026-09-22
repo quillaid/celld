@@ -1,0 +1,230 @@
+
+> test
+> node --test --test-concurrency=2 smoke.test.mjs async-wasm.test.mjs resources.test.mjs pool-lifecycle.test.mjs durable.test.mjs persistence.test.mjs transaction-contract.test.mjs workflow-regression.test.mjs sdk.test.mjs native.test.mjs reload.test.mjs native-durable.test.mjs microtask-contract.test.mjs native-packages.test.mjs package-reload.test.mjs package-reference.test.mjs native-extension.test.mjs native-rpc.test.mjs websocket-pair-contract.test.mjs native-websocket.test.mjs socket-eviction.test.mjs socket-idle.test.mjs native-pressure.test.mjs shared-heap.test.mjs proxy-lifecycle.test.mjs
+
+TAP version 13
+# Subtest: compiled-module Wasm promises match workerd; byte compilation is probed separately
+ok 1 - compiled-module Wasm promises match workerd; byte compilation is probed separately
+  ---
+  duration_ms: 4892.002167
+  type: 'test'
+  ...
+# [{"operation":"sync","celld":{"outcome":"resolved","instance":true},"workerd":{"outcome":"resolved","instance":true}},{"operation":"instantiate-module","celld":{"outcome":"resolved"},"workerd":{"outcome":"resolved"}},{"operation":"compile","celld":{"outcome":"timeout"},"workerd":{"outcome":"rejected","error":"CompileError: WebAssembly.compile(): Wasm code generation disallowed by embedder"}},{"operation":"instantiate-bytes","celld":{"outcome":"timeout"},"workerd":{"outcome":"rejected","error":"CompileError: WebAssembly.instantiate(): Wasm code generation disallowed by embedder"}}]
+# Subtest: Python Durable Object SQL and recovery after abort
+ok 2 - Python Durable Object SQL and recovery after abort
+  ---
+  duration_ms: 9907.305416
+  type: 'test'
+  ...
+# Subtest: queueMicrotask invokes callbacks with no arguments, matching workerd
+ok 3 - queueMicrotask invokes callbacks with no arguments, matching workerd
+  ---
+  duration_ms: 4643.896875
+  type: 'test'
+  ...
+# Subtest: native SDK Durable Object preserves SQL across abort and process restart and runs alarms
+ok 4 - native SDK Durable Object preserves SQL across abort and process restart and runs alarms
+  ---
+  duration_ms: 22932.464416
+  type: 'test'
+  ...
+# Subtest: compiled MarkupSafe executes offline and matches the same extension on workerd
+ok 5 - compiled MarkupSafe executes offline and matches the same extension on workerd
+  ---
+  duration_ms: 20901.96825
+  type: 'test'
+  ...
+# Subtest: native Python bundles locked packages, rejects stale inputs and starts offline
+ok 6 - native Python bundles locked packages, rejects stale inputs and starts offline
+  ---
+  duration_ms: 34864.160292
+  type: 'test'
+  ...
+# Subtest: memory pressure retires Python state and preserves acknowledged SQL writes
+ok 7 - memory pressure retires Python state and preserves acknowledged SQL writes
+  ---
+  duration_ms: 13123.472667
+  type: 'test'
+  ...
+# Subtest: native Python Durable Object RPC methods match workerd and retain SQL state
+ok 8 - native Python Durable Object RPC methods match workerd and retain SQL state
+  ---
+  duration_ms: 21042.381458
+  type: 'test'
+  ...
+# Subtest: native Python Durable Object WebSocket events match workerd
+ok 9 - native Python Durable Object WebSocket events match workerd
+  ---
+  duration_ms: 20888.702375
+  type: 'test'
+  ...
+# Subtest: native .py project builds and serves SDK HTTP through celld dev
+ok 10 - native .py project builds and serves SDK HTTP through celld dev
+  ---
+  duration_ms: 9435.269959
+  type: 'test'
+  ...
+# Subtest: native Python deployment identity is reproducible and rejects unsupported configuration
+ok 11 - native Python deployment identity is reproducible and rejects unsupported configuration
+  ---
+  duration_ms: 27907.506125
+  type: 'test'
+  ...
+# Subtest: locked package application and released SDK match the workerd reference
+ok 12 - locked package application and released SDK match the workerd reference
+  ---
+  duration_ms: 14937.685167
+  type: 'test'
+  ...
+# Subtest: Python package reload retains the last good worker across stale and invalid locks
+ok 13 - Python package reload retains the last good worker across stale and invalid locks
+  ---
+  duration_ms: 30191.023834
+  type: 'test'
+  ...
+# Subtest: Python SQL rollback, alarms, and acknowledged state survive process crash
+ok 14 - Python SQL rollback, alarms, and acknowledged state survive process crash
+  ---
+  duration_ms: 13339.252666
+  type: 'test'
+  ...
+# Subtest: pooled Python interpreters are replaced after hard termination
+ok 15 - pooled Python interpreters are replaced after hard termination
+  ---
+  duration_ms: 11645.2745
+  type: 'test'
+  ...
+# Subtest: evicted Python objects release handler proxies inside a still-live shared heap
+ok 16 - evicted Python objects release handler proxies inside a still-live shared heap
+  ---
+  duration_ms: 10976.233875
+  type: 'test'
+  ...
+# Subtest: Python watch reload retains the last good deployment after a syntax error
+ok 17 - Python watch reload retains the last good deployment after a syntax error
+  ---
+  duration_ms: 26062.075708
+  type: 'test'
+  ...
+# Subtest: Python interpreter resource lifecycle inside a real Dynamic Worker
+    # Subtest: bounded allocations reuse one interpreter and plateau in linear memory
+    ok 1 - bounded allocations reuse one interpreter and plateau in linear memory
+      ---
+      duration_ms: 1175.343667
+      type: 'test'
+      ...
+    # Subtest: CPU limit interrupts Python
+    ok 2 - CPU limit interrupts Python
+      ---
+      duration_ms: 968.870208
+      type: 'test'
+      ...
+    # Subtest: an interrupted interpreter has a defined lifecycle and a replacement serves
+    ok 3 - an interrupted interpreter has a defined lifecycle and a replacement serves
+      ---
+      duration_ms: 1864.679584
+      type: 'test'
+      ...
+    1..3
+ok 18 - Python interpreter resource lifecycle inside a real Dynamic Worker
+  ---
+  duration_ms: 11397.897375
+  type: 'test'
+  ...
+# {"timestamp":"2026-09-22T05:26:26.019Z","memory":{"samples":[{"status":200,"instance":"cdf637e1-d63e-4b09-8a47-624b94bca1ed","linearMemory":20971520,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"warm\\", \\"binding\\": null, \\"outbound\\": null}"},{"status":200,"instance":"cdf637e1-d63e-4b09-8a47-624b94bca1ed","linearMemory":35323904,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"allocate\\", \\"binding\\": null, \\"outbound\\": null}"},{"status":200,"instance":"cdf637e1-d63e-4b09-8a47-624b94bca1ed","linearMemory":35323904,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"allocate\\", \\"binding\\": null, \\"outbound\\": null}"},{"status":200,"instance":"cdf637e1-d63e-4b09-8a47-624b94bca1ed","linearMemory":35323904,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"allocate\\", \\"binding\\": null, \\"outbound\\": null}"},{"status":200,"instance":"cdf637e1-d63e-4b09-8a47-624b94bca1ed","linearMemory":35323904,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"allocate\\", \\"binding\\": null, \\"outbound\\": null}"},{"status":200,"instance":"cdf637e1-d63e-4b09-8a47-624b94bca1ed","linearMemory":35323904,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"allocate\\", \\"binding\\": null, \\"outbound\\": null}"},{"status":200,"instance":"cdf637e1-d63e-4b09-8a47-624b94bca1ed","linearMemory":35323904,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"allocate\\", \\"binding\\": null, \\"outbound\\": null}"},{"status":200,"instance":"cdf637e1-d63e-4b09-8a47-624b94bca1ed","linearMemory":35323904,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"allocate\\", \\"binding\\": null, \\"outbound\\": null}"},{"status":200,"instance":"cdf637e1-d63e-4b09-8a47-624b94bca1ed","linearMemory":35323904,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"allocate\\", \\"binding\\": null, \\"outbound\\": null}"},{"status":200,"instance":"cdf637e1-d63e-4b09-8a47-624b94bca1ed","linearMemory":35323904,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"allocate\\", \\"binding\\": null, \\"outbound\\": null}"},{"status":200,"instance":"cdf637e1-d63e-4b09-8a47-624b94bca1ed","linearMemory":35323904,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"allocate\\", \\"binding\\": null, \\"outbound\\": null}"}]},"terminationOnly":{"warm":{"status":200,"instance":"9860628d-8388-4609-ba37-c9c988c8ea1c","linearMemory":20971520,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"warm\\", \\"binding\\": null, \\"outbound\\": null}"},"termination":{"error":"Error: Worker exceeded CPU limit of 25 ms"},"terminationElapsedMs":33,"pendingStarted":true,"pendingElapsedMs":34,"pending":{"error":"Error: Python runtime invalidated after execution termination; recreate the worker"}},"termination":{"warm":{"status":200,"instance":"615a5a6d-d40e-420d-8087-c34d0f3fe917","linearMemory":20971520,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"warm\\", \\"binding\\": null, \\"outbound\\": null}"},"termination":{"error":"Error: Worker exceeded CPU limit of 25 ms"},"terminationElapsedMs":33,"diagnostics":{"error":"Error: Python runtime invalidated after execution termination; recreate the worker"},"after":{"error":"Error: Python runtime invalidated after execution termination; recreate the worker"},"secondAfter":{"error":"Error: Python runtime invalidated after execution termination; recreate the worker"},"pendingStarted":true,"pendingElapsedMs":33,"pending":{"error":"Error: Python runtime invalidated after execution termination; recreate the worker"},"replacement":{"status":200,"instance":"cdba1838-9453-4186-b1c7-75bc1c74db5b","linearMemory":20971520,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"replacement\\", \\"binding\\": null, \\"outbound\\": null}"}}}
+# Subtest: released Workers SDK HTTP, streaming, and background work match workerd
+ok 19 - released Workers SDK HTTP, streaming, and background work match workerd
+  ---
+  duration_ms: 11931.947917
+  type: 'test'
+  ...
+# Subtest: stopping one Python object preserves its shared heap until the last object stops
+ok 20 - stopping one Python object preserves its shared heap until the last object stops
+  ---
+  duration_ms: 10441.986042
+  type: 'test'
+  ...
+# <jemalloc>: option background_thread currently supports pthread only
+# Subtest: Pyodide through the real celld HTTP, KV, and fetch paths
+    # Subtest: concurrent first requests boot Python and import json/sys
+    ok 1 - concurrent first requests boot Python and import json/sys
+      ---
+      duration_ms: 939.386584
+      type: 'test'
+      ...
+    # Subtest: Python awaits a real KV write and read
+    ok 2 - Python awaits a real KV write and read
+      ---
+      duration_ms: 80.799958
+      type: 'test'
+      ...
+    # Subtest: Python awaits outbound fetch and body consumption
+    ok 3 - Python awaits outbound fetch and body consumption
+      ---
+      duration_ms: 125.243667
+      type: 'test'
+      ...
+    # Subtest: Python traceback is preserved and a later request works
+    ok 4 - Python traceback is preserved and a later request works
+      ---
+      duration_ms: 8.968792
+      type: 'test'
+      ...
+    # Subtest: repeated warm requests preserve their own input
+    ok 5 - repeated warm requests preserve their own input
+      ---
+      duration_ms: 65.725791
+      type: 'test'
+      ...
+    # Subtest: same Python source matches pinned workerd HTTP, KV, fetch, and errors
+    ok 6 - same Python source matches pinned workerd HTTP, KV, fetch, and errors
+      ---
+      duration_ms: 3698.002584
+      type: 'test'
+      ...
+    1..6
+ok 21 - Pyodide through the real celld HTTP, KV, and fetch paths
+  ---
+  duration_ms: 11901.48625
+  type: 'test'
+  ...
+# {"celld":"celld 0.5.1 (debug)","pyodide":"0.28.3","timestamp":"2026-09-22T05:26:49.473Z","platform":"darwin","architecture":"arm64","nodeBeforePython":[{"pid":91973,"rssKiB":129776}],"warmMs":[5.021375000000262,3.863500000001295,3.0560830000013084,3.013958999999886,3.4228750000002037,3.755542000000787,2.9751669999986916,3.571791000000303,2.953625000000102,3.2750410000007832,2.9954579999994166,3.0931670000009035,3.1842090000009193,3.433082999999897,3.397292000001471,1.5950419999990118,3.6220420000008744,3.139291999999841,3.04674999999952,3.1004160000011325],"concurrentColdBatchMs":937.5863749999999,"coldInterpreterInstances":["22ad49b6-b411-494d-a2e3-cea6042a2d65","b8de4c05-2d13-46b6-bbd8-aeee0fb7900a"],"python":"3.13.2","nodeAfterRequests":[{"pid":91973,"rssKiB":395472}],"reference":{"workerd":"1.20260922.1","miniflare":"5.20260921.0-alpha","compatibilityDate":"2025-06-01","pyodide":"0.28.2 (Cloudflare bundle)","sourceSha256":"d5516c103f669cdfcc8a7d4f17c2478e5672ddffdd3187aa88837d2558323a21","adapter":"historical WorkerEntrypoint.on_fetch delegates unchanged source","normalization":"parse JSON for success; compare status and Python type/message for errors","outputs":[{"input":"hello","status":200,"celld":{"language":"python","version":"3.13.2","body":"hello","binding":null,"outbound":null},"workerd":{"language":"python","version":"3.13.2","body":"hello","binding":null,"outbound":null}},{"input":"binding","status":200,"celld":{"language":"python","version":"3.13.2","body":"binding","binding":"written from Python","outbound":null},"workerd":{"language":"python","version":"3.13.2","body":"binding","binding":"written from Python","outbound":null}},{"input":"fetch","status":200,"celld":{"language":"python","version":"3.13.2","body":"fetch","binding":null,"outbound":"local outbound fetch succeeded"},"workerd":{"language":"python","version":"3.13.2","body":"fetch","binding":null,"outbound":"local outbound fetch succeeded"}}],"errors":["Worker failed: rejected: PythonError: Traceback (most recent call last):\\n  File \\"<exec>\\", line 12, in handle\\nValueError: intentional Python traceback\\n [File \\"<exec>\\", line 12, in handle <- ValueError: intentional Python traceback <- ]","Error: PythonError: Traceback (most recent call last):\\n  File \\"introspection.py\\", line 88, in wrapper_func\\n    return python_to_rpc(await result)\\n                         ^^^^^^^^^^^^\\n  File \\"/session/metadata/reference-entry.py\\", line 9, in on_fetch\\n    return await handle(request, self.env)\\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\"/session/metadata/worker.py\\", line 12, in handle\\n    raise ValueError(\\"intentional Python traceback\\")\\nValueError: intentional Python traceback\\n\\n    at async Object.fetch (file:///Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/node_modules/miniflare/dist/src/workers/core/entry.worker.js:5216:22)"]}}
+# Subtest: Python Durable Object reconstructs around a live socket after forced eviction
+ok 22 - Python Durable Object reconstructs around a live socket after forced eviction
+  ---
+  duration_ms: 14502.945333
+  type: 'test'
+  ...
+# Subtest: Python live sockets hibernate through the automatic idle policy
+ok 23 - Python live sockets hibernate through the automatic idle policy
+  ---
+  duration_ms: 22428.603375
+  type: 'test'
+  ...
+# Subtest: transactionSync callback and nested rollback match pinned workerd
+ok 24 - transactionSync callback and nested rollback match pinned workerd
+  ---
+  duration_ms: 4690.055375
+  type: 'test'
+  ...
+# Subtest: WebSocketPair enumeration matches workerd
+ok 25 - WebSocketPair enumeration matches workerd
+  ---
+  duration_ms: 4694.0985
+  type: 'test'
+  ...
+# Subtest: Workflow event consumption and persisted steps survive transaction API correction
+ok 26 - Workflow event consumption and persisted steps survive transaction API correction
+  ---
+  duration_ms: 4680.95375
+  type: 'test'
+  ...
+1..26
+# tests 35
+# suites 0
+# pass 35
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 199421.371292

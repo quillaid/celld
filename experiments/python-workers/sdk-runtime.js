@@ -48,8 +48,17 @@ async function initialize({ files, packages = [], dynamicLibraries = [] }) {
 
 export function createPythonDeployment({ moduleName, files, packages, dynamicLibraries }) {
   let ready;
+  const durableHandlers = new Set();
   const runtime = () => ready ??= initialize({ moduleName, files, packages, dynamicLibraries });
   async function invoke(handler, ...args) {
+    // Destroying a proxy may execute Python __del__. Do this only inside an
+    // admitted guest event, never from host-side residency teardown (which
+    // also runs after hard termination of an unsafe interpreter).
+    for (const record of durableHandlers) {
+      if (!record.ctx.__celldReleased && !record.ctx._aborted) continue;
+      durableHandlers.delete(record);
+      record.handler.destroy();
+    }
     const future = handler(...args);
     try { return await future; }
     finally { future.destroy(); }
@@ -72,6 +81,7 @@ export function createPythonDeployment({ moduleName, files, packages, dynamicLib
           this.#ready = ctx.blockConcurrencyWhile(async () => {
             const { loadDurable } = await runtime();
             this.#handler = loadDurable(moduleName, className, ctx, env);
+            durableHandlers.add({ ctx, handler: this.#handler });
             const methods = this.#handler.rpc_methods;
             try {
               for (const name of methods.toJs()) {

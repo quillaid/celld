@@ -284,6 +284,16 @@ verifies that stopping one of two objects preserves their shared interpreter and
 the surviving Python instance; stopping the last object frees the heap. Linux
 cgroup accounting, pressure across multiple occupied objects, pressure with live
 sockets, repeated pressure cycles and extension memory remain unqualified.
+
+`npm run test:proxy-lifecycle` keeps one Python object resident while creating
+and evicting another eight times in the same heap. A Python weak-reference census
+must return to one live object, and each evicted instance must finalize exactly
+once. Host teardown marks released state without calling Python; the adapter
+destroys its owned handler proxy on the next admitted Python event. This keeps
+Python finalization under event execution limits and avoids interpreter entry
+during post-termination host cleanup. Without another event, cleanup is deferred
+until one arrives or the whole heap is freed. Returned RPC capabilities, retained
+tracebacks and long-run proxy/memory bounds remain separate qualification work.
 Lifecycle event arguments bypass SDK RPC conversion to preserve their FFI types.
 The pair contract test also checks `Object.values(new WebSocketPair())` has two
 entries: celld previously included an enumerable `length` property.

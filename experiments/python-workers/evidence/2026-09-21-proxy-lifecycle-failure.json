@@ -1,0 +1,35 @@
+{
+  "timestamp": "2026-09-22T05:21:16.739Z",
+  "pools": [
+    {
+      "cells": 2,
+      "external_bytes": 5656299,
+      "freed": 0,
+      "heap_bytes": 33718272,
+      "live": 1,
+      "live_empty": 0,
+      "requests": 0,
+      "retiring": 0,
+      "turns": 0
+    }
+  ],
+  "witness": {
+    "instance": "4fe6c16f-475b-4121-aeb8-58337728ee89",
+    "live": 1,
+    "scope": "Counter:d7ab4202725051991d056f4d8d0fd4a55105546f4bb804bfdd4810eef6a80934"
+  },
+  "cycles": [
+    {
+      "temporary": {
+        "instance": "5d9241cf-4248-4e87-8f16-7d3afae23bd1",
+        "live": 2,
+        "scope": "Counter:e7dbe8dc3b08c617c9b1e5b65f08542eaefef01ab78ea17bbe4cc10488825cd5"
+      },
+      "witness": {
+        "instance": "4fe6c16f-475b-4121-aeb8-58337728ee89",
+        "live": 2,
+        "scope": "Counter:d7ab4202725051991d056f4d8d0fd4a55105546f4bb804bfdd4810eef6a80934"
+      }
+    }
+  ]
+}

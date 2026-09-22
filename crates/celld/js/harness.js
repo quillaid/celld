@@ -3883,6 +3883,11 @@ const __actorBreak = (scope, reason) => {
 // Storage is not here -- `stop_cell` closes it host-side -- and sockets
 // live in the host registry, so a hibernated cell keeps them.
 const __cellRelease = (scope) => {
+  // Mark the host state without entering the guest interpreter. The Python
+  // adapter releases its owned proxies on the next admitted Python event,
+  // where user finalizers remain subject to execution limits.
+  const state = __cell.instances[scope]?.__celldState;
+  if (state) state.__celldReleased = true;
   __cell.instances[scope]?.ctx?.facets?._release();
   delete __cell.instances[scope];
   delete __cell.idNames[scope];

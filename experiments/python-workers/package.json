@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs && npm run build:sdk",
-    "test": "node --test --test-concurrency=2 smoke.test.mjs async-wasm.test.mjs resources.test.mjs pool-lifecycle.test.mjs durable.test.mjs persistence.test.mjs transaction-contract.test.mjs workflow-regression.test.mjs sdk.test.mjs native.test.mjs reload.test.mjs native-durable.test.mjs microtask-contract.test.mjs native-packages.test.mjs package-reload.test.mjs package-reference.test.mjs native-extension.test.mjs native-rpc.test.mjs websocket-pair-contract.test.mjs native-websocket.test.mjs socket-eviction.test.mjs socket-idle.test.mjs native-pressure.test.mjs shared-heap.test.mjs",
+    "test": "node --test --test-concurrency=2 smoke.test.mjs async-wasm.test.mjs resources.test.mjs pool-lifecycle.test.mjs durable.test.mjs persistence.test.mjs transaction-contract.test.mjs workflow-regression.test.mjs sdk.test.mjs native.test.mjs reload.test.mjs native-durable.test.mjs microtask-contract.test.mjs native-packages.test.mjs package-reload.test.mjs package-reference.test.mjs native-extension.test.mjs native-rpc.test.mjs websocket-pair-contract.test.mjs native-websocket.test.mjs socket-eviction.test.mjs socket-idle.test.mjs native-pressure.test.mjs shared-heap.test.mjs proxy-lifecycle.test.mjs",
     "test:durable": "node --test durable.test.mjs",
     "test:smoke": "node --test smoke.test.mjs",
     "test:wasm": "node --test async-wasm.test.mjs",
@@ -24,7 +24,8 @@
     "test:websocket": "node --test --test-concurrency=2 websocket-pair-contract.test.mjs native-websocket.test.mjs",
     "test:socket-eviction": "node --test socket-eviction.test.mjs",
     "test:socket-lifecycle": "node --test --test-concurrency=2 socket-eviction.test.mjs socket-idle.test.mjs",
-    "test:native-pressure": "node --test native-pressure.test.mjs"
+    "test:native-pressure": "node --test native-pressure.test.mjs",
+    "test:proxy-lifecycle": "node --test proxy-lifecycle.test.mjs"
   },
   "dependencies": {
     "pyodide": "0.28.3"
