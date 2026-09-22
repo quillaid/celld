@@ -1,0 +1,30 @@
+
+> test:packages
+> node --test packages.test.mjs
+
+TAP version 13
+# Subtest: target package resolution pins transitive wheels and supports offline target imports
+not ok 1 - target package resolution pins transitive wheels and supports offline target imports
+  ---
+  duration_ms: 9866.199792
+  type: 'test'
+  location: '/Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/packages.test.mjs:13:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async TestContext.<anonymous> (file:///Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/packages.test.mjs:56:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9909.748625

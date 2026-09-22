@@ -15,7 +15,8 @@
     "test:sdk": "node --test sdk.test.mjs",
     "test:native": "node --test native.test.mjs",
     "test:reload": "node --test reload.test.mjs",
-    "test:native-durable": "node --test native-durable.test.mjs"
+    "test:native-durable": "node --test native-durable.test.mjs",
+    "test:packages": "node --test packages.test.mjs"
   },
   "dependencies": {
     "pyodide": "0.28.3"

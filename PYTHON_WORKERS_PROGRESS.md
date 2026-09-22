@@ -494,3 +494,37 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   Application-driven cancellation, cancellation without retained tasks, resource
   reclamation/pressure, package resolution and the other original goal gates
   remain open. Goal remains active, with no fleet or public changes.
+
+## Target package resolver groundwork (2026-09-21)
+
+- Added lock-packages.mjs: resolves one pyproject.toml project.dependencies list
+  or simple PEP 508 requirements.txt inside pinned Pyodide 0.28.3 / CPython
+  3.13.2, using its micropip 0.10.1 wheel. Resolver/runtime bytes are verified
+  before use. The local uv only advertises the older Pyodide 2024 target and was
+  not used for this 2025_0 ABI.
+- The lock binds the input manifest hash, target ABI, resolver identity, roots,
+  selected transitive package closure, wheel origins, versions and hashes.
+  Verified wheel bytes are cached by digest under project .celld/python-wheels.
+  A successful resolution atomically replaces the lock; failures preserve it.
+  Current acceptance is pure Python wheels. Compiled PyEmscripten packages and
+  their shared-library loader remain a later explicit gate.
+- Tests cover PyPI humanize 4.12.3, runtime-index python-dateutil 2.9.0.post0 and
+  transitive six 1.17.0. Identical inputs produce identical locks; marker tests
+  select Emscripten and skip a deliberately nonexistent macOS-only requirement.
+  Locked wheel bytes import and execute formatting/date parsing in target
+  CPython with fetch disabled. Corrupt caches and dynamic dependencies reject.
+- The conflict test exposed micropip accepting incompatible six==1.17.0 and
+  six==1.16.0 roots. Added independent installed-metadata validation of root and
+  transitive requirements, extras/markers and Requires-Python; frozen versions
+  must match those verified installed versions. The conflicting lock now fails
+  without replacing the old lock. Raw failing test evidence is retained.
+- Native dev/deploy STILL rejects dependency manifests. Next work: consume this
+  lock in the native builder, validate manifest/hash/ABI staleness, mount packages
+  for static import checks and runtime startup, include identity in deployment
+  metadata, then qualify real HTTP, offline startup, identity changes and reload.
+  This utility is groundwork, not completed deployed package support.
+- Final npm run test:packages passes; diff checks pass. Evidence includes
+  date-prefixed package-resolver-passing.json, package-resolver-test.txt and
+  package-conflict-failure.txt under experiments/python-workers/evidence/.
+  No celld runtime changed, so its unrelated HTTP suites were not rerun.
+  Goal remains active; no fleet/public changes.

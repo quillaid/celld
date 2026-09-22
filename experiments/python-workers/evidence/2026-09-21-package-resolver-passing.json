@@ -1,0 +1,72 @@
+{
+  "timestamp": "2026-09-22T04:15:07.674Z",
+  "lock": {
+    "schema": 1,
+    "pyodide": "0.28.3",
+    "python": "3.13.2",
+    "resolver": {
+      "name": "micropip",
+      "version": "0.10.1"
+    },
+    "manifest": {
+      "name": "requirements.txt",
+      "sha256": "059d4fdfa560973e2ed41bf29d3f61a375bc73b41fa9f86766629c964b441ccb"
+    },
+    "requirements": [
+      "python-dateutil==2.9.0.post0",
+      "humanize==4.12.3"
+    ],
+    "roots": [
+      "humanize",
+      "python-dateutil"
+    ],
+    "abi": {
+      "abi_version": "2025_0",
+      "arch": "wasm32",
+      "platform": "emscripten_4_0_9",
+      "python": "3.13.2",
+      "version": "0.28.0.dev0"
+    },
+    "packages": [
+      {
+        "name": "humanize",
+        "version": "4.12.3",
+        "filename": "humanize-4.12.3-py3-none-any.whl",
+        "url": "https://files.pythonhosted.org/packages/a0/1e/62a2ec3104394a2975a2629eec89276ede9dbe717092f6966fcf963e1bf0/humanize-4.12.3-py3-none-any.whl",
+        "sha256": "2cbf6370af06568fa6d2da77c86edb7886f3160ecd19ee1ffef07979efc597f6",
+        "depends": []
+      },
+      {
+        "name": "python-dateutil",
+        "version": "2.9.0.post0",
+        "filename": "python_dateutil-2.9.0.post0-py2.py3-none-any.whl",
+        "url": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/python_dateutil-2.9.0.post0-py2.py3-none-any.whl",
+        "sha256": "26b50ce706a17abdde09dbb95745a44f9320dfdb99e950c52b1a62a3d99e452c",
+        "depends": [
+          "six"
+        ]
+      },
+      {
+        "name": "six",
+        "version": "1.17.0",
+        "filename": "six-1.17.0-py2.py3-none-any.whl",
+        "url": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/six-1.17.0-py2.py3-none-any.whl",
+        "sha256": "618e0357f1724d937c20b75d691f0ba9e404de2701084e3c4f35995cfb879665",
+        "depends": []
+      }
+    ]
+  },
+  "targetMarkerRoots": [
+    "humanize",
+    "python-dateutil"
+  ],
+  "importedOffline": {
+    "date": "2026-09-21T12:34:56+00:00",
+    "number": "1,234,567"
+  },
+  "reproducible": true,
+  "corruptCacheRejected": true,
+  "conflictingRequirementsRejected": true,
+  "dynamicDependenciesRejected": true,
+  "priorLockPreserved": true
+}

@@ -272,3 +272,36 @@ the client's connection. The waitUntil-retained reader must reject from read()
 with exactly those six bytes observed, release its lock, and report from finally.
 Both engines pass and serve a follow-up request. This tests abrupt socket closure;
 graceful EOF and application-driven cancellation are separate contracts.
+
+### Package resolver groundwork
+
+`node lock-packages.mjs /absolute/path/to/project` resolves one `pyproject.toml`
+(`[project].dependencies`) or `requirements.txt` (one PEP 508 requirement per
+line). This runs micropip 0.10.1 inside the pinned Pyodide 0.28.3 interpreter, so
+markers describe CPython 3.13.2 on Emscripten rather than the build machine.
+Dynamic dependencies, pip command-line options and continuations are rejected.
+The tool independently checks installed versions against root and transitive
+requirements, extras, markers and Requires-Python before writing the lock. This
+rejects conflicting roots that the pinned micropip accepted in testing. Micropip
+is not a general backtracking solver; a resolution failure may require choosing
+compatible explicit versions even when a different dependency solution exists.
+
+The command writes `celld-python.lock.json` with the input manifest hash, target
+ABI, resolver identity, selected package closure, versions, HTTPS wheel URLs
+and SHA-256 hashes. Verified wheel bytes go into `.celld/python-wheels/` under
+their hashes. A successful resolution atomically replaces the lock; a failure
+preserves the previous lock. Resolution may contact the pinned Pyodide CDN and
+PyPI. The current artifact consumer accepts pure Python wheels only; native
+PyEmscripten wheels still need loader and ABI qualification.
+
+`npm run test:packages` checks a PyPI wheel (`humanize`), a runtime-index wheel
+(`python-dateutil`) and its transitive dependency (`six`). It verifies repeatable
+locks, target markers, corrupt-cache/conflict rejection and imports directly from
+the locked wheel bytes with networking disabled. This is currently a separate
+package-tool test, not part of the celld HTTP suite.
+
+**Native build integration is still pending.** Dev/deploy continues to reject
+dependency manifests; generating this lock does not yet enable package imports
+in a deployed Worker. Next gates are consuming and validating the lock in the
+builder, bundling packages in the runtime, including package identity in the
+deployment version, and real HTTP/reload/offline-startup qualification.
