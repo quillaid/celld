@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-09-22T03:48:05.128Z",
+  "workerd": "1.20260922.1",
+  "actual": {
+    "argumentsSeen": 1
+  },
+  "expected": {
+    "argumentsSeen": 0
+  }
+}

@@ -201,12 +201,12 @@ versions for identical projects in different directories, a changed version for
 changed source, and rejection of dependency manifests and `no_bundle`.
 
 This is an initial native path. Python dependency manifests are rejected pending
-the resolver, even if they declare no dependencies. Native Durable Object and
-Workflow configuration, `define`, `rules`, and `no_bundle` are rejected. Named
-exports, missing-import build checks, source/data selection,
+the resolver, even if they declare no dependencies. Native Workflow configuration,
+`define`, `rules`, and `no_bundle` are rejected. Additional event/RPC exports,
+complete import checks, source/data selection,
 package startup hooks, release distribution, and the full compatibility matrix
-still need implementation or qualification. Existing fixture DO results do not
-prove native Python DO deployment.
+still need implementation or qualification. Native Durable Object fetch/alarm
+exports now have a separate SDK comparison.
 
 `npm run test:reload` checks native Python watched reloads: a local-module edit
 is adopted, a syntax error leaves the last good deployment serving, and a valid
@@ -222,3 +222,18 @@ supported. Imports inside conditions/functions/try blocks, imported attributes,
 and detailed standard-library availability remain runtime checks; this is not a
 complete static dependency resolver. Optional imports are not rejected merely
 because the optional module is absent.
+
+`npm run test:native-durable` builds a normal Python project with SDK
+`DurableObject` classes and generates its configured exports. The default Worker
+and Durable Objects share initialization within each deployment isolate; each
+Durable Object retains its own Python instance. The test compares SQL updates,
+rollback, SDK abort recovery, and alarms against pinned workerd using the same
+Python source and wheel. Celld additionally undergoes a local process-crash
+restart and retains SQL/alarm state. The reference uses historical on_fetch and
+on_alarm dispatch aliases. This does not qualify remote durability, RPC,
+WebSocket callbacks, or long-run proxy reclamation.
+
+The default suite runs two test files at a time to bound simultaneous runtime
+startups. Individual concurrency probes and deadlines are unchanged. Earlier
+unbounded-file runs sometimes timed out waiting for the workerd SDK reference
+first response; phase evidence distinguishes this from celld response time.

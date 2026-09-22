@@ -19,7 +19,7 @@ function patchWaitUntil(ctx) {
   };
   patched.add(ctx);
 }
-async function initialize({ moduleName, className, files }) {
+async function initialize({ files }) {
   const python = await loadPyodide({ indexURL: 'https://python-runtime.invalid/', lockFileContents });
   python.unpackArchive(wheel, 'zip', { extractDir: '/sdk' });
   python.runPython("import sys; sys.path.insert(0, '/sdk')");
@@ -39,19 +39,37 @@ async function initialize({ moduleName, className, files }) {
   }
   python.runPython("sys.path.insert(0, '/app')");
   python.runPython(adapter);
-  const loader = python.globals.get('load_worker');
-  try { return loader(moduleName, className); }
-  finally { loader.destroy(); }
+  return { loadWorker: python.globals.get('load_worker'), loadDurable: python.globals.get('load_durable') };
 }
-// One initialization and retained dispatcher per generated Worker adapter.
-// User instances are created inside each call, so env/context cannot leak from
-// the first request into a concurrent request.
-export function createPythonWorker({ moduleName, className = 'Default', files }) {
+
+export function createPythonDeployment({ moduleName, files }) {
   let ready;
-  return { async fetch(request, env, ctx) {
-    const handler = await (ready ??= initialize({ moduleName, className, files }));
-    const future = handler(ctx, env, 'fetch', request);
+  const runtime = () => ready ??= initialize({ moduleName, files });
+  async function invoke(handler, ...args) {
+    const future = handler(...args);
     try { return await future; }
     finally { future.destroy(); }
-  } };
+  }
+  return {
+    worker(className = 'Default') {
+      let handler;
+      return { async fetch(request, env, ctx) {
+        const { loadWorker } = await runtime();
+        handler ??= loadWorker(moduleName, className);
+        return invoke(handler, ctx, env, 'fetch', request);
+      } };
+    },
+    durableObject(className) {
+      return class {
+        constructor(ctx, env) {
+          this.handler = runtime().then(({ loadDurable }) => loadDurable(moduleName, className, ctx, env));
+        }
+        async fetch(request) { return invoke(await this.handler, 'fetch', request); }
+        async alarm(info) { return invoke(await this.handler, 'alarm', info); }
+      };
+    },
+  };
+}
+export function createPythonWorker({ className = 'Default', ...options }) {
+  return createPythonDeployment(options).worker(className);
 }

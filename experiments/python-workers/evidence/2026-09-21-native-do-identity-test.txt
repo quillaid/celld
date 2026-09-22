@@ -1,0 +1,20 @@
+
+> test:native-durable
+> node --test native-durable.test.mjs
+
+TAP version 13
+# Subtest: native SDK Durable Object preserves SQL across abort and process restart and runs alarms
+ok 1 - native SDK Durable Object preserves SQL across abort and process restart and runs alarms
+  ---
+  duration_ms: 19761.236333
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 20031.826333

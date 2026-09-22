@@ -368,3 +368,40 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   response arrival if it recurs. Passing evidence: import-build-passing.json,
   import-sdk-phases.json, import-full-suite.txt. All evidence has the
   2026-09-21- prefix under experiments/python-workers/evidence/.
+
+## Native SDK Durable Object exports (2026-09-21)
+
+- The Python builder receives configured user DO class names from celld and
+  generates named JS class exports. Runtime initialization is shared between
+  default Worker and DO exports in each isolate; each DO constructor retains
+  a dispatcher closing over its own actual SDK DurableObject instance. Fetch
+  and alarm use the SDK argument/result converters. Native Workflow exports,
+  other event/RPC exports, and long-run proxy reclamation remain unqualified.
+- Same-source native fixture now runs through real celld and pinned workerd:
+  SQL updates, transaction rollback, SDK abort recovery, and alarm delivery.
+  Both use workers-runtime-sdk 1.9.0. Workerd uses the historical 2025-06-01
+  envelope with on_fetch/on_alarm aliases. Celld also preserves SQL and alarm
+  counts across killing/restarting its test-owned supervisor and node.
+- SDK abort initially returned an exception but left the object instance alive.
+  A focused differential showed celld's queueMicrotask fallback passed one
+  argument while workerd passed zero. Python's scheduled zero-argument abort
+  callback could not run. Corrected the fallback to invoke the callback without
+  Promise arguments. The unchanged SDK then passes abort/recreation.
+- Retained red evidence: 2026-09-21-native-sdk-abort-failure.json and
+  2026-09-21-microtask-arity-failure.json in experiments/python-workers/evidence/.
+  This is a callback arity fix, not qualification of every queueMicrotask semantic.
+- Package resolver/distribution, modern compatibility dates, broader events,
+  remote durability/ownership, and the rest of the original goal remain open.
+- Full suite with two file jobs: all 23 records passed. Added SDK identity and
+  reference instance-recreation assertions then passed in the focused native DO
+  rerun. The loaded workers.entrypoints digest matches the pinned wheel in both
+  engines. Deployment unit test and formatting/diff checks also pass.
+- An unbounded-file run timed out in SDK reference startup. Phase evidence shows
+  celld returned its body in about one second; workerd's first response did not
+  arrive before the unchanged test deadline. The default suite now bounds file
+  parallelism to two; individual concurrency probes/deadlines remain unchanged.
+  Root cause of the reference delay is not established.
+- Passing evidence: native-sdk-durable-passing.json, microtask-arity-passing.json,
+  native-do-full-suite.txt, native-do-identity-test.txt, native-do-build.sha256.
+  Timeout run/phase evidence is also retained. All use the 2026-09-21- prefix
+  under experiments/python-workers/evidence/. No fleet or public changes.

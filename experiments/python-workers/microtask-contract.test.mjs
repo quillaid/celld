@@ -1,0 +1,23 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
+import workerd from 'workerd';
+import { startCelld } from './local-celld.mjs';
+const source = `export default { fetch() { return new Promise(resolve => queueMicrotask(function() { resolve(Response.json({ argumentsSeen: arguments.length })); })); } };`;
+test('queueMicrotask invokes callbacks with no arguments, matching workerd', { timeout: 30000 }, async (t) => {
+  const local = await startCelld({ 'index.js': source });
+  t.after(local.close);
+  const previous = process.env.MINIFLARE_WORKERD_PATH;
+  process.env.MINIFLARE_WORKERD_PATH = workerd.default;
+  t.after(() => { if (previous === undefined) delete process.env.MINIFLARE_WORKERD_PATH; else process.env.MINIFLARE_WORKERD_PATH = previous; });
+  const reference = new Miniflare(convertV4MiniflareOptions({ name: 'microtask-contract', modules: true, script: source, cf: false, compatibilityDate: '2026-09-21' }));
+  t.after(() => reference.dispose());
+  const actual = await (await fetch(local.url, { signal: AbortSignal.timeout(5000) })).json();
+  const expected = await (await reference.dispatchFetch('http://local/')).json();
+  const root = new URL('.', import.meta.url);
+  await mkdir(new URL('results/', root), { recursive: true });
+  await writeFile(new URL('results/microtask.json', root), JSON.stringify({ timestamp: new Date().toISOString(), workerd: workerd.version, actual, expected }, null, 2) + '\n');
+  assert.deepEqual(expected, { argumentsSeen: 0 });
+  assert.deepEqual(actual, expected);
+});

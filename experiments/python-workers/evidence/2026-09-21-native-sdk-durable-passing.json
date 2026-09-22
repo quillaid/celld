@@ -1,0 +1,106 @@
+{
+  "timestamp": "2026-09-22T03:53:27.225Z",
+  "workerd": "1.20260922.1",
+  "referenceDate": "2025-06-01",
+  "sourceSha256": "270a47827b705997cd7809baf929251dde7657a68c6f883f8732596c7f8a6532",
+  "responses": [
+    {
+      "operation": "inc",
+      "status": 200,
+      "text": "{\"value\": 1, \"fires\": 0, \"instance\": \"644aa7ee-5ef5-4936-85cd-9b23def7ffb7\", \"sdk\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}",
+      "reference": {
+        "status": 200,
+        "text": "{\"value\": 1, \"fires\": 0, \"instance\": \"a7370fb3-d377-4f8b-bcb9-a03ad51e1bcf\", \"sdk\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+      }
+    },
+    {
+      "operation": "inc",
+      "status": 200,
+      "text": "{\"value\": 2, \"fires\": 0, \"instance\": \"644aa7ee-5ef5-4936-85cd-9b23def7ffb7\", \"sdk\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}",
+      "reference": {
+        "status": 200,
+        "text": "{\"value\": 2, \"fires\": 0, \"instance\": \"a7370fb3-d377-4f8b-bcb9-a03ad51e1bcf\", \"sdk\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+      }
+    },
+    {
+      "operation": "rollback",
+      "status": 500,
+      "text": "Worker failed: rejected: PythonError: Traceback (most recent call last):\n  File \"<exec>\", line 18, in dispatch\n  File \"/app/worker.py\", line 9, in fetch\n    return await self.env.COUNTER.getByName('counter').fetch(request)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/sdk/workers/fetch.py\", line 43, in fetch\n    resp = await _pyfetch_patched(resource, **other_options)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/lib/python313.zip/pyodide/http.py\", line 458, in pyfetch\n    raise AbortError(e) from None\npyodide.http.AbortError: rejected: PythonError: Traceback (most recent call last):\n  File \"<exec>\", line 35, in dispatch\n  File \"/app/worker.py\", line 29, in fetch\n    self.ctx.storage.transactionSync(change_and_fail)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/sdk/workers/rpc.py\", line 307, in wrapper\n    return self._conver_and_invoke(attr, args, kwargs)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^\n  File \"/sdk/workers/rpc.py\", line 291, in _conver_and_invoke\n    result = fn(*js_args, **js_kwargs)\n  File \"worker.js\", line 19395, in new_error\n  File \"/app/worker.py\", line 28, in change_and_fail\n    raise ValueError('native SDK rollback')\nValueError: native SDK rollback\n [File \"<exec>\", line 35, in dispatch <- File \"/app/worker.py\", line 29, in fetch <- self.ctx.storage.transactionSync(change_and_fail)]\n [File \"<exec>\", line 18, in dispatch <- File \"/app/worker.py\", line 9, in fetch <- return await self.env.COUNTER.getByName('counter').fetch(request)]",
+      "reference": {
+        "status": 500,
+        "text": "Error: PythonError: Traceback (most recent call last):\n  File \"introspection.py\", line 88, in wrapper_func\n    return python_to_rpc(await result)\n                         ^^^^^^^^^^^^\n  File \"/session/metadata/native-durable-reference.py\", line 11, in fetch\n    return await self.env.COUNTER.getByName('counter').fetch(request)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/session/metadata/python_modules/workers/fetch.py\", line 43, in fetch\n    resp = await _pyfetch_patched(resource, **other_options)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/lib/python313.zip/pyodide/http.py\", line 458, in pyfetch\n    raise AbortError(e) from None\npyodide.http.AbortError: PythonError: Traceback (most recent call last):\n  File \"introspection.py\", line 88, in wrapper_func\n    return python_to_rpc(await result)\n                         ^^^^^^^^^^^^\n  File \"/session/metadata/native-durable-reference.py\", line 31, in fetch\n    self.ctx.storage.transactionSync(change_and_fail)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/session/metadata/python_modules/workers/rpc.py\", line 307, in wrapper\n    return self._conver_and_invoke(attr, args, kwargs)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^\n  File \"/session/metadata/python_modules/workers/rpc.py\", line 291, in _conver_and_invoke\n    result = fn(*js_args, **js_kwargs)\n  File \"pyodideRuntime-internal:emscriptenSetup\", line 21852, in new_error\n  File \"/session/metadata/native-durable-reference.py\", line 30, in change_and_fail\n    raise ValueError('native SDK rollback')\nValueError: native SDK rollback\n\n\n    at async Object.fetch (file:///Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/node_modules/miniflare/dist/src/workers/core/entry.worker.js:5216:22)"
+      }
+    },
+    {
+      "operation": "read",
+      "status": 200,
+      "text": "{\"value\": 2, \"fires\": 0, \"instance\": \"644aa7ee-5ef5-4936-85cd-9b23def7ffb7\", \"sdk\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}",
+      "reference": {
+        "status": 200,
+        "text": "{\"value\": 2, \"fires\": 0, \"instance\": \"a7370fb3-d377-4f8b-bcb9-a03ad51e1bcf\", \"sdk\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+      }
+    },
+    {
+      "operation": "abort",
+      "status": 500,
+      "text": "Worker failed: rejected: PythonError: Traceback (most recent call last):\n  File \"<exec>\", line 18, in dispatch\n  File \"/app/worker.py\", line 9, in fetch\n    return await self.env.COUNTER.getByName('counter').fetch(request)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/sdk/workers/fetch.py\", line 43, in fetch\n    resp = await _pyfetch_patched(resource, **other_options)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/lib/python313.zip/pyodide/http.py\", line 458, in pyfetch\n    raise AbortError(e) from None\npyodide.http.AbortError: native SDK abort\n [File \"<exec>\", line 18, in dispatch <- File \"/app/worker.py\", line 9, in fetch <- return await self.env.COUNTER.getByName('counter').fetch(request)]",
+      "reference": {
+        "status": 500,
+        "text": "Error: PythonError: Traceback (most recent call last):\n  File \"introspection.py\", line 88, in wrapper_func\n    return python_to_rpc(await result)\n                         ^^^^^^^^^^^^\n  File \"/session/metadata/native-durable-reference.py\", line 11, in fetch\n    return await self.env.COUNTER.getByName('counter').fetch(request)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/session/metadata/python_modules/workers/fetch.py\", line 43, in fetch\n    resp = await _pyfetch_patched(resource, **other_options)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/lib/python313.zip/pyodide/http.py\", line 458, in pyfetch\n    raise AbortError(e) from None\npyodide.http.AbortError: native SDK abort\n\n    at async Object.fetch (file:///Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/node_modules/miniflare/dist/src/workers/core/entry.worker.js:5216:22)"
+      }
+    },
+    {
+      "operation": "read",
+      "status": 200,
+      "text": "{\"value\": 2, \"fires\": 0, \"instance\": \"4def951c-5257-441a-8446-f5177c056af6\", \"sdk\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}",
+      "reference": {
+        "status": 200,
+        "text": "{\"value\": 2, \"fires\": 0, \"instance\": \"445b540c-a97a-4ba6-b508-2dd749e59fe2\", \"sdk\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+      }
+    },
+    {
+      "operation": "arm",
+      "status": 200,
+      "text": "{\"value\": 2, \"fires\": 0, \"instance\": \"4def951c-5257-441a-8446-f5177c056af6\", \"sdk\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}",
+      "reference": {
+        "status": 200,
+        "text": "{\"value\": 2, \"fires\": 0, \"instance\": \"445b540c-a97a-4ba6-b508-2dd749e59fe2\", \"sdk\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+      }
+    },
+    {
+      "operation": "read",
+      "status": 200,
+      "text": "{\"value\": 2, \"fires\": 0, \"instance\": \"4def951c-5257-441a-8446-f5177c056af6\", \"sdk\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}",
+      "reference": {
+        "status": 200,
+        "text": "{\"value\": 2, \"fires\": 0, \"instance\": \"445b540c-a97a-4ba6-b508-2dd749e59fe2\", \"sdk\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+      }
+    },
+    {
+      "operation": "read",
+      "status": 200,
+      "text": "{\"value\": 2, \"fires\": 1, \"instance\": \"4def951c-5257-441a-8446-f5177c056af6\", \"sdk\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}",
+      "reference": {
+        "status": 200,
+        "text": "{\"value\": 2, \"fires\": 1, \"instance\": \"445b540c-a97a-4ba6-b508-2dd749e59fe2\", \"sdk\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+      }
+    },
+    {
+      "operation": "read",
+      "status": 200,
+      "text": "{\"value\": 2, \"fires\": 1, \"instance\": \"19687096-8ff1-4902-a020-faa1938897b5\", \"sdk\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}",
+      "reference": {
+        "status": 200,
+        "text": "{\"value\": 2, \"fires\": 1, \"instance\": \"445b540c-a97a-4ba6-b508-2dd749e59fe2\", \"sdk\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+      }
+    }
+  ],
+  "restart": {
+    "stoppedPids": [
+      28370,
+      28375
+    ],
+    "pid": 28680,
+    "crash": true
+  }
+}

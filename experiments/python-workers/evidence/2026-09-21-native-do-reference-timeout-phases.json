@@ -1,0 +1,30 @@
+{
+  "timestamp": "2026-09-22T03:50:27.966Z",
+  "reference": {
+    "workerd": "1.20260922.1",
+    "compatibilityDate": "2025-06-01",
+    "adapter": "Default.on_fetch alias for historical runtime dispatch; unchanged SDK wheel and Python source"
+  },
+  "sdk": {
+    "name": "workers-runtime-sdk",
+    "version": "1.9.0",
+    "filename": "workers_runtime_sdk-1.9.0-py3-none-any.whl",
+    "url": "https://files.pythonhosted.org/packages/94/3d/053deb135d4db2ef6f6c3ccdeb86d7829de3c271f7ae02cec73da8f65891/workers_runtime_sdk-1.9.0-py3-none-any.whl",
+    "sha256": "36209f94984686264db4e1fd410d51ac3460f2a2ab3cc29869699b975e1e1331",
+    "sourceAudit": "https://github.com/cloudflare/workers-py/tree/e5cf461540e94f2065398ced7ed8031ac504dc3a/packages/runtime-sdk",
+    "license": "MIT"
+  },
+  "responses": [],
+  "phases": [
+    {
+      "input": "sdk-identity",
+      "stage": "celld-request",
+      "timestamp": "2026-09-22T03:50:27.972Z"
+    },
+    {
+      "input": "sdk-identity",
+      "stage": "celld-body-complete",
+      "timestamp": "2026-09-22T03:50:29.043Z"
+    }
+  ]
+}

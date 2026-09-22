@@ -602,7 +602,7 @@ pub fn build(options: &Options) -> anyhow::Result<Built> {
         .as_deref()
         .map(|entry| {
             if entry.ends_with(".py") {
-                let (output, descriptor) = run_python_builder(&root, entry)?;
+                let (output, descriptor) = run_python_builder(&root, entry, &project.do_classes)?;
                 project.metadata["python_runtime"] = descriptor;
                 Ok(output)
             } else if project.no_bundle {
@@ -1354,8 +1354,8 @@ fn read_project(
         {
             bail!("Python entries require the python_workers compatibility flag");
         }
-        if object.contains_key("durable_objects") || object.contains_key("workflows") {
-            bail!("Native Python class export generation is not implemented for Durable Objects or Workflows");
+        if object.contains_key("workflows") {
+            bail!("Native Python Workflow class export generation is not implemented");
         }
     }
     let bundle = read_bundle_config(object)?;
@@ -2854,7 +2854,11 @@ fn collect_unbundled_wasm(
 
 // Like esbuild, the Python packager runs only on the build host. Its output
 // enters the same content-addressed deployment and local-dev path as JS.
-fn run_python_builder(root: &Path, entry: &str) -> anyhow::Result<(BundleOutput, Value)> {
+fn run_python_builder(
+    root: &Path,
+    entry: &str,
+    classes: &[String],
+) -> anyhow::Result<(BundleOutput, Value)> {
     let binary =
         std::env::var("CELLD_PYTHON_BUILD").unwrap_or_else(|_| "celld-python-build".to_string());
     let outdir = tempfile::tempdir().context("create Python build directory")?;
@@ -2862,7 +2866,9 @@ fn run_python_builder(root: &Path, entry: &str) -> anyhow::Result<(BundleOutput,
         .join(entry)
         .canonicalize()
         .context("resolve Python entry")?;
-    let output = Command::new(&binary).arg(source).arg(outdir.path()).output()
+    let output = Command::new(&binary).arg(source).arg(outdir.path())
+        .arg(serde_json::to_string(&classes.iter().filter(|class| !is_reserved_class(class)).collect::<Vec<_>>())?)
+        .output()
         .with_context(|| format!("run Python builder {binary:?}; install celld-python-build or set CELLD_PYTHON_BUILD"))?;
     if !output.status.success() {
         bail!(

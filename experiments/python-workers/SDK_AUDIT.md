@@ -28,7 +28,7 @@ remain in ignored `.celld/` and `dist/` directories.
 | `doAnImport` | Explicit unsupported error | Permitted JS imports and SDK companion modules |
 | `patch_env_helper` | Explicit unsupported error | Context-local patch semantics |
 | Package `.pth` hooks | Not run by unpacking wheel into `/sdk` | Audit/install entropy and package patches before framework support |
-| SDK DurableObject / WorkflowEntrypoint | Present in wheel, unqualified by this fixture | Adapt and compare lifecycle/event/RPC behavior |
+| SDK DurableObject / WorkflowEntrypoint | Native DO fetch/alarm class exports now tested separately | Other DO events/RPC, Workflow bridge and proxy bounds |
 
 `sdk-runtime.js` now loads ordinary application modules under `/app`. Its
 `sdk-dispatch.py` adapter validates the selected WorkerEntrypoint class, creates

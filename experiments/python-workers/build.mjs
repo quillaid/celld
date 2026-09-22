@@ -27,7 +27,12 @@ if (process.env.PYTHON_PROJECT_FILE) {
   const moduleName = basename(main, '.py');
   if (!/^[A-Za-z_][A-Za-z_0-9]*$/.test(moduleName)) throw new Error('Python entry must have an importable module name');
   if (!(basename(main) in projectSources)) throw new Error('Python entry was not collected');
-  generatedEntry = "import { createPythonWorker } from './sdk-runtime.js';\nexport default createPythonWorker(" + JSON.stringify({ moduleName, files: projectSources }) + ');';
+  const classes = JSON.parse(process.env.PYTHON_DURABLE_CLASSES || '[]');
+  if (!Array.isArray(classes) || classes.some(name => typeof name !== 'string' || !/^[A-Za-z_][A-Za-z_0-9]*$/.test(name) || name === 'default')) throw new Error('Invalid Python Durable Object class names');
+  generatedEntry = "import { createPythonDeployment } from './sdk-runtime.js';\nconst deployment = createPythonDeployment(" + JSON.stringify({ moduleName, files: projectSources }) + ');\nexport default deployment.worker();\n';
+  classes.forEach((name, index) => {
+    generatedEntry += 'const _durable' + index + ' = deployment.durableObject(' + JSON.stringify(name) + ');\nexport { _durable' + index + ' as ' + name + ' };\n';
+  });
 }
 const runtime = 'node_modules/pyodide/';
 const runtimeLock = JSON.parse(await readFile('runtime-lock.json', 'utf8'));

@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-09-22T03:47:11.054Z",
+  "responses": [
+    {
+      "operation": "inc",
+      "status": 200,
+      "text": "{\"value\": 1, \"fires\": 0, \"instance\": \"8577a531-8d14-4d87-84b9-665616571e48\"}"
+    },
+    {
+      "operation": "inc",
+      "status": 200,
+      "text": "{\"value\": 2, \"fires\": 0, \"instance\": \"8577a531-8d14-4d87-84b9-665616571e48\"}"
+    },
+    {
+      "operation": "abort",
+      "status": 500,
+      "text": "Worker failed: rejected: PythonError: Traceback (most recent call last):\n  File \"<exec>\", line 18, in dispatch\n  File \"/app/worker.py\", line 7, in fetch\n    return await self.env.COUNTER.getByName('counter').fetch(request)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/sdk/workers/fetch.py\", line 43, in fetch\n    resp = await _pyfetch_patched(resource, **other_options)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/lib/python313.zip/pyodide/http.py\", line 458, in pyfetch\n    raise AbortError(e) from None\npyodide.http.AbortError: rejected: PythonError: Traceback (most recent call last):\n  File \"<exec>\", line 35, in dispatch\n  File \"/app/worker.py\", line 24, in fetch\n    self.ctx.abort('native SDK abort')\n    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^\n  File \"/sdk/workers/entrypoints.py\", line 72, in abort\n    raise DurableObjectAbort(reason or \"Durable Object abort requested\")\nworkers.entrypoints.DurableObjectAbort: native SDK abort\n [File \"<exec>\", line 35, in dispatch <- File \"/app/worker.py\", line 24, in fetch <- self.ctx.abort('native SDK abort')]\n [File \"<exec>\", line 18, in dispatch <- File \"/app/worker.py\", line 7, in fetch <- return await self.env.COUNTER.getByName('counter').fetch(request)]"
+    },
+    {
+      "operation": "read",
+      "status": 200,
+      "text": "{\"value\": 2, \"fires\": 0, \"instance\": \"8577a531-8d14-4d87-84b9-665616571e48\"}"
+    }
+  ]
+}
