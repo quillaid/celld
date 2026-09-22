@@ -763,3 +763,22 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   idle hibernation, pressure-driven interpreter eviction, auto-response no-wake
   proof, process survival of TCP sockets, or multi-node ownership migration.
   Those and other original goal requirements remain open. Goal active.
+
+## Python socket auto-response without residency (2026-09-21)
+
+- Previous turn made verified progress (875d791): two live sockets survived
+  forced local eviction. Extended that fixture with a Python-installed
+  WebSocketRequestResponsePair and explicit /state residency observations.
+- Before each of three evictions, the Durable Object appears in the deployment
+  generation census. After eviction it is absent. Both live sockets then receive
+  pong for ping, and the object remains absent after each reply. Only the next
+  application message restores residency and creates a new Python instance.
+- The six automatic replies do not enter Python's message handler: SQL still
+  contains only the nine application messages. Each socket's auto-response
+  timestamp is initially absent and survives reconstruction with a value inside
+  the test's observed ping/reply time window. Attachments/tags remain distinct and
+  closing one socket before the fourth eviction still restores only the survivor.
+- Focused test passes; no runtime changes. Evidence retained as date-prefixed
+  socket-autoresponse-passing.json and socket-autoresponse-test.txt. Previous full
+  regression baseline remains applicable; this is local residency/SDK proof, not
+  automatic idle/pressure eviction or ownership migration. Goal remains active.

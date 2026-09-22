@@ -1,0 +1,221 @@
+{
+  "timestamp": "2026-09-22T05:07:40.198Z",
+  "messages": [
+    {
+      "instance": "841b7385-dee5-4042-86be-fa8bc7e0aded",
+      "restored": 0,
+      "attachment": "first",
+      "tags": [
+        "python"
+      ],
+      "count": 1,
+      "message": "before",
+      "auto_timestamp": null,
+      "scope": "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c"
+    },
+    {
+      "instance": "841b7385-dee5-4042-86be-fa8bc7e0aded",
+      "restored": 0,
+      "attachment": "second",
+      "tags": [
+        "python"
+      ],
+      "count": 2,
+      "message": "second-before",
+      "auto_timestamp": null,
+      "scope": "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c"
+    },
+    {
+      "instance": "882d6882-8d8e-4cb4-b48d-23a383cbee1c",
+      "restored": 2,
+      "attachment": "first",
+      "tags": [
+        "python"
+      ],
+      "count": 3,
+      "message": "after-1",
+      "auto_timestamp": 1790053662434,
+      "scope": "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c"
+    },
+    {
+      "instance": "882d6882-8d8e-4cb4-b48d-23a383cbee1c",
+      "restored": 2,
+      "attachment": "second",
+      "tags": [
+        "python"
+      ],
+      "count": 4,
+      "message": "second-after-1",
+      "auto_timestamp": 1790053662437,
+      "scope": "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c"
+    },
+    {
+      "instance": "f03c963a-bb0b-429d-82f3-5d0224810054",
+      "restored": 2,
+      "attachment": "first",
+      "tags": [
+        "python"
+      ],
+      "count": 5,
+      "message": "after-2",
+      "auto_timestamp": 1790053662493,
+      "scope": "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c"
+    },
+    {
+      "instance": "f03c963a-bb0b-429d-82f3-5d0224810054",
+      "restored": 2,
+      "attachment": "second",
+      "tags": [
+        "python"
+      ],
+      "count": 6,
+      "message": "second-after-2",
+      "auto_timestamp": 1790053662495,
+      "scope": "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c"
+    },
+    {
+      "instance": "f92312e8-8a79-49d5-8122-4eba737b1b69",
+      "restored": 2,
+      "attachment": "first",
+      "tags": [
+        "python"
+      ],
+      "count": 7,
+      "message": "after-3",
+      "auto_timestamp": 1790053662545,
+      "scope": "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c"
+    },
+    {
+      "instance": "f92312e8-8a79-49d5-8122-4eba737b1b69",
+      "restored": 2,
+      "attachment": "second",
+      "tags": [
+        "python"
+      ],
+      "count": 8,
+      "message": "second-after-3",
+      "auto_timestamp": 1790053662548,
+      "scope": "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c"
+    },
+    {
+      "instance": "6bea4f1b-ff3b-4bd9-8dc1-800de3f7678e",
+      "restored": 1,
+      "attachment": "second",
+      "tags": [
+        "python"
+      ],
+      "count": 9,
+      "message": "survivor",
+      "auto_timestamp": 1790053662548,
+      "scope": "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c"
+    }
+  ],
+  "evictions": [
+    {
+      "status": 200,
+      "body": "{\"ok\":true}"
+    },
+    {
+      "status": 200,
+      "body": "{\"ok\":true}"
+    },
+    {
+      "status": 200,
+      "body": "{\"ok\":true}"
+    },
+    {
+      "status": 200,
+      "body": "{\"ok\":true}"
+    }
+  ],
+  "residency": [
+    {
+      "phase": "before eviction 1",
+      "resident": true,
+      "cells": {
+        "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c": 1
+      }
+    },
+    {
+      "phase": "after eviction 1",
+      "resident": false,
+      "cells": {}
+    },
+    {
+      "phase": "after auto-response 1",
+      "resident": false,
+      "cells": {}
+    },
+    {
+      "phase": "after auto-response 1",
+      "resident": false,
+      "cells": {}
+    },
+    {
+      "phase": "after application wake 1",
+      "resident": true,
+      "cells": {
+        "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c": 1
+      }
+    },
+    {
+      "phase": "before eviction 2",
+      "resident": true,
+      "cells": {
+        "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c": 1
+      }
+    },
+    {
+      "phase": "after eviction 2",
+      "resident": false,
+      "cells": {}
+    },
+    {
+      "phase": "after auto-response 2",
+      "resident": false,
+      "cells": {}
+    },
+    {
+      "phase": "after auto-response 2",
+      "resident": false,
+      "cells": {}
+    },
+    {
+      "phase": "after application wake 2",
+      "resident": true,
+      "cells": {
+        "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c": 1
+      }
+    },
+    {
+      "phase": "before eviction 3",
+      "resident": true,
+      "cells": {
+        "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c": 1
+      }
+    },
+    {
+      "phase": "after eviction 3",
+      "resident": false,
+      "cells": {}
+    },
+    {
+      "phase": "after auto-response 3",
+      "resident": false,
+      "cells": {}
+    },
+    {
+      "phase": "after auto-response 3",
+      "resident": false,
+      "cells": {}
+    },
+    {
+      "phase": "after application wake 3",
+      "resident": true,
+      "cells": {
+        "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c": 1
+      }
+    }
+  ],
+  "logs": "<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T05:07:32.206654Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld dev\n  Project  /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-Yts8Fc/wrangler.json\n  State    /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-Yts8Fc/.celld/dev\n  Watch    disabled\n  ● opening the local storage\n  ● building the application\n celld 0.5.1\n───────────────────────────────────────────────\nTotal Upload: 13241.78 KiB / gzip: 5465.53 KiB\nYour Worker has access to the following bindings:\nBinding                    Resource\nenv.COUNTER (Counter)      Durable Object (SQLite)\nBundled python-runtime-probe (1.18 sec)\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T05:07:35.734191Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld listening on 127.0.0.1:62100 (ownership=dev)\ncelld internal listening on 127.0.0.1:62104 (advertise=127.0.0.1:62104)\n  ready  http://127.0.0.1:62100\n"
+}

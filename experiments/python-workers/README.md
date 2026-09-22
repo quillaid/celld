@@ -259,8 +259,12 @@ The host transport unit test preserves that distinction for malformed frames.
 live connections. It requires new Python instance identities, constructor-time
 restoration of both sockets, separate attachments, retained tags and continuous
 SQL counts across three evictions. After one socket closes, another eviction
-must restore only the survivor. This does not qualify automatic idle hibernation,
-memory-pressure eviction, auto-response without waking, or ownership migration.
+must restore only the survivor. Between evictions and application messages, both
+sockets receive automatic pong replies while the resident-instance census stays
+empty for that object. Application messages then restore residency; auto-response
+timestamps survive and fall within the observed ping/reply interval. This does
+not qualify automatic idle hibernation, memory-pressure eviction, or ownership
+migration.
 Lifecycle event arguments bypass SDK RPC conversion to preserve their FFI types.
 The pair contract test also checks `Object.values(new WebSocketPair())` has two
 entries: celld previously included an enumerable `length` property.

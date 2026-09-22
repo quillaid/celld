@@ -30,7 +30,7 @@ remain in ignored `.celld/` and `dist/` directories.
 | Package `.pth` hooks | Not run by unpacking wheel into `/sdk` | Audit/install entropy and package patches before framework support |
 | Application packages | Locked pure wheels bundled for native dev/deploy; humanize/dateutil/six HTTP/offline startup, package reload and same-wheel workerd comparison tested | Framework behavior; .pth and .data layouts explicitly rejected |
 | Compiled extensions | Exact cp313/Pyodide 2025_0 wheel tags; immutable Wasm imports and pinned `_api.loadDynlib`; MarkupSafe C function passes celld HTTP/offline startup and same-extension/SDK-digest workerd comparison | Multi-library graphs, reload and pressure; other wheels/workloads unqualified |
-| SDK DurableObject / WorkflowEntrypoint | Native DO fetch/alarm, bounded method RPC, WebSocket text/binary input/output, clean close, abrupt EOF and forced local live-socket eviction tested separately | Automatic idle/pressure hibernation, auto-response no-wake, ownership migration, protocol-error callback parity, late-added/descriptor RPC methods, properties/capabilities, cross-node RPC, Workflow bridge and proxy bounds |
+| SDK DurableObject / WorkflowEntrypoint | Native DO fetch/alarm, bounded method RPC, WebSocket text/binary input/output, clean close, abrupt EOF, forced local live-socket eviction and auto-response without residency tested separately | Automatic idle/pressure hibernation, ownership migration, protocol-error callback parity, late-added/descriptor RPC methods, properties/capabilities, cross-node RPC, Workflow bridge and proxy bounds |
 
 `sdk-runtime.js` now loads ordinary application modules under `/app`. Its
 `sdk-dispatch.py` adapter validates the selected WorkerEntrypoint class, creates

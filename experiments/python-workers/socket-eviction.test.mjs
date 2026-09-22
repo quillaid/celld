@@ -13,7 +13,7 @@ test('Python Durable Object reconstructs around a live socket after forced evict
     migrations: [{ tag: 'v1', new_sqlite_classes: ['Counter'] }],
   }, { CELLD_PYTHON_BUILD: fileURLToPath(new URL('build-project.mjs', root)) });
   t.after(local.close);
-  const evidence = { timestamp: new Date().toISOString(), messages: [], evictions: [] };
+  const evidence = { timestamp: new Date().toISOString(), messages: [], evictions: [], residency: [] };
   t.after(async () => {
     evidence.logs = local.logs();
     await mkdir(new URL('results/', root), { recursive: true });
@@ -38,9 +38,21 @@ test('Python Durable Object reconstructs around a live socket after forced evict
   let previous = await send('before');
   assert.equal(previous.count, 1);
   assert.equal(previous.restored, 0);
-  assert.equal((await send('second-before', second, 'second')).count, 2);
+  assert.equal(previous.auto_timestamp, null);
+  const otherInitial = await send('second-before', second, 'second');
+  assert.equal(otherInitial.count, 2);
+  assert.equal(otherInitial.auto_timestamp, null);
   const address = local.logs().match(/celld internal listening on (127\.0\.0\.1:\d+)/)?.[1];
   assert.ok(address, 'test-owned internal listener is reported');
+  async function residency(scope, expected, phase) {
+    const response = await fetch('http://' + address + '/state', { signal: AbortSignal.timeout(5000) });
+    assert.equal(response.status, 200);
+    const state = await response.json();
+    assert.ok(state.deployment?.cells, 'resident generation census exists');
+    const resident = Object.hasOwn(state.deployment.cells, scope);
+    evidence.residency.push({ phase, resident, cells: state.deployment.cells });
+    assert.equal(resident, expected, phase);
+  }
   async function evict(scope) {
     const response = await fetch('http://' + address + '/evict/' + scope, { method: 'POST', signal: AbortSignal.timeout(10000) });
     const body = await response.text();
@@ -48,9 +60,19 @@ test('Python Durable Object reconstructs around a live socket after forced evict
     assert.equal(response.status, 200, body);
   }
   for (let cycle = 1; cycle <= 3; cycle++) {
+    await residency(previous.scope, true, 'before eviction ' + cycle);
     await evict(previous.scope);
+    await residency(previous.scope, false, 'after eviction ' + cycle);
+    const pingStarted = Date.now();
+    for (const connection of [socket, second]) {
+      const reply = once(connection, 'message', { signal: AbortSignal.timeout(5000) });
+      connection.send('ping');
+      assert.equal((await reply)[0].toString(), 'pong');
+      await residency(previous.scope, false, 'after auto-response ' + cycle);
+    }
     assert.equal(socket.readyState, WebSocket.OPEN);
     const next = await send('after-' + cycle);
+    assert.ok(next.auto_timestamp >= pingStarted && next.auto_timestamp <= Date.now());
     assert.notEqual(next.instance, previous.instance, 'new Python Durable Object instance required');
     assert.equal(next.restored, 2);
     assert.equal(next.count, cycle * 2 + 1);
@@ -58,6 +80,8 @@ test('Python Durable Object reconstructs around a live socket after forced evict
     const other = await send('second-after-' + cycle, second, 'second');
     assert.equal(other.instance, next.instance);
     assert.equal(other.count, cycle * 2 + 2);
+    assert.ok(other.auto_timestamp >= pingStarted && other.auto_timestamp <= Date.now());
+    await residency(previous.scope, true, 'after application wake ' + cycle);
     previous = next;
   }
   const closed = once(socket, 'close', { signal: AbortSignal.timeout(10000) });
