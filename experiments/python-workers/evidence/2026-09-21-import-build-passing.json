@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-09-22T03:45:21.247Z",
+  "versions": [
+    "a2c6a4ec53d6d355",
+    "a2c6a4ec53d6d355"
+  ],
+  "changed": "073bf08e777d419a",
+  "compileWithoutExecution": true,
+  "rejected": [
+    "missing top-level module",
+    "missing local submodule",
+    "syntax error",
+    "dependency manifest",
+    "no_bundle"
+  ]
+}

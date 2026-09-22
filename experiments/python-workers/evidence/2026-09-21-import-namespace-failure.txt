@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: native Python deployment identity is reproducible and rejects unsupported configuration
+not ok 1 - native Python deployment identity is reproducible and rejects unsupported configuration
+  ---
+  duration_ms: 17737.590125
+  type: 'test'
+  location: '/Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/native.test.mjs:23:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Command failed: /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/target/debug/celld deploy /var/folders/nr/rds9xrgx3dq8sp5f1vd4nrxm0000gn/T/celld-python-build-DZ0w5a --dry-run --json
+    <jemalloc>: option background_thread currently supports pthread only
+    2026-09-22T03:43:03.339279Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.
+    Error: Python build failed: Verified workers-runtime-sdk 1.9.0: 36209f94984686264db4e1fd410d51ac3460f2a2ab3cc29869699b975e1e1331
+    Traceback (most recent call last):
+      File "/lib/python313.zip/_pyodide/_base.py", line 523, in eval_code
+        .run(globals, locals)
+         ~~~^^^^^^^^^^^^^^^^^
+      File "/lib/python313.zip/_pyodide/_base.py", line 357, in run
+        coroutine = eval(self.code, globals, locals)
+      File "<exec>", line 50, in <module>
+      File "<exec>", line 26, in find_module
+      File "<frozen importlib._bootstrap_external>", line 1568, in find_spec
+      File "<frozen importlib._bootstrap_external>", line 1366, in __init__
+      File "<frozen importlib._bootstrap_external>", line 1382, in _get_parent_path
+    KeyError: 'namespace'
+    
+    
+    
+  code: 1
+  stack: |-
+    genericNodeError (node:internal/errors:983:15)
+    wrappedFn (node:internal/errors:537:14)
+    ChildProcess.exithandler (node:child_process:417:12)
+    ChildProcess.emit (node:events:519:28)
+    maybeClose (node:internal/child_process:1101:16)
+    ChildProcess._handle.onexit (node:internal/child_process:304:5)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 17779.766416

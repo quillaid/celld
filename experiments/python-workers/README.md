@@ -214,3 +214,11 @@ edit afterward recovers. The builder compiles every collected source with pinned
 CPython before emitting a bundle, without executing application top-level code.
 It reports Python diagnostics directly. This does not validate missing imports
 or promise uninterrupted service during celld dev's existing node restart.
+
+Native builds also check unconditional top-level module imports against bundled
+local modules and the SDK, without executing parent packages. Missing local
+modules/submodules fail with source filename and line. Namespace packages are
+supported. Imports inside conditions/functions/try blocks, imported attributes,
+and detailed standard-library availability remain runtime checks; this is not a
+complete static dependency resolver. Optional imports are not rejected merely
+because the optional module is absent.

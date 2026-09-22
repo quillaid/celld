@@ -49,6 +49,21 @@ test('native Python deployment identity is reproducible and rejects unsupported 
   assert.notEqual(changed, versions[0]);
   await writeFile(join(directories[1], 'worker.py'), source + '\nraise RuntimeError("do not execute application at build time")\n');
   await deploy(directories[1]);
+  await writeFile(join(directories[1], 'worker.py'), 'import absent_celld_module\n' + source);
+  await assert.rejects(deploy(directories[1]), error => /worker\.py:1.*absent_celld_module.*not bundled/.test(error.stderr));
+  await mkdir(join(directories[1], 'package'));
+  await writeFile(join(directories[1], 'package', '__init__.py'), 'raise RuntimeError("must not execute package to inspect imports")\n');
+  await writeFile(join(directories[1], 'package', 'child.py'), 'value = 42\n');
+  await writeFile(join(directories[1], 'worker.py'), 'import package.child\n' + source);
+  await deploy(directories[1]);
+  await mkdir(join(directories[1], 'namespace', 'deep'), { recursive: true });
+  await writeFile(join(directories[1], 'namespace', 'deep', 'member.py'), 'value = 42\n');
+  await writeFile(join(directories[1], 'worker.py'), 'import namespace.deep.member\n' + source);
+  await deploy(directories[1]);
+  await writeFile(join(directories[1], 'worker.py'), 'import package.absent\n' + source);
+  await assert.rejects(deploy(directories[1]), error => /package\.absent.*not bundled/.test(error.stderr));
+  await writeFile(join(directories[1], 'worker.py'), 'try:\n    import optional_absent\nexcept ImportError:\n    pass\n' + source);
+  await deploy(directories[1]);
   await writeFile(join(directories[1], 'worker.py'), source + '\ninvalid = (\n');
   await assert.rejects(deploy(directories[1]), error => /SyntaxError/.test(error.stderr) && /worker\.py/.test(error.stderr) && !/var Module=moduleArg/.test(error.stderr));
   await writeFile(join(directories[0], 'pyproject.toml'), '[project]\nname="example"\ndependencies=["requests"]\n');
@@ -56,5 +71,5 @@ test('native Python deployment identity is reproducible and rejects unsupported 
   await rm(join(directories[0], 'pyproject.toml'));
   await writeFile(join(directories[0], 'wrangler.json'), JSON.stringify({ ...config, no_bundle: true }));
   await assert.rejects(deploy(directories[0]), error => /do not support no_bundle/.test(error.stderr));
-  await writeFile(new URL('results/native-identity.json', root), JSON.stringify({ timestamp: new Date().toISOString(), versions, changed, compileWithoutExecution: true, rejected: ['syntax error', 'dependency manifest', 'no_bundle'] }, null, 2) + '\n');
+  await writeFile(new URL('results/native-identity.json', root), JSON.stringify({ timestamp: new Date().toISOString(), versions, changed, compileWithoutExecution: true, rejected: ['missing top-level module', 'missing local submodule', 'syntax error', 'dependency manifest', 'no_bundle'] }, null, 2) + '\n');
 });

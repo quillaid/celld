@@ -42,11 +42,14 @@ if (projectSources) {
   const { loadPyodide } = await import('pyodide');
   const validator = await loadPyodide({ indexURL: resolve(runtime) + '/' });
   validator.globals.set('_celld_sources_json', JSON.stringify(projectSources));
-  validator.runPython(`import json
-for _name, _source in json.loads(_celld_sources_json).items():
-    compile(_source, _name, 'exec', dont_inherit=True)
-del _name, _source, _celld_sources_json
-`);
+  const sdkLock = JSON.parse(await readFile('sdk-lock.json', 'utf8'));
+  validator.unpackArchive(new Uint8Array(await readFile('.celld/' + sdkLock.filename)), 'zip', { extractDir: '/sdk' });
+  for (const [name, source] of Object.entries(projectSources)) {
+    if (!/^(?:[A-Za-z_][A-Za-z_0-9]*\/)*[A-Za-z_][A-Za-z_0-9]*\.py$/.test(name)) throw new Error('Invalid Python module path: ' + name);
+    validator.FS.mkdirTree('/app/' + name.split('/').slice(0, -1).join('/'));
+    validator.FS.writeFile('/app/' + name, source);
+  }
+  validator.runPython(await readFile('validate-sources.py', 'utf8'));
 }
 // Pyodide embeds one tiny GC sentinel Wasm program in its JS loader. Give it
 // the same compiled-module treatment as the main interpreter. Fail on a changed

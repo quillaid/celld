@@ -37,16 +37,20 @@ test('unmodified workers-runtime-sdk wheel serves HTTP, binary, and background K
     kvNamespaces: ['CACHE'],
   }));
   t.after(() => reference.dispose());
-  const evidence = { timestamp: new Date().toISOString(), reference: { workerd: workerd.version, compatibilityDate: '2025-06-01', adapter: 'Default.on_fetch alias for historical runtime dispatch; unchanged SDK wheel and Python source' }, sdk: JSON.parse(await readFile(new URL('sdk-lock.json', root))), responses: [] };
+  const evidence = { timestamp: new Date().toISOString(), reference: { workerd: workerd.version, compatibilityDate: '2025-06-01', adapter: 'Default.on_fetch alias for historical runtime dispatch; unchanged SDK wheel and Python source' }, sdk: JSON.parse(await readFile(new URL('sdk-lock.json', root))), responses: [], phases: [] };
   t.after(async () => {
     await mkdir(new URL('results/', root), { recursive: true });
     await writeFile(new URL('results/sdk.json', root), JSON.stringify(evidence, null, 2) + '\n');
   });
   async function call(body, compare = true) {
+    const phase = stage => evidence.phases.push({ input: body, stage, timestamp: new Date().toISOString() });
+    phase('celld-request');
     const response = await fetch(local.url, { method: 'POST', body, signal: AbortSignal.timeout(10000) });
     // Consume celld's body within its deadline, before reference cold startup.
     const actualBytes = [...new Uint8Array(await response.clone().arrayBuffer())];
+    phase('celld-body-complete');
     const expected = await reference.dispatchFetch('http://local/', { method: 'POST', body });
+    phase('workerd-response');
     const expectedBytes = [...new Uint8Array(await expected.arrayBuffer())];
     evidence.responses.push({ input: body, celld: { status: response.status, bytes: actualBytes }, workerd: { status: expected.status, bytes: expectedBytes } });
     assert.equal(response.status, expected.status, JSON.stringify(evidence.responses.at(-1)));

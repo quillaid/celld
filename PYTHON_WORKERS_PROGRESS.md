@@ -339,3 +339,32 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   Evidence: 2026-09-21-reload-passing.json, syntax-build.json, and
   reload-full-suite.txt (all date-prefixed) under the experiment evidence/.
   The tested celld binary is unchanged from the native-build checkpoint.
+
+## Build-time module import inspection (2026-09-21)
+
+- Extracted target-Python validation into validate-sources.py. Builds now inspect
+  unconditional top-level module imports, reject absent bundled local modules
+  and submodules with a filename/line diagnostic, and validate source module
+  paths before mounting them.
+- The validator mounts the pinned SDK for lookup and walks module specs without
+  importing application packages. Regression checks include a package initializer
+  that raises if executed, nested namespace packages, missing root/submodules,
+  and an optional import inside try/except that must remain accepted.
+- Qualified PathFinder lookup initially failed for nested namespace packages
+  because its parent was deliberately absent from sys.modules. Walk individual
+  components within their search directories instead. Retained failing evidence:
+  2026-09-21-import-namespace-failure.txt under experiment evidence/.
+- This is deliberately bounded inspection, not full dependency resolution.
+  Conditional/function-local/dynamic imports and imported attributes are not
+  resolved. Standard-library roots are recognized without asserting availability
+  of every compiled extension or virtual child. Those gaps remain in scope.
+- Next substantial work: native SDK Durable Object exports and package locks/
+  resolution, then the remaining lifecycle/binding matrix. The goal stays active.
+- Final suite: 21 integration records passed with existing deadlines unchanged.
+  One earlier full run timed out in the SDK case before its first comparison;
+  an isolated rerun and the instrumented full rerun passed. Its cause remains
+  unproven. The failed run is retained as import-suite-sdk-startup-timeout.txt;
+  SDK phase timestamps now distinguish celld body completion from workerd
+  response arrival if it recurs. Passing evidence: import-build-passing.json,
+  import-sdk-phases.json, import-full-suite.txt. All evidence has the
+  2026-09-21- prefix under experiments/python-workers/evidence/.
