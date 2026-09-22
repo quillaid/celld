@@ -4120,6 +4120,9 @@ impl Engine {
 /// is every switch off; production derives real values in `main`.
 #[derive(Clone, Copy, Default)]
 pub struct Compat {
+    /// Fail closed after hard V8 termination, which can abandon CPython/Wasm
+    /// frames and asyncio task state. This does not supply a Python adapter.
+    pub python_workers: bool,
     pub delete_all_deletes_alarm: bool,
     /// `js_rpc`: RPC on a Durable Object class that does not extend
     /// `DurableObject` (Workerd worker-rpc.c++ getTargetInfo()).
@@ -4599,6 +4602,29 @@ struct Realm {
 }
 
 impl WorkerIsolate {
+    fn invalidation_error(&self) -> Option<anyhow::Error> {
+        self.runtime_state
+            .invalidated
+            .load(Ordering::Acquire)
+            .then(|| {
+                anyhow!(
+                    "Python runtime invalidated after execution termination; recreate the worker"
+                )
+            })
+    }
+
+    /// Called with storage installed, so failures retain the event's existing
+    /// durability gates. Never enter guest code to repair an interrupted VM.
+    fn reject_invalidated_entry(&self, entry: &mut InFlight) -> bool {
+        let Some(error) = self.invalidation_error() else {
+            return false;
+        };
+        entry.fail_in_turn(error);
+        entry.background = None;
+        entry.abandon();
+        true
+    }
+
     fn cpu_watchdog(
         &self,
         remaining: Option<Duration>,
@@ -4800,6 +4826,8 @@ enum EgressPolicy {
 
 #[derive(Default)]
 struct ActorRuntimeState {
+    invalidate_on_termination: bool,
+    invalidated: AtomicBool,
     promises: std::sync::Mutex<PromiseMap>,
     termination: std::sync::Mutex<Option<ExecutionTermination>>,
     pending_puts: std::sync::Mutex<PendingPuts>,
@@ -5183,6 +5211,11 @@ fn take_execution_termination_in_context(
         .and_then(|state| state.termination.lock().ok()?.take());
     let is_terminating = scope.is_execution_terminating();
     if termination.is_some() || is_terminating {
+        if let Some(state) = &state {
+            if state.invalidate_on_termination {
+                state.invalidated.store(true, Ordering::Release);
+            }
+        }
         scope.cancel_terminate_execution();
     }
     if let Some(termination) = termination {
@@ -6523,6 +6556,20 @@ impl Worker {
         let Some(inner) = self.inner.as_mut() else {
             return (None, Vec::new());
         };
+        if let Some(error) = inner.invalidation_error() {
+            match job {
+                crate::WorkerJob::Fetch { reply, .. } => {
+                    let _ = reply.send(Err(error));
+                }
+                crate::WorkerJob::Rpc { reply, .. } => {
+                    let _ = reply.send(Err(error));
+                }
+                crate::WorkerJob::Queue { reply, .. } => {
+                    let _ = reply.send(Err(error));
+                }
+            }
+            return (None, Vec::new());
+        }
         let (mut locker, _cells) = inner.lock();
         inner.recover_heap(&mut locker);
         v8::scope!(let hs, &mut *locker);
@@ -6606,6 +6653,9 @@ impl Worker {
             return Vec::new();
         };
         let (mut locker, _cells) = inner.lock();
+        if inner.reject_invalidated_entry(entry) {
+            return Vec::new();
+        }
         v8::scope!(let hs, &mut *locker);
         let realm = inner.realm(hs);
         let context = realm.context;
@@ -6676,6 +6726,9 @@ impl Worker {
             return Vec::new();
         };
         let (mut locker, _cells) = inner.lock();
+        if inner.reject_invalidated_entry(entry) {
+            return Vec::new();
+        }
         v8::scope!(let hs, &mut *locker);
         let realm = inner.realm(hs);
         let context = realm.context;
@@ -8279,6 +8332,7 @@ impl Worker {
             forced_admission_refusal: AtomicBool::new(false),
         });
         let runtime_state = Arc::new(ActorRuntimeState {
+            invalidate_on_termination: compat.python_workers,
             promises: std::sync::Mutex::new(PromiseMap::new()),
             egress: config.egress.clone(),
             resource_limits: config.resource_limits,
@@ -8684,6 +8738,10 @@ impl Worker {
         let Some(inner) = self.inner.as_mut() else {
             return (None, Vec::new());
         };
+        if let Some(error) = inner.invalidation_error() {
+            job.fail(error);
+            return (None, Vec::new());
+        }
         let (mut locker, _cells) = inner.lock();
         inner.recover_heap(&mut locker);
         v8::scope!(let hs, &mut *locker);
@@ -8741,6 +8799,9 @@ impl Worker {
             return Vec::new();
         };
         let (mut locker, _cells) = inner.lock();
+        if inner.reject_invalidated_entry(entry) {
+            return Vec::new();
+        }
         v8::scope!(let hs, &mut *locker);
         let realm = inner.realm(hs);
         let context = realm.context;
@@ -8765,6 +8826,9 @@ impl Worker {
             return Vec::new();
         };
         let (mut locker, _cells) = inner.lock();
+        if inner.reject_invalidated_entry(entry) {
+            return Vec::new();
+        }
         v8::scope!(let hs, &mut *locker);
         let realm = inner.realm(hs);
         let context = realm.context;

@@ -4,7 +4,7 @@ import sentinel from './dist/sentinel.wasm';
 
 function code() {
   return {
-    mainModule: 'index.js', compatibilityDate: '2026-09-21',
+    mainModule: 'index.js', compatibilityDate: '2026-09-21', compatibilityFlags: ['python_workers'],
     modules: { 'index.js': source, 'pyodide.asm.wasm': { wasm: interpreter }, 'sentinel.wasm': { wasm: sentinel } },
     globalOutbound: null,
   };
@@ -28,25 +28,37 @@ export default {
         }
         return Response.json({ samples });
       }
+      const pending = invoke(stub, 'delay').catch((error) => ({ error: String(error) }));
+      let pendingStarted = false;
+      for (let i = 0; i < 50; i++) {
+        const status = await stub.getEntrypoint().fetch('https://python.invalid/__diagnostics').then((response) => response.json());
+        if (status.delayStarted) { pendingStarted = true; break; }
+        await new Promise((done) => setTimeout(done, 10));
+      }
+      if (!pendingStarted) throw new Error('Python delay did not start before the termination probe');
       let termination;
       const started = Date.now();
       try { termination = await invoke(stub, 'spin', 25); }
       catch (error) { termination = { error: String(error) }; }
       const terminationElapsedMs = Date.now() - started;
       if (new URL(request.url).pathname === '/terminate-only') {
-        return Response.json({ warm, termination, terminationElapsedMs });
+        return Response.json({ warm, termination, terminationElapsedMs, pendingStarted, pending: await pending });
       }
-      const diagnostics = await stub.getEntrypoint(null, { limits: { cpuMs: 1000 } })
-        .fetch('https://python.invalid/__diagnostics').then((response) => response.json());
+      let diagnostics;
+      try {
+        diagnostics = await stub.getEntrypoint(null, { limits: { cpuMs: 1000 } })
+          .fetch('https://python.invalid/__diagnostics').then((response) => response.json());
+      } catch (error) { diagnostics = { error: String(error) }; }
       let after;
       try { after = await Promise.race([
         invoke(stub, 'after-termination', 1000),
         new Promise((done) => setTimeout(() => done({ error: 'post-termination request did not settle within 2000ms' }), 2000)),
       ]); }
       catch (error) { after = { error: String(error) }; }
+      const secondAfter = await invoke(stub, 'second-after-termination').catch((error) => ({ error: String(error) }));
       const replacement = env.LOADER.load(code());
       try {
-        return Response.json({ warm, termination, terminationElapsedMs, diagnostics, after, replacement: await invoke(replacement, 'replacement') });
+        return Response.json({ warm, termination, terminationElapsedMs, diagnostics, after, secondAfter, pendingStarted, pending: await pending, replacement: await invoke(replacement, 'replacement') });
       } finally { replacement.dispose(); }
     } finally { stub.dispose(); }
   },

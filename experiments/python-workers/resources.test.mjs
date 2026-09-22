@@ -44,13 +44,15 @@ test('Python interpreter resource lifecycle inside a real Dynamic Worker', { tim
     const body = await response.text();
     assert.equal(response.status, 200, body);
     evidence.termination = JSON.parse(body);
-    const { warm, termination, terminationElapsedMs, after, replacement } = evidence.termination;
+    const { warm, termination, terminationElapsedMs, after, secondAfter, pending, replacement } = evidence.termination;
     assert.equal(warm.status, 200);
     assert.match(JSON.stringify(termination), /CPU|cpu/);
     assert.ok(terminationElapsedMs < 3000, `CPU termination took ${terminationElapsedMs}ms`);
     assert.equal(replacement.status, 200, JSON.stringify(replacement));
     assert.notEqual(replacement.instance, warm.instance);
-    assert.equal(after.status, 200, JSON.stringify(after));
+    for (const result of [after, secondAfter, pending]) {
+      assert.match(result.error ?? '', /Python runtime invalidated after execution termination; recreate the worker/, JSON.stringify(result));
+    }
   });
   await mkdir(resolve(root, 'results'), { recursive: true });
   await writeFile(resolve(root, 'results/resources.json'), JSON.stringify(evidence, null, 2) + '\n');

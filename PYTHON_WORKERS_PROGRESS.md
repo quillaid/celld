@@ -40,17 +40,14 @@ Bootstrap a pinned upstream Pyodide 0.28.3 inside the real celld 0.5.1 HTTP path
 
 ## Next action
 
-1. Fix or explicitly invalidate an interpreter after hard execution termination.
-   `npm run test:resources` has a real red regression: the host interrupts Python
-   at its 25 ms CPU limit, but a subsequent request into that same interpreter
-   never settles (the diagnostic races it with a 2-second timer). A new loaded
-   worker initializes and serves successfully. Do not hide this by accepting a
-   timeout or merely retrying the user operation. The spec permits a safely
-   reusable interpreter OR an explicitly discarded/invalidated runtime; the
-   present test expects reuse and should be refined to accept a precise terminal
-   invalidation error only if that lifecycle is actually implemented.
-2. Inspect celld `take_execution_termination_in_context`, `Worker::turn_begin`,
-   pool retirement, and Dynamic Worker ownership. V8 cancellation clears the
+1. Extend the now-tested host invalidation to pool retirement and prompt
+   cancellation of suspended events. The initial patch rejects new calls and
+   continuations when they next enter the isolate. A timer-backed suspended
+   request is tested; a hung outbound operation does not yet have a dedicated
+   invalidation wakeup. Do not silently retry the operation that exceeded CPU.
+2. Verify Durable Object recovery, retained input/output gates, and alarm retry
+   state under invalidation before enabling a production Python deployment path.
+   Inspect pool placement/retirement and Dynamic Worker ownership. V8 clears the
    isolate's termination flag, but Python's asyncio/native frames may still be
    abandoned. The fixture's post-termination diagnostic now confirms a stale
    `asyncio.tasks._current_tasks` entry: `PyodideTask pending`, with `handle`
@@ -58,9 +55,8 @@ Bootstrap a pinned upstream Pyodide 0.28.3 inside the real celld 0.5.1 HTTP path
    still works; the next async handler does not settle. This directly identifies
    leftover scheduler state, without proving all interpreter state is safe.
    Cloudflare SDK `DurableObjectContext.abort` similarly documents
-   that immediate V8 unwinding can leave Python task state behind. That is a
-   possible consequences of immediate unwinding. Whole-isolate invalidation may
-   be needed; preserve DO durability/input/output gates. Do not simply clear
+   that immediate V8 unwinding can leave Python task state behind. Preserve DO
+   durability/input/output gates under whole-isolate invalidation. Do not clear
    `_current_tasks`: native/Wasm state may also have been interrupted. The host
    needs a terminal-runtime contract before admitting another guest invocation,
    including already-suspended work, rather than guest-controlled health checks.
@@ -96,3 +92,36 @@ Bootstrap a pinned upstream Pyodide 0.28.3 inside the real celld 0.5.1 HTTP path
   `npm run test:resources`; `npm test` includes all suites and the known failure.
 
 Keep tests meaningful and local. Retain exact failing evidence and next actions if a slice cannot finish in one run. Make coherent local commits. Public outreach and PR publication remain outside this recurring prompt.
+
+## Native invalidation checkpoint (2026-09-21, supersedes the red gate above)
+
+- Added host-owned, sticky invalidation for `python_workers`-enabled isolates
+  when hard execution termination is consumed. Ordinary Python exceptions do
+  not invalidate. The flag currently only enables this lifecycle behavior; it
+  does not install an SDK or implement native Python deployment.
+- New worker/DO events are rejected before running guest code. Delivery, poll,
+  cancellation, and pending-event turns fail invalidated entries with storage
+  installed, retaining the existing `fail_in_turn` durability-gate path.
+- Real Dynamic Worker test: CPU limit stops the loop; a diagnostic call, two
+  later calls, and a Python task already suspended in `asyncio.sleep` receive
+  `Python runtime invalidated after execution termination; recreate the worker`.
+  An explicit Python-side handshake proves the sleeping task started first.
+  A fresh replacement succeeds. No guest state is reset or repaired.
+- Full current suite: **12 test records pass**, no failures. This covers the
+  current HTTP/workerd, compiled-Wasm, and Dynamic Worker resource probes, not
+  the remaining SDK/deployment/DO requirements. Raw-byte Wasm compilation still
+  stalls as recorded separately. Official unmodified v0.5.1 remains unsafe to
+  reuse after termination; it does not enforce the new flag behavior.
+- Source build needs explicit Rust 1.94.1 (installed default is older), and an
+  override for the machine's missing local V8 mirror:
+  `RUSTY_V8_MIRROR=https://github.com/denoland/rusty_v8/releases/download cargo +1.94.1 build -p celld`.
+  Run tests with `CELLD_BIN` set to this worktree's `target/debug/celld`.
+- Debug binary SHA-256: `c7d91408c9bbc8b6d6aeb17ab1f174b56b59f6aed8f2e072086bcc1f24c6702e`.
+  Tested js.rs SHA-256: `3fcf84b0854cabacc9b09da1cd2ee051c740c63975066dc3bd058309710d7cc1`.
+  Tested lib.rs SHA-256: `2464ed9a834d066c5150a526c6bbdd6b721269fd33a44efce00af1182df3bd00`.
+  Evidence files under the experiment: `2026-09-21-native-resources.json`,
+  `2026-09-21-native-differential.json`, `2026-09-21-native-async-wasm.json`.
+- Pool retirement, immediate invalidation wakeups, DO durability, proxy cleanup,
+  and eviction are still unqualified. Existing suspended contexts fail only
+  when driven again. The host guard must survive future native packaging and
+  old-node capability rejection rather than relying on an ignored flag.

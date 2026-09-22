@@ -1,0 +1,116 @@
+{
+  "celld": "celld 0.5.1 (debug)",
+  "pyodide": "0.28.3",
+  "timestamp": "2026-09-22T02:53:50.362Z",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "nodeBeforePython": [
+    {
+      "pid": 93485,
+      "rssKiB": 128800
+    }
+  ],
+  "warmMs": [
+    2.7564579999998386,
+    3.408291000000645,
+    2.8725000000004,
+    2.9661669999995866,
+    2.7265419999994265,
+    1.368333000000348,
+    2.6269589999992604,
+    1.1056250000001455,
+    2.703791999999339,
+    2.3660829999998896,
+    2.324916999999914,
+    2.5631249999996726,
+    2.8366669999995793,
+    2.337166999999681,
+    2.267541999999594,
+    2.197707999999693,
+    1.9248749999997017,
+    2.1306249999997817,
+    2.430500000000393,
+    2.269666000000143
+  ],
+  "concurrentColdBatchMs": 891.4036249999999,
+  "coldInterpreterInstances": [
+    "d5ad303b-2fc0-406c-a042-08c53a8497f3",
+    "fd7a2e32-d17a-49e9-920e-67f5673fc867"
+  ],
+  "python": "3.13.2",
+  "nodeAfterRequests": [
+    {
+      "pid": 93485,
+      "rssKiB": 473328
+    }
+  ],
+  "reference": {
+    "workerd": "1.20260922.1",
+    "miniflare": "5.20260921.0-alpha",
+    "compatibilityDate": "2025-06-01",
+    "pyodide": "0.28.2 (Cloudflare bundle)",
+    "sourceSha256": "3f573be1b9243623d065eddd87077bb87e9bd439d48c33f7979f76cdc1343af0",
+    "adapter": "historical WorkerEntrypoint.on_fetch delegates unchanged source",
+    "normalization": "parse JSON for success; compare status and Python type/message for errors",
+    "outputs": [
+      {
+        "input": "hello",
+        "status": 200,
+        "celld": {
+          "language": "python",
+          "version": "3.13.2",
+          "body": "hello",
+          "binding": null,
+          "outbound": null
+        },
+        "workerd": {
+          "language": "python",
+          "version": "3.13.2",
+          "body": "hello",
+          "binding": null,
+          "outbound": null
+        }
+      },
+      {
+        "input": "binding",
+        "status": 200,
+        "celld": {
+          "language": "python",
+          "version": "3.13.2",
+          "body": "binding",
+          "binding": "written from Python",
+          "outbound": null
+        },
+        "workerd": {
+          "language": "python",
+          "version": "3.13.2",
+          "body": "binding",
+          "binding": "written from Python",
+          "outbound": null
+        }
+      },
+      {
+        "input": "fetch",
+        "status": 200,
+        "celld": {
+          "language": "python",
+          "version": "3.13.2",
+          "body": "fetch",
+          "binding": null,
+          "outbound": "local outbound fetch succeeded"
+        },
+        "workerd": {
+          "language": "python",
+          "version": "3.13.2",
+          "body": "fetch",
+          "binding": null,
+          "outbound": "local outbound fetch succeeded"
+        }
+      }
+    ],
+    "errors": [
+      "Worker failed: rejected: PythonError: Traceback (most recent call last):\n  File \"<exec>\", line 12, in handle\nValueError: intentional Python traceback\n [File \"<exec>\", line 12, in handle <- ValueError: intentional Python traceback <- ]",
+      "Error: PythonError: Traceback (most recent call last):\n  File \"introspection.py\", line 88, in wrapper_func\n    return python_to_rpc(await result)\n                         ^^^^^^^^^^^^\n  File \"/session/metadata/reference-entry.py\", line 9, in on_fetch\n    return await handle(request, self.env)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/session/metadata/worker.py\", line 12, in handle\n    raise ValueError(\"intentional Python traceback\")\nValueError: intentional Python traceback\n\n    at async Object.fetch (file:///Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/node_modules/miniflare/dist/src/workers/core/entry.worker.js:5216:22)"
+    ]
+  }
+}

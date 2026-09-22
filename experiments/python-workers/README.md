@@ -1,8 +1,9 @@
 # Python Workers feasibility spike
 
-This runs Pyodide 0.28.3 (CPython 3.13.2, Emscripten ABI `2025_0`) inside an
-unmodified celld 0.5.1 binary. It exercises actual HTTP requests, KV, and outbound
-fetch. It is **not** native `.py` deployment support or the Cloudflare Python SDK.
+This runs Pyodide 0.28.3 (CPython 3.13.2, Emscripten ABI `2025_0`) inside celld.
+HTTP, KV, and outbound fetch work on unmodified 0.5.1. The full lifecycle suite
+requires this branch's host invalidation patch. It is **not** native `.py`
+deployment support or the Cloudflare Python SDK.
 
 ## Reproduce
 
@@ -41,16 +42,31 @@ instantiation passes on both engines. Raw byte compilation currently times out
 on celld and is rejected by workerd. Set `WASM_REQUIRE_BYTE_COMPILATION=1` to
 make the celld timeout a failing regression check.
 
-`npm run test:resources` is currently **red**: the 25 ms CPU limit interrupts a
-Python loop in about 25–30 ms, but the next call into that same interpreter does
-not settle. A fresh replacement interpreter serves correctly. A separate test
-passes 100 allocate/release cycles of 16 MiB with stable Wasm linear memory after
-initial growth. This does not establish process-RSS bounds or freedom from leaks.
-`npm test` runs all qualification suites and therefore retains this red gate.
-The fixture-only `/__diagnostics` route confirms that the interrupted Python
-task remains in asyncio's current-task table even though synchronous Python
-evaluation still works. This is diagnostic evidence, not permission to clear
-that table and assume the runtime is safe. Retained results live in `evidence/`.
+`npm run test:resources` reproduces a lifecycle failure on unmodified 0.5.1:
+CPU termination leaves asyncio's current-task table populated, and the next
+async invocation hangs. Retained failing evidence includes a fixture-only
+`/__diagnostics` route showing that synchronous Python evaluation still works.
+Clearing that table would not establish that native interpreter state is safe.
+
+The branch's `python_workers` flag now makes hard termination invalidate the
+isolate at the host boundary. New calls and continuations are explicitly
+rejected; they cannot re-enter Python. Tests prove rejection of two new calls
+and an already-suspended Python task, then successful explicit replacement.
+All 12 current test records pass on the patched source build. Automatic pool
+replacement and prompt cancellation of hung I/O still need implementation and
+tests; Python Durable Object recovery is not yet qualified.
+
+To run this full suite, build at the repository root with:
+
+```sh
+RUSTY_V8_MIRROR=https://github.com/denoland/rusty_v8/releases/download cargo +1.94.1 build -p celld
+```
+
+Then from this directory run `CELLD_BIN="$PWD/../../target/debug/celld" npm test`.
+The flag is an experimental lifecycle opt-in, not an SDK/deployment parity claim.
+A separate test passes 100 allocate/release cycles of 16 MiB with stable Wasm
+linear memory after initial growth. This does not establish process-RSS bounds
+or freedom from leaks. Both failing and passing evidence remain in `evidence/`.
 
 `results/smoke.json` records timing samples and node RSS before/after requests.
 RSS includes the whole node and KV work, so its difference is not a clean

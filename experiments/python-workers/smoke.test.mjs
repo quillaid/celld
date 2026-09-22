@@ -28,6 +28,7 @@ test('Pyodide through the real celld HTTP, KV, and fetch paths', { timeout: 9000
   await writeFile(resolve(project, 'wrangler.json'), JSON.stringify({
     name: 'python-workers-smoke', main: 'index.js', no_bundle: true,
     compatibility_date: '2026-09-21',
+    compatibility_flags: ['python_workers'],
     kv_namespaces: [{ binding: 'CACHE', id: 'isolated-python-test-cache' }],
   }));
   const echo = createServer((_req, res) => res.end('local outbound fetch succeeded'));

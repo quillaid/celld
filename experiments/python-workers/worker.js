@@ -35,6 +35,7 @@ export default {
     if (new URL(request.url).pathname === '/__diagnostics') {
       return Response.json({
         instance: instanceId,
+        delayStarted: python.globals.get('delay_started'),
         currentTasks: python.runPython('repr(__import__("asyncio").tasks._current_tasks)'),
         startupLog,
       });

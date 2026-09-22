@@ -1,6 +1,9 @@
 import json
+import asyncio
 import sys
 from js import Response, fetch
+
+delay_started = False
 
 
 async def handle(request, env):
@@ -10,6 +13,10 @@ async def handle(request, env):
     if body == "spin":
         while True:
             pass
+    if body == "delay":
+        global delay_started
+        delay_started = True
+        await asyncio.sleep(1)
     if body == "allocate":
         scratch = bytearray(16 * 1024 * 1024)
         scratch[0] = 1
