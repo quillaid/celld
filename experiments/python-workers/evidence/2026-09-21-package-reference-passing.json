@@ -1,0 +1,88 @@
+{
+  "timestamp": "2026-09-22T04:25:23.273Z",
+  "reference": {
+    "workerd": "1.20260922.1",
+    "compatibilityDate": "2025-06-01",
+    "adapter": "Historical on_fetch alias; unchanged SDK files; same locked pure wheels on sys.path"
+  },
+  "lock": {
+    "schema": 1,
+    "pyodide": "0.28.3",
+    "python": "3.13.2",
+    "resolver": {
+      "name": "micropip",
+      "version": "0.10.1"
+    },
+    "manifest": {
+      "name": "requirements.txt",
+      "sha256": "de6c1fe13d910b0fe67f7293dfa6ad8756a2b6a6157a6d99b0f5076c6cd23498"
+    },
+    "requirements": [
+      "humanize==4.12.3",
+      "python-dateutil==2.9.0.post0"
+    ],
+    "roots": [
+      "humanize",
+      "python-dateutil"
+    ],
+    "abi": {
+      "abi_version": "2025_0",
+      "arch": "wasm32",
+      "platform": "emscripten_4_0_9",
+      "python": "3.13.2",
+      "version": "0.28.0.dev0"
+    },
+    "packages": [
+      {
+        "name": "humanize",
+        "version": "4.12.3",
+        "filename": "humanize-4.12.3-py3-none-any.whl",
+        "url": "https://files.pythonhosted.org/packages/a0/1e/62a2ec3104394a2975a2629eec89276ede9dbe717092f6966fcf963e1bf0/humanize-4.12.3-py3-none-any.whl",
+        "sha256": "2cbf6370af06568fa6d2da77c86edb7886f3160ecd19ee1ffef07979efc597f6",
+        "depends": []
+      },
+      {
+        "name": "python-dateutil",
+        "version": "2.9.0.post0",
+        "filename": "python_dateutil-2.9.0.post0-py2.py3-none-any.whl",
+        "url": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/python_dateutil-2.9.0.post0-py2.py3-none-any.whl",
+        "sha256": "26b50ce706a17abdde09dbb95745a44f9320dfdb99e950c52b1a62a3d99e452c",
+        "depends": [
+          "six"
+        ]
+      },
+      {
+        "name": "six",
+        "version": "1.17.0",
+        "filename": "six-1.17.0-py2.py3-none-any.whl",
+        "url": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/six-1.17.0-py2.py3-none-any.whl",
+        "sha256": "618e0357f1724d937c20b75d691f0ba9e404de2701084e3c4f35995cfb879665",
+        "depends": []
+      }
+    ]
+  },
+  "responses": [
+    {
+      "input": "1234567",
+      "actual": {
+        "status": 200,
+        "text": "{\"number\": \"1,234,567\", \"date\": \"2026-09-21T12:34:56+00:00\", \"versions\": [\"4.12.3\", \"2.9.0.post0\", \"1.17.0\"], \"sdk_hash\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+      },
+      "expected": {
+        "status": 200,
+        "text": "{\"number\": \"1,234,567\", \"date\": \"2026-09-21T12:34:56+00:00\", \"versions\": [\"4.12.3\", \"2.9.0.post0\", \"1.17.0\"], \"sdk_hash\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+      }
+    },
+    {
+      "input": "-9876543",
+      "actual": {
+        "status": 200,
+        "text": "{\"number\": \"-9,876,543\", \"date\": \"2026-09-21T12:34:56+00:00\", \"versions\": [\"4.12.3\", \"2.9.0.post0\", \"1.17.0\"], \"sdk_hash\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+      },
+      "expected": {
+        "status": 200,
+        "text": "{\"number\": \"-9,876,543\", \"date\": \"2026-09-21T12:34:56+00:00\", \"versions\": [\"4.12.3\", \"2.9.0.post0\", \"1.17.0\"], \"sdk_hash\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+      }
+    }
+  ]
+}

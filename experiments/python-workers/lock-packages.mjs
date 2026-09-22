@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // Resolve project dependencies inside the pinned target interpreter. This is a
 // build-time tool; deploying a project must consume its lock, never re-resolve.
-import { readFile, writeFile, mkdir, rename } from 'node:fs/promises';
-import { createHash } from 'node:crypto';
+import { readFile, writeFile, mkdir, rename, rm } from 'node:fs/promises';
+import { createHash, randomUUID } from 'node:crypto';
 import { resolve, join, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadPyodide } from 'pyodide';
@@ -129,15 +129,25 @@ json.dumps({'roots': sorted(set(canonicalize_name(req.name) for req in _active))
 
 export async function verifiedDownload(url, sha256, target) {
   let bytes;
+  let downloaded = false;
   try { bytes = await readFile(target); }
   catch (error) {
     if (error.code !== 'ENOENT') throw error;
     const response = await fetch(url, { signal: AbortSignal.timeout(30000) });
     if (!response.ok) throw new Error(`Package download failed: ${response.status} ${url}`);
     bytes = new Uint8Array(await response.arrayBuffer());
+    downloaded = true;
   }
   if (digest(bytes) !== sha256) throw new Error('Package artifact hash mismatch: ' + url);
-  await writeFile(target, bytes);
+  // Readers never observe a partially written cache entry, even when separate
+  // build processes fetch the same missing wheel concurrently.
+  if (downloaded) {
+    const temporary = target + '.' + randomUUID() + '.tmp';
+    try {
+      await writeFile(temporary, bytes);
+      await rename(temporary, target);
+    } finally { await rm(temporary, { force: true }); }
+  }
   return bytes;
 }
 

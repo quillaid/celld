@@ -316,6 +316,20 @@ python-dateutil and six. Tests verify identity survives directory relocation and
 changes when a package version changes. Run `npm run test:native-packages`; this
 case is also in the default HTTP suite.
 
-Package watch/reload, compiled extensions, package startup hooks, broader wheel
-layouts and framework behavior remain unqualified. The builder is still a local
-experimental helper, not a published distribution.
+`npm run test:package-lifecycle` checks watched dependency updates and the pinned
+workerd reference. A changed requirements file with a stale lock keeps serving
+the last good Worker. A wrong-ABI lock also fails without replacing it; publishing
+the matching lock loads the requested version, and restoring the original pair
+restores the original package. The reference case runs identical Python with
+the same locked wheel bytes and verifies the loaded SDK digest, package versions,
+number formatting and date parsing under the historical compatibility envelope.
+The reference exposes the pure wheels on Python's zip import path; celld unpacks
+its bundled copies. No Cloudflare package resolution parity is inferred.
+
+Cache hits verify without rewriting files. Missing wheels are verified and
+published by atomic rename, so concurrent readers cannot see partial cache
+contents. Corrupt cached artifacts remain errors.
+
+Compiled extensions, package startup hooks, broader wheel layouts and framework
+behavior remain unqualified. The builder is still a local experimental helper,
+not a published distribution.

@@ -1,0 +1,26 @@
+
+> test:package-lifecycle
+> node --test --test-concurrency=2 package-reload.test.mjs package-reference.test.mjs
+
+TAP version 13
+# Subtest: locked package application and released SDK match the workerd reference
+ok 1 - locked package application and released SDK match the workerd reference
+  ---
+  duration_ms: 17410.373958
+  type: 'test'
+  ...
+# Subtest: Python package reload retains the last good worker across stale and invalid locks
+ok 2 - Python package reload retains the last good worker across stale and invalid locks
+  ---
+  duration_ms: 33221.585666
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 33261.859375

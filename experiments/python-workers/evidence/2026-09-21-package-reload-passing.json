@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-09-22T04:25:23.985Z",
+  "observations": [
+    {
+      "stage": "initial",
+      "status": 200,
+      "text": "{\"version\": \"4.12.3\", \"formatted\": \"1,234,567\"}"
+    },
+    {
+      "stage": "stale-lock",
+      "status": 200,
+      "text": "{\"version\": \"4.12.3\", \"formatted\": \"1,234,567\"}"
+    },
+    {
+      "stage": "invalid-lock",
+      "status": 200,
+      "text": "{\"version\": \"4.12.3\", \"formatted\": \"1,234,567\"}"
+    },
+    {
+      "stage": "updated-package",
+      "status": 200,
+      "text": "{\"version\": \"4.12.2\", \"formatted\": \"1,234,567\"}"
+    },
+    {
+      "stage": "stale-revert",
+      "status": 200,
+      "text": "{\"version\": \"4.12.2\", \"formatted\": \"1,234,567\"}"
+    },
+    {
+      "stage": "restored-package",
+      "status": 200,
+      "text": "{\"version\": \"4.12.3\", \"formatted\": \"1,234,567\"}"
+    }
+  ],
+  "logs": "<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T04:25:15.908691Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld dev\n  Project  /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-H4eFlR/wrangler.json\n  State    /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-H4eFlR/.celld/dev\n  ● opening the local storage\n  ● building the application\n celld 0.5.1\n───────────────────────────────────────────────\nTotal Upload: 13405.51 KiB / gzip: 5583.50 KiB\nYour Worker has no bindings.\nBundled python-runtime-probe (1.47 sec)\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T04:25:19.573518Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld listening on 127.0.0.1:56422 (ownership=dev)\ncelld internal listening on 127.0.0.1:56428 (advertise=127.0.0.1:56428)\n  ready  http://127.0.0.1:56422\n  ● change detected; rebuilding the application\n  error reload failed: Python build failed: Verified workers-runtime-sdk 1.9.0: 36209f94984686264db4e1fd410d51ac3460f2a2ab3cc29869699b975e1e1331\nPython package lock is stale; regenerate it for the current dependency manifest\n\n  ● change detected; rebuilding the application\n  error reload failed: Python build failed: Verified workers-runtime-sdk 1.9.0: 36209f94984686264db4e1fd410d51ac3460f2a2ab3cc29869699b975e1e1331\nPython package lock target ABI does not match the pinned runtime\n\n  ● change detected; rebuilding the application\n celld 0.5.1\n───────────────────────────────────────────────\nTotal Upload: 13405.28 KiB / gzip: 5583.51 KiB\nYour Worker has no bindings.\nBundled python-runtime-probe (1.77 sec)\n  ● restarting the application\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T04:25:29.857307Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld listening on 127.0.0.1:56422 (ownership=dev)\ncelld internal listening on 127.0.0.1:56445 (advertise=127.0.0.1:56445)\n  ready  http://127.0.0.1:56422\n  ● change detected; rebuilding the application\n  error reload failed: Python build failed: Verified workers-runtime-sdk 1.9.0: 36209f94984686264db4e1fd410d51ac3460f2a2ab3cc29869699b975e1e1331\nPython package lock is stale; regenerate it for the current dependency manifest\n\n  ● change detected; rebuilding the application\n celld 0.5.1\n───────────────────────────────────────────────\nTotal Upload: 13405.51 KiB / gzip: 5583.50 KiB\nYour Worker has no bindings.\nBundled python-runtime-probe (1.14 sec)\n  ● restarting the application\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T04:25:39.265642Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld listening on 127.0.0.1:56422 (ownership=dev)\ncelld internal listening on 127.0.0.1:56456 (advertise=127.0.0.1:56456)\n  ready  http://127.0.0.1:56422\n"
+}

@@ -98,7 +98,7 @@ export async function startCelld(files, config = {}, environment = {}, { watch =
     await launch();
     return {
       async write(name, contents) {
-        if (!/^[a-zA-Z_][a-zA-Z_0-9]*\.py$/.test(name)) throw new Error('Test source name must be a flat Python module');
+        if (!/^[a-zA-Z_][a-zA-Z_0-9]*\.py$/.test(name) && !['requirements.txt', 'pyproject.toml', 'celld-python.lock.json'].includes(name)) throw new Error('Test source must be a flat Python module or package manifest/lock');
         await writeFile(resolve(project, name), contents);
       },
       url: `http://127.0.0.1:${port}`, get pid() { return child.pid; }, close, logs: () => logs,

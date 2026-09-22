@@ -563,3 +563,32 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   native-packages-full-suite.txt, native-packages-unit-test.txt and
   native-packages-build.sha256 under experiment evidence/. The relocation red
   case is package-path-identity-failure.txt. No fleet/public changes; goal active.
+
+## Package reload and workerd comparison (2026-09-21)
+
+- package-reload.test.mjs watches an actual native Python project. Updating
+  requirements without its lock produces the stale-lock diagnostic and keeps
+  serving humanize 4.12.3. A wrong-ABI lock also leaves the good Worker running.
+  Publishing the matching valid lock serves 4.12.2; restoring the original
+  manifest/lock restores 4.12.3. Every observation checks formatting behavior
+  and the installed package metadata version, not just a ready log line.
+- package-reference.test.mjs runs identical SDK Python against celld and the
+  pinned historical workerd reference. The same humanize/dateutil/six wheel
+  bytes, verified by hash, are bundled/unpacked by celld and exposed as zip
+  imports by the reference. Results, package versions and the unchanged SDK
+  source digest agree. This is application behavior parity, not parity with
+  Cloudflare's package resolver or current compatibility date.
+- New package cache entries are written to unique temporary files and atomically
+  renamed after verification. Cache hits verify without rewriting. This avoids
+  exposing partial writes to concurrent build processes; corrupt cache contents
+  still reject. No change to runtime dispatch or the native binary was needed.
+- Both new tests pass individually and together with two file jobs, and are now
+  in the default HTTP suite. The earlier 24-record full-suite result remains the
+  runtime regression baseline; no new full-suite result is claimed here.
+- Compiled extensions, framework/package hooks, distribution, broader events
+  and the original resource/multi-node qualification requirements remain open.
+- Resolver tests also pass after the cache-write change, including corrupt cache
+  and conflicting requirement rejection. Diff checks pass. Date-prefixed
+  package-reload-passing.json, package-reference-passing.json,
+  package-lifecycle-test.txt and package-lifecycle-resolver-test.txt are retained
+  under experiment evidence/. Goal active; no fleet/public changes.
