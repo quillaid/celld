@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
-import { createServer } from 'node:http';
+import { createServer, request as httpRequest } from 'node:http';
 import { once } from 'node:events';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -41,13 +41,14 @@ test('ASGI upload candidate releases unread bodies and delivers upload disconnec
   t.after(() => reference.dispose());
   for (const [engine, url] of [['celld', local.url], ['workerd', String(await reference.ready)]]) {
     const observation = { engine }; evidence.observations.push(observation);
-    for (const mode of ['early', 'partial']) {
+    for (const mode of ['early', 'partial', 'app-error']) {
       let upload;
       const body = new ReadableStream({ start(controller) { upload = controller; controller.enqueue(new TextEncoder().encode('first\n')); } });
       try {
         const response = await fetch(new URL('/' + mode, url), { method: 'POST', body, duplex: 'half', signal: AbortSignal.timeout(10000) });
         observation[mode] = { status: response.status, body: await response.text(), locked: response.headers.get('x-body-locked'), done: response.headers.get('x-body-done') };
-        assert.equal(observation[mode].status, 200); assert.equal(observation[mode].body, 'early');
+        assert.equal(observation[mode].status, mode === 'app-error' ? 500 : 200);
+        assert.equal(observation[mode].body, mode === 'app-error' ? 'app-error' : 'early');
       } finally { try { upload.close(); } catch {} }
     }
     const gate = { waiting: deferred(), finished: deferred() }; gates.set(engine, gate);
@@ -64,6 +65,25 @@ test('ASGI upload candidate releases unread bodies and delivers upload disconnec
       abort.abort(); await reader.cancel().catch(() => {});
       observation.disconnect = await deadline(gate.finished.promise, 'ASGI receive did not finish after upload abort');
     } finally { abort.abort(); try { cancelUpload.error(new Error('probe cleanup')); } catch {} }
+    const cancelGate = { waiting: deferred(), finished: deferred() };
+    gates.set(engine + '-task', cancelGate);
+    const request = httpRequest(new URL('/task-cancel', url), { method: 'POST', headers: { 'transfer-encoding': 'chunked', 'x-gate': `http://127.0.0.1:${server.address().port}/${engine}-task` } });
+    const completed = new Promise((resolve, reject) => {
+      request.on('error', reject);
+      request.on('response', async response => {
+        try { const chunks = []; for await (const chunk of response) chunks.push(chunk); resolve({ status: response.statusCode, body: Buffer.concat(chunks).toString(), locked: response.headers['x-body-locked'], done: response.headers['x-body-done'] }); }
+        catch (error) { reject(error); }
+      });
+    });
+    completed.catch(() => {});
+    try {
+      request.flushHeaders();
+      // No body bytes exist yet: cancellation must finish before the chunk
+      // is released, so a consumed/lost first chunk cannot pass by timing luck.
+      await deadline(cancelGate.waiting.promise, 'Pending receive cancellation did not finish');
+      request.end('first\n');
+      observation.taskCancellation = await deadline(completed, 'Retried receive did not finish');
+    } finally { request.destroy(); }
     const recovery = await fetch(new URL('/early', url), { method: 'POST', body: 'recovery', signal: AbortSignal.timeout(5000) });
     observation.recovery = { status: recovery.status, body: await recovery.text(), locked: recovery.headers.get('x-body-locked'), done: recovery.headers.get('x-body-done') };
   }
@@ -71,7 +91,12 @@ test('ASGI upload candidate releases unread bodies and delivers upload disconnec
     assert.equal(observation.early.locked, 'false', JSON.stringify(evidence));
     assert.equal(observation.early.done, 'true', JSON.stringify(evidence));
     assert.deepEqual(observation.partial, { status: 200, body: 'early', locked: 'false', done: 'true' });
+    assert.deepEqual(observation['app-error'], { status: 500, body: 'app-error', locked: 'false', done: 'true' });
     assert.deepEqual(observation.disconnect, { event: 'http.disconnect' }, JSON.stringify(evidence));
+    assert.equal(observation.taskCancellation.status, 200, observation.taskCancellation.body);
+    assert.deepEqual(JSON.parse(observation.taskCancellation.body), { cancelled: [true, true, true], body: 'first\n' }, JSON.stringify(evidence));
+    assert.equal(observation.taskCancellation.locked, 'false');
+    assert.equal(observation.taskCancellation.done, 'true');
     assert.deepEqual(observation.recovery, { status: 200, body: 'early', locked: 'false', done: 'true' });
   }
 });

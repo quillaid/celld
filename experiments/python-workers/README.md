@@ -358,9 +358,15 @@ an explicitly owned reader, lazy acquisition, and cancel/release in app cleanup.
 The initial candidate raised JsException for aborted reads on both engines and
 left unread bodies locked on workerd; both observations are retained.
 
+The lifecycle probe also cancels three pending Python receive tasks before the
+client is allowed to send a body chunk. The next receive must preserve all its
+bytes. The candidate owns one shielded read future across canceled callers and
+settles it during cleanup. Initial failure evidence records a lost chunk on
+celld and a spurious disconnect on the workerd retry. A deliberate application
+exception after a partial read also leaves a closed, unlocked input stream.
+
 Before integration it still needs receive-only disconnect after upload EOF,
-application-error cleanup, pending-read task cancellation and response-completion
-races, and regression
+response-completion and cleanup-cancellation races, and regression
 coverage with a reproducible SDK-overlay identity. This prototype does not close
 the incoming-streaming requirement for the default experiment runtime.
 

@@ -1,0 +1,26 @@
+TAP version 13
+# ASGI request failed
+# Traceback (most recent call last):
+#   File "/session/metadata/python_modules/workers/asgi.py", line 444, in fetch
+#     result, request_task = await process_request(app, req, env, ctx, state=state)
+#                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#   File "<celld-asgi-upload-candidate>", line 168, in process_request
+#   File "<celld-asgi-upload-candidate>", line 138, in run_app
+#   File "/session/metadata/asgi-upload-lifecycle-reference.py", line 23, in app
+#     raise ValueError('intentional ASGI application error')
+# ValueError: intentional ASGI application error
+# Subtest: ASGI upload candidate releases unread bodies and delivers upload disconnect events
+ok 1 - ASGI upload candidate releases unread bodies and delivers upload disconnect events
+  ---
+  duration_ms: 16928.32125
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 17202.790375

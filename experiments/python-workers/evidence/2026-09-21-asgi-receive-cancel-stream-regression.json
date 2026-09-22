@@ -1,0 +1,53 @@
+{
+  "timestamp": "2026-09-22T06:33:34.086Z",
+  "workerd": "1.20260922.1",
+  "compatibilityDate": "2025-06-01",
+  "firstByteWindowMs": 1500,
+  "sdkMode": "test-only demand-driven receive candidate",
+  "candidateSha256": "9ab98e356974d39e9ccfdc34407848ce91dc296c676a786864a5c6d4f8694ccd",
+  "baseAsgiSha256": "f606250b2087c7bfffcdcae8a9dd95f080954820e457e932daa77803c4fdd35d",
+  "observations": [
+    {
+      "engine": "celld",
+      "mode": "direct",
+      "status": 200,
+      "firstBeforeUploadClose": true,
+      "body": "first\nsecond\n"
+    },
+    {
+      "engine": "celld",
+      "mode": "asgi",
+      "status": 200,
+      "firstBeforeUploadClose": true,
+      "body": "first\nsecond\n"
+    },
+    {
+      "engine": "celld",
+      "mode": "direct-recovery",
+      "status": 200,
+      "firstBeforeUploadClose": true,
+      "body": "first\nsecond\n"
+    },
+    {
+      "engine": "workerd",
+      "mode": "direct",
+      "status": 200,
+      "firstBeforeUploadClose": true,
+      "body": "first\nsecond\n"
+    },
+    {
+      "engine": "workerd",
+      "mode": "asgi",
+      "status": 200,
+      "firstBeforeUploadClose": true,
+      "body": "first\nsecond\n"
+    },
+    {
+      "engine": "workerd",
+      "mode": "direct-recovery",
+      "status": 200,
+      "firstBeforeUploadClose": true,
+      "body": "first\nsecond\n"
+    }
+  ]
+}

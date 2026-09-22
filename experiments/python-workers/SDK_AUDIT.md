@@ -69,6 +69,7 @@ engines while direct SDK passthrough controls stream successfully. A guarded,
 test-only candidate that reads the body inside receive() passes the same gate
 on both engines. Its lifecycle probe also verifies unread/partially read body
 cleanup and upload-abort disconnect events. It is not integrated into the
-adapter; pending-read cancellation, receive-only disconnect after EOF,
-response-completion races and SDK-overlay identity remain required before that
+adapter. Repeated pending-receive cancellation now preserves a withheld chunk,
+and application-error cleanup is checked. Receive-only disconnect after EOF,
+response-completion/cleanup races and SDK-overlay identity remain required before that
 behavior can be advertised.

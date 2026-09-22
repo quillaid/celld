@@ -1,0 +1,64 @@
+{
+  "timestamp": "2026-09-22T06:31:09.787Z",
+  "sdkMode": "test-only receive candidate",
+  "candidateSha256": "472840180def4979aea82965032712e468ab1dfaa4ec3b95e9b6ba7248ea7b30",
+  "workerd": "1.20260922.1",
+  "observations": [
+    {
+      "engine": "celld",
+      "early": {
+        "status": 200,
+        "body": "early",
+        "locked": "false",
+        "done": "true"
+      },
+      "partial": {
+        "status": 200,
+        "body": "early",
+        "locked": "false",
+        "done": "true"
+      },
+      "disconnect": {
+        "event": "http.disconnect"
+      },
+      "taskCancellation": {
+        "status": 200,
+        "body": "{\"cancelled\": true, \"body\": \"\"}"
+      },
+      "recovery": {
+        "status": 200,
+        "body": "early",
+        "locked": "false",
+        "done": "true"
+      }
+    },
+    {
+      "engine": "workerd",
+      "early": {
+        "status": 200,
+        "body": "early",
+        "locked": "false",
+        "done": "true"
+      },
+      "partial": {
+        "status": 200,
+        "body": "early",
+        "locked": "false",
+        "done": "true"
+      },
+      "disconnect": {
+        "event": "http.disconnect"
+      },
+      "taskCancellation": {
+        "status": 500,
+        "body": "Error: PythonError: Traceback (most recent call last):\n  File \"introspection.py\", line 88, in wrapper_func\n    return python_to_rpc(await result)\n                         ^^^^^^^^^^^^\n  File \"/session/metadata/asgi-upload-lifecycle-reference.py\", line 59, in fetch\n    response = await super().fetch(request)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/session/metadata/python_modules/workers/asgi.py\", line 479, in fetch\n    return await fetch(app, request, self.env, self.ctx)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/session/metadata/python_modules/workers/asgi.py\", line 444, in fetch\n    result, request_task = await process_request(app, req, env, ctx, state=state)\n                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<celld-asgi-upload-candidate>\", line 159, in process_request\n  File \"<celld-asgi-upload-candidate>\", line 129, in run_app\n  File \"/session/metadata/asgi-upload-lifecycle-reference.py\", line 36, in app\n    assert event['type'] == 'http.request'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n\n    at async Object.fetch (file:///Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/node_modules/miniflare/dist/src/workers/core/entry.worker.js:5216:22)"
+      },
+      "recovery": {
+        "status": 200,
+        "body": "early",
+        "locked": "false",
+        "done": "true"
+      }
+    }
+  ]
+}

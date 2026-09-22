@@ -1,0 +1,80 @@
+{
+  "timestamp": "2026-09-22T06:33:34.077Z",
+  "sdkMode": "test-only receive candidate",
+  "candidateSha256": "9ab98e356974d39e9ccfdc34407848ce91dc296c676a786864a5c6d4f8694ccd",
+  "workerd": "1.20260922.1",
+  "observations": [
+    {
+      "engine": "celld",
+      "early": {
+        "status": 200,
+        "body": "early",
+        "locked": "false",
+        "done": "true"
+      },
+      "partial": {
+        "status": 200,
+        "body": "early",
+        "locked": "false",
+        "done": "true"
+      },
+      "app-error": {
+        "status": 500,
+        "body": "app-error",
+        "locked": "false",
+        "done": "true"
+      },
+      "disconnect": {
+        "event": "http.disconnect"
+      },
+      "taskCancellation": {
+        "status": 200,
+        "body": "{\"cancelled\": [true, true, true], \"body\": \"first\\n\"}",
+        "locked": "false",
+        "done": "true"
+      },
+      "recovery": {
+        "status": 200,
+        "body": "early",
+        "locked": "false",
+        "done": "true"
+      }
+    },
+    {
+      "engine": "workerd",
+      "early": {
+        "status": 200,
+        "body": "early",
+        "locked": "false",
+        "done": "true"
+      },
+      "partial": {
+        "status": 200,
+        "body": "early",
+        "locked": "false",
+        "done": "true"
+      },
+      "app-error": {
+        "status": 500,
+        "body": "app-error",
+        "locked": "false",
+        "done": "true"
+      },
+      "disconnect": {
+        "event": "http.disconnect"
+      },
+      "taskCancellation": {
+        "status": 200,
+        "body": "{\"cancelled\": [true, true, true], \"body\": \"first\\n\"}",
+        "locked": "false",
+        "done": "true"
+      },
+      "recovery": {
+        "status": 200,
+        "body": "early",
+        "locked": "false",
+        "done": "true"
+      }
+    }
+  ]
+}

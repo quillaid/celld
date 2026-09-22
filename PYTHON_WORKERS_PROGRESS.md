@@ -1129,3 +1129,36 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   races. In particular, canceling a Python receive task must not silently lose
   a chunk still owned by a JS read promise. Probe that before promoting this
   candidate and declaring an SDK-overlay identity. Goal remains active.
+
+## Preserving ASGI body bytes across canceled receive tasks (2026-09-21)
+
+- Previous turn was progress (b9bea0a): candidate input ownership and upload-abort
+  events passed bounded lifecycle probes. This turn exercises cancellation of
+  the Python consumer while the underlying stream is still live.
+- Added a raw HTTP request that flushes headers but withholds every body byte.
+  The app starts and cancels a receive task, acknowledges cancellation through
+  a separate HTTP callback, then retries receive. Only that callback releases
+  the client's first chunk. Initial candidate lost the entire chunk on celld;
+  workerd's retry reported disconnect and the fixture returned 500. Kept both
+  raw observations and the failing gate.
+- Candidate now owns a single pending read future and shields it from caller
+  cancellation. A later receive reuses that future instead of starting a read
+  after the previous one has already consumed data. Input cleanup cancels the
+  stream when needed, awaits settlement of its pending future, and releases
+  the reader. This remains an opt-in test candidate, not default runtime code.
+- Strengthened final probe cancels three receives before releasing the chunk.
+  Both engines then receive all first-chunk bytes and EOF, with the body closed
+  and unlocked. Added a deliberately raised application error after a partial
+  read; its controlled error response observes the same closed/unlocked state.
+  Prior early/partial/client-abort/recovery cases continue to pass.
+- Causal upload regression also passes against the revised candidate on both
+  engines. Saved failure, final lifecycle, and streaming regression evidence.
+  No Rust or default SDK adapter changes; prior default-suite baseline remains.
+- Remaining gates are response-end/pending-read and cleanup-cancellation races,
+  plus receive-only client disconnect after upload EOF. Source inspection also
+  found that celld's stateless incoming-request signal mapping is removed when
+  its handler settles (js.rs settle/finish_incoming_request); a post-response
+  disconnect bridge should not assume that signal stays registered. Verify a
+  response-stream closure signal rather than inferring behavior from source.
+  Original goal remains active; integration and explicit SDK-overlay identity
+  are still required after those checks.

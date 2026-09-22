@@ -1,0 +1,55 @@
+TAP version 13
+# ASGI request failed
+# Traceback (most recent call last):
+#   File "/session/metadata/python_modules/workers/asgi.py", line 444, in fetch
+#     result, request_task = await process_request(app, req, env, ctx, state=state)
+#                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#   File "<celld-asgi-upload-candidate>", line 159, in process_request
+#   File "<celld-asgi-upload-candidate>", line 129, in run_app
+#   File "/session/metadata/asgi-upload-lifecycle-reference.py", line 36, in app
+#     assert event['type'] == 'http.request'
+#            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# AssertionError
+# Subtest: ASGI upload candidate releases unread bodies and delivers upload disconnect events
+not ok 1 - ASGI upload candidate releases unread bodies and delivers upload disconnect events
+  ---
+  duration_ms: 14977.855084
+  type: 'test'
+  location: '/Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/asgi-upload-lifecycle.probe.mjs:16:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"timestamp":"2026-09-22T06:31:09.787Z","sdkMode":"test-only receive candidate","candidateSha256":"472840180def4979aea82965032712e468ab1dfaa4ec3b95e9b6ba7248ea7b30","workerd":"1.20260922.1","observations":[{"engine":"celld","early":{"status":200,"body":"early","locked":"false","done":"true"},"partial":{"status":200,"body":"early","locked":"false","done":"true"},"disconnect":{"event":"http.disconnect"},"taskCancellation":{"status":200,"body":"{\"cancelled\": true, \"body\": \"\"}"},"recovery":{"status":200,"body":"early","locked":"false","done":"true"}},{"engine":"workerd","early":{"status":200,"body":"early","locked":"false","done":"true"},"partial":{"status":200,"body":"early","locked":"false","done":"true"},"disconnect":{"event":"http.disconnect"},"taskCancellation":{"status":500,"body":"Error: PythonError: Traceback (most recent call last):\n  File \"introspection.py\", line 88, in wrapper_func\n    return python_to_rpc(await result)\n                         ^^^^^^^^^^^^\n  File \"/session/metadata/asgi-upload-lifecycle-reference.py\", line 59, in fetch\n    response = await super().fetch(request)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/session/metadata/python_modules/workers/asgi.py\", line 479, in fetch\n    return await fetch(app, request, self.env, self.ctx)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/session/metadata/python_modules/workers/asgi.py\", line 444, in fetch\n    result, request_task = await process_request(app, req, env, ctx, state=state)\n                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<celld-asgi-upload-candidate>\", line 159, in process_request\n  File \"<celld-asgi-upload-candidate>\", line 129, in run_app\n  File \"/session/metadata/asgi-upload-lifecycle-reference.py\", line 36, in app\n    assert event['type'] == 'http.request'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n\n    at async Object.fetch (file:///Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/node_modules/miniflare/dist/src/workers/core/entry.worker.js:5216:22)"},"recovery":{"status":200,"body":"early","locked":"false","done":"true"}}]}
+    + actual - expected
+    
+      {
+    +   body: '',
+    -   body: 'first\n',
+        cancelled: true
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    cancelled: true
+    body: |-
+      first
+      
+  actual:
+    cancelled: true
+    body: ''
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/asgi-upload-lifecycle.probe.mjs:95:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 15250.2215

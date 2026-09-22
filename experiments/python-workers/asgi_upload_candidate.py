@@ -38,11 +38,12 @@ after = '''    request_body = req.body
     body_reader = None
     body_complete = False
     body_disconnected = False
-    from asyncio import Lock
+    pending_read = None
+    from asyncio import Lock, ensure_future, gather, shield
     receive_lock = Lock()
 
     async def close_request_body():
-        nonlocal body_reader, body_complete
+        nonlocal body_reader, body_complete, pending_read
         try:
             if body_reader is not None:
                 if not body_complete:
@@ -53,13 +54,16 @@ after = '''    request_body = req.body
             # An errored transport can reject cancellation as well as reads.
             pass
         finally:
+            if pending_read is not None:
+                await gather(pending_read, return_exceptions=True)
+                pending_read = None
             if body_reader is not None:
                 body_reader.releaseLock()
                 body_reader = None
             body_complete = True
 
     async def receive():
-        nonlocal body_reader, body_complete, body_disconnected
+        nonlocal body_reader, body_complete, body_disconnected, pending_read
         async with receive_lock:
             if body_disconnected or finished_response.is_set():
                 return {"type": "http.disconnect"}
@@ -67,12 +71,17 @@ after = '''    request_body = req.body
                 if request_body:
                     if body_reader is None:
                         body_reader = request_body.getReader()
+                    if pending_read is None:
+                        pending_read = ensure_future(body_reader.read())
                     try:
-                        data = await body_reader.read()
+                        # A canceled ASGI receive must not consume a chunk that
+                        # the next caller can no longer retrieve.
+                        data = await shield(pending_read)
                     except Exception:
                         body_disconnected = True
                         await close_request_body()
                         return {"type": "http.disconnect"}
+                    pending_read = None
                     if not data.done:
                         return {"type": "http.request", "body": data.value.to_bytes(), "more_body": True}
                 body_complete = True
