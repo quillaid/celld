@@ -528,3 +528,38 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   package-conflict-failure.txt under experiments/python-workers/evidence/.
   No celld runtime changed, so its unrelated HTTP suites were not rerun.
   Goal remains active; no fleet/public changes.
+
+## Native locked-package integration (2026-09-21)
+
+- Native Python dev/deploy now accepts a dependency manifest with a matching
+  celld-python.lock.json. The host passes the project root to the builder so
+  nested source entries use the root manifest. Unsupported requirements-file
+  variants still reject explicitly.
+- consume-packages.mjs verifies the manifest digest, pinned Python/Pyodide ABI,
+  closed dependency references, pure-wheel filenames and artifact hashes. It
+  downloads only missing locked artifacts during builds; it never resolves new
+  versions. Corrupt cache bytes fail rather than silently being replaced.
+- The target interpreter validates wheel paths/layouts before unpacking: no
+  traversal, symlinks, duplicate files, SDK shadowing, .data relocation or .pth
+  hooks. Packages are mounted for static import inspection and bundled as bytes
+  for SDK runtime initialization, ahead of application import. No request-time
+  package download path is introduced.
+- Runtime metadata includes the lock and its digest in deployment identity.
+  A relocation test caught local cache paths leaking through esbuild comments
+  into that identity. Virtual modules now use wheel hashes and the verified
+  in-memory bytes. The same project in different directories produces the same
+  version; changing humanize 4.12.3 to 4.12.2 produces a different version.
+- Focused native package test passes real celld HTTP using humanize, dateutil
+  and six, plus startup of the generated bundle with global fetch disabled.
+  It also covers a nested entry, repeatable/relocated identity, stale manifest,
+  wrong ABI and corrupt artifact rejection. The existing unlocked-manifest
+  regression now expects the missing-lock diagnostic.
+- Package watch/reload, compiled PyEmscripten extensions, broader wheel layouts,
+  startup hooks, framework/SDK companion modules and distribution remain open,
+  along with the original resource, event and multi-node qualification gates.
+- All 24 records in the rebuilt full HTTP suite pass, as does the Python
+  deployment capability unit test and diff check. Retained date-prefixed
+  native-packages-passing.json, native-packages-test.txt,
+  native-packages-full-suite.txt, native-packages-unit-test.txt and
+  native-packages-build.sha256 under experiment evidence/. The relocation red
+  case is package-path-identity-failure.txt. No fleet/public changes; goal active.

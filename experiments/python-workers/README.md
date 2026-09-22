@@ -198,10 +198,10 @@ request-time runtime downloads are not used.
 
 `npm run test:native` verifies real dev HTTP with a local module, matching
 versions for identical projects in different directories, a changed version for
-changed source, and rejection of dependency manifests and `no_bundle`.
+changed source, and rejection of unlocked dependency manifests and `no_bundle`.
 
-This is an initial native path. Python dependency manifests are rejected pending
-the resolver, even if they declare no dependencies. Native Workflow configuration,
+This is an initial native path. Dependency manifests require a matching package
+lock as described below. Native Workflow configuration,
 `define`, `rules`, and `no_bundle` are rejected. Additional event/RPC exports,
 complete import checks, source/data selection,
 package startup hooks, release distribution, and the full compatibility matrix
@@ -273,7 +273,7 @@ with exactly those six bytes observed, release its lock, and report from finally
 Both engines pass and serve a follow-up request. This tests abrupt socket closure;
 graceful EOF and application-driven cancellation are separate contracts.
 
-### Package resolver groundwork
+### Locked pure Python packages
 
 `node lock-packages.mjs /absolute/path/to/project` resolves one `pyproject.toml`
 (`[project].dependencies`) or `requirements.txt` (one PEP 508 requirement per
@@ -300,8 +300,22 @@ locks, target markers, corrupt-cache/conflict rejection and imports directly fro
 the locked wheel bytes with networking disabled. This is currently a separate
 package-tool test, not part of the celld HTTP suite.
 
-**Native build integration is still pending.** Dev/deploy continues to reject
-dependency manifests; generating this lock does not yet enable package imports
-in a deployed Worker. Next gates are consuming and validating the lock in the
-builder, bundling packages in the runtime, including package identity in the
-deployment version, and real HTTP/reload/offline-startup qualification.
+Native dev/deploy now consumes this lock from the project root, including when
+the Python entry lives in a subdirectory. The builder rejects missing/stale
+locks, mismatched ABIs, missing dependencies and corrupt cached wheel bytes. A
+missing cached wheel can be fetched from its locked HTTPS origin at build time;
+request startup uses only bundled bytes. Wheels are checked for supported pure
+layouts, path traversal, symlinks, file collisions and SDK conflicts before
+unpacking. Relocated .data layouts and .pth startup hooks are explicitly rejected.
+
+Packages are mounted for build-time import checks and runtime SDK dispatch. The
+lock and its digest participate in deployment identity; wheel bundle module
+names use their content hashes, never local cache paths. Native HTTP and a
+generated-bundle startup with global fetch disabled both exercise humanize,
+python-dateutil and six. Tests verify identity survives directory relocation and
+changes when a package version changes. Run `npm run test:native-packages`; this
+case is also in the default HTTP suite.
+
+Package watch/reload, compiled extensions, package startup hooks, broader wheel
+layouts and framework behavior remain unqualified. The builder is still a local
+experimental helper, not a published distribution.

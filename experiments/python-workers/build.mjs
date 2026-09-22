@@ -3,14 +3,20 @@ import { mkdir, copyFile, readFile, writeFile, readdir, lstat } from 'node:fs/pr
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { resolve, dirname, basename, join } from 'node:path';
+import { consumePackages } from './consume-packages.mjs';
 
 process.chdir(fileURLToPath(new URL('.', import.meta.url)));
 const outdir = process.env.PYTHON_BUILD_OUTPUT_DIR || 'dist';
 await mkdir(outdir, { recursive: true });
-let generatedEntry, projectSources;
+let generatedEntry, projectSources, packageDescriptor;
+let packageArtifacts = [];
 if (process.env.PYTHON_PROJECT_FILE) {
   const main = resolve(process.env.PYTHON_PROJECT_FILE);
   const directory = dirname(main);
+  const projectRoot = resolve(process.env.CELLD_PYTHON_PROJECT_ROOT || directory);
+  const consumed = await consumePackages(projectRoot);
+  packageArtifacts = consumed.artifacts;
+  packageDescriptor = consumed.descriptor;
   projectSources = {};
   async function collect(dir, prefix = '') {
     for (const item of (await readdir(dir)).sort()) {
@@ -20,7 +26,7 @@ if (process.env.PYTHON_PROJECT_FILE) {
       if (stat.isSymbolicLink()) throw new Error('Python source symlinks are unsupported: ' + relative);
       if (stat.isDirectory()) await collect(path, relative + '/');
       else if (item.endsWith('.py')) projectSources[relative] = await readFile(path, 'utf8');
-      else if (item === 'pyproject.toml' || item.startsWith('requirements')) throw new Error('Python dependency manifests need the pending package resolver: ' + relative);
+      else if ((item === 'pyproject.toml' || item.startsWith('requirements')) && resolve(dir) !== projectRoot) throw new Error('Python dependency manifests must live at the project root: ' + relative);
     }
   }
   await collect(directory);
@@ -29,7 +35,9 @@ if (process.env.PYTHON_PROJECT_FILE) {
   if (!(basename(main) in projectSources)) throw new Error('Python entry was not collected');
   const classes = JSON.parse(process.env.PYTHON_DURABLE_CLASSES || '[]');
   if (!Array.isArray(classes) || classes.some(name => typeof name !== 'string' || !/^[A-Za-z_][A-Za-z_0-9]*$/.test(name) || name === 'default')) throw new Error('Invalid Python Durable Object class names');
-  generatedEntry = "import { createPythonDeployment } from './sdk-runtime.js';\nconst deployment = createPythonDeployment(" + JSON.stringify({ moduleName, files: projectSources }) + ');\nexport default deployment.worker();\n';
+  generatedEntry = "import { createPythonDeployment } from './sdk-runtime.js';\n";
+  packageArtifacts.forEach((artifact, index) => { generatedEntry += `import _wheel${index} from ${JSON.stringify('celld-python-wheel/' + basename(artifact.path))};\n`; });
+  generatedEntry += 'const deployment = createPythonDeployment({...' + JSON.stringify({ moduleName, files: projectSources }) + ', packages: [' + packageArtifacts.map((_, index) => '_wheel' + index).join(',') + ']});\nexport default deployment.worker();\n';
   classes.forEach((name, index) => {
     generatedEntry += 'const _durable' + index + ' = deployment.durableObject(' + JSON.stringify(name) + ');\nexport { _durable' + index + ' as ' + name + ' };\n';
   });
@@ -49,6 +57,11 @@ if (projectSources) {
   validator.globals.set('_celld_sources_json', JSON.stringify(projectSources));
   const sdkLock = JSON.parse(await readFile('sdk-lock.json', 'utf8'));
   validator.unpackArchive(new Uint8Array(await readFile('.celld/' + sdkLock.filename)), 'zip', { extractDir: '/sdk' });
+  validator.FS.mkdirTree('/wheel-input');
+  packageArtifacts.forEach((artifact, index) => validator.FS.writeFile(`/wheel-input/${index}.whl`, artifact.bytes));
+  validator.globals.set('_celld_wheel_count', packageArtifacts.length);
+  validator.runPython(await readFile('validate-wheels.py', 'utf8'));
+  for (const artifact of packageArtifacts) validator.unpackArchive(new Uint8Array(artifact.bytes), 'zip', { extractDir: '/packages' });
   for (const [name, source] of Object.entries(projectSources)) {
     if (!/^(?:[A-Za-z_][A-Za-z_0-9]*\/)*[A-Za-z_][A-Za-z_0-9]*\.py$/.test(name)) throw new Error('Invalid Python module path: ' + name);
     validator.FS.mkdirTree('/app/' + name.split('/').slice(0, -1).join('/'));
@@ -80,6 +93,14 @@ await build({
   plugins: [{ name: 'sentinel-bytes', setup(builder) {
     builder.onResolve({ filter: /^pyodide-sentinel-bytes$/ }, () => ({ path: 'sentinel', namespace: 'sentinel' }));
     builder.onLoad({ filter: /.*/, namespace: 'sentinel' }, () => ({ contents: sentinel, loader: 'binary' }));
+    // Stable content-addressed module names keep local cache paths out of the
+    // bundle identity. Use already verified bytes, not a second filesystem read.
+    builder.onResolve({ filter: /^celld-python-wheel\// }, args => ({ path: args.path.slice('celld-python-wheel/'.length), namespace: 'python-wheel' }));
+    builder.onLoad({ filter: /.*/, namespace: 'python-wheel' }, args => {
+      const artifact = packageArtifacts.find(item => basename(item.path) === args.path);
+      if (!artifact) throw new Error('Unknown locked Python wheel');
+      return { contents: artifact.bytes, loader: 'binary' };
+    });
   } }],
 });
 const files = ['pyodide.mjs', 'pyodide.asm.js', 'pyodide.asm.wasm', 'python_stdlib.zip', 'pyodide-lock.json'];
@@ -93,6 +114,7 @@ await writeFile(join(outdir, 'runtime-manifest.json'), JSON.stringify({
   schema: 1,
   pyodide: '0.28.3',
   sdk: generatedEntry ? JSON.parse(await readFile('sdk-lock.json', 'utf8')) : undefined,
+  packages: packageDescriptor,
   sources: projectSources ? Object.fromEntries(Object.entries(projectSources).map(([name, contents]) => [name, createHash('sha256').update(contents).digest('hex')])) : undefined,
   pythonAbi: JSON.parse(await readFile(runtime + 'pyodide-lock.json', 'utf8')).info,
   packaging: generatedEntry ? 'experimental-native-python-v1' : 'fixture-only; stdlib embedded in JS', assets,

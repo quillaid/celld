@@ -1336,8 +1336,8 @@ fn read_project(
         for entry in std::fs::read_dir(root)? {
             let name = entry?.file_name();
             let name = name.to_string_lossy();
-            if name == "pyproject.toml" || name.starts_with("requirements") {
-                bail!("Python dependency manifests need the pending package resolver: {name}");
+            if name.starts_with("requirements") && name != "requirements.txt" {
+                bail!("Python dependencies support pyproject.toml or requirements.txt, not {name}");
             }
         }
         if no_bundle || object.contains_key("define") || object.contains_key("rules") {
@@ -2867,6 +2867,7 @@ fn run_python_builder(
         .canonicalize()
         .context("resolve Python entry")?;
     let output = Command::new(&binary).arg(source).arg(outdir.path())
+        .env("CELLD_PYTHON_PROJECT_ROOT", root.canonicalize().context("resolve Python project root")?)
         .arg(serde_json::to_string(&classes.iter().filter(|class| !is_reserved_class(class)).collect::<Vec<_>>())?)
         .output()
         .with_context(|| format!("run Python builder {binary:?}; install celld-python-build or set CELLD_PYTHON_BUILD"))?;

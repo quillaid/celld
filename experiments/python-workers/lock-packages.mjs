@@ -127,7 +127,7 @@ json.dumps({'roots': sorted(set(canonicalize_name(req.name) for req in _active))
   return lock;
 }
 
-async function verifiedDownload(url, sha256, target) {
+export async function verifiedDownload(url, sha256, target) {
   let bytes;
   try { bytes = await readFile(target); }
   catch (error) {
@@ -138,6 +138,7 @@ async function verifiedDownload(url, sha256, target) {
   }
   if (digest(bytes) !== sha256) throw new Error('Package artifact hash mismatch: ' + url);
   await writeFile(target, bytes);
+  return bytes;
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

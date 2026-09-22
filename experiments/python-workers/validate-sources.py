@@ -20,7 +20,7 @@ def find_module(name):
     # Builtin/frozen modules can expose virtual children (e.g. os.path).
     if parts[0] in sys.stdlib_module_names or parts[0] == 'js':
         return True
-    path = ['/app', '/sdk', *sys.path]
+    path = ['/app', '/sdk', '/packages', *sys.path]
     for index in range(len(parts)):
         # Inspect one directory component at a time. A qualified namespace
         # spec consults parent modules in sys.modules, which would require

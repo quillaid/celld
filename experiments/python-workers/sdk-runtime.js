@@ -19,10 +19,12 @@ function patchWaitUntil(ctx) {
   };
   patched.add(ctx);
 }
-async function initialize({ files }) {
+async function initialize({ files, packages = [] }) {
   const python = await loadPyodide({ indexURL: 'https://python-runtime.invalid/', lockFileContents });
   python.unpackArchive(wheel, 'zip', { extractDir: '/sdk' });
   python.runPython("import sys; sys.path.insert(0, '/sdk')");
+  for (const bytes of packages) python.unpackArchive(bytes, 'zip', { extractDir: '/packages' });
+  if (packages.length) python.runPython("sys.path.insert(1, '/packages')");
   python.registerJsModule('_cloudflare_compat_flags', { python_workflows_implicit_dependencies: false });
   python.registerJsModule('_pyodide_entrypoint_helper', {
     patchWaitUntil,
@@ -42,9 +44,9 @@ async function initialize({ files }) {
   return { loadWorker: python.globals.get('load_worker'), loadDurable: python.globals.get('load_durable') };
 }
 
-export function createPythonDeployment({ moduleName, files }) {
+export function createPythonDeployment({ moduleName, files, packages }) {
   let ready;
-  const runtime = () => ready ??= initialize({ moduleName, files });
+  const runtime = () => ready ??= initialize({ moduleName, files, packages });
   async function invoke(handler, ...args) {
     const future = handler(...args);
     try { return await future; }
