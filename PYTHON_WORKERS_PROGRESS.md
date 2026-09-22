@@ -10,9 +10,9 @@ Kyle explicitly requested `/goal`; the durable goal is ACTIVE with no token
 budget. See `GOAL.md` and the goal tool. Continue immediately while there is
 authorized work; do not wait for the heartbeat to make progress.
 
-## Current slice — native interpreter and Durable Object lifecycle
+## Current slice — released SDK integration and native packaging
 
-Pinned upstream Pyodide 0.28.3 runs through real celld HTTP, bindings, and a fixture-only Python Durable Object class bridge. Host termination, pool replacement, and focused Durable Object recovery are implemented and tested below. Native Python deployment metadata and the Workers SDK remain future work; do not infer them from the class fixture.
+Pinned upstream Pyodide 0.28.3 runs through real celld HTTP, bindings, and a fixture-only Python Durable Object class bridge. Host termination, pool replacement, and focused Durable Object recovery are implemented and tested below. A separate fixture now loads the released Workers SDK unchanged and compares it with workerd. Native Python deployment remains future work; neither fixture is a supported deployment interface.
 
 ## Environment
 
@@ -214,3 +214,26 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
 - This qualifies persistent local dev storage only. Remote durability, multi-node
   ownership, alarm retries, SDK/native packaging, and resource/transport bounds
   remain open; the goal is active.
+
+## Released Workers SDK checkpoint (2026-09-21)
+
+- Audited workers-py source at e5cf461540e94f2065398ced7ed8031ac504dc3a
+  and pinned the released workers-runtime-sdk 1.9.0 wheel by SHA-256. The old
+  workerd package explicitly describes itself as legacy. Details and source
+  links are in experiments/python-workers/SDK_AUDIT.md.
+- New SDK fixture loads the unmodified wheel into celld Pyodide. It uses actual
+  WorkerEntrypoint, Request, Response, environment wrappers, and waitUntil.
+  Background awaitable ownership is retained before returning to Python and
+  released on settlement. Unsupported helper operations fail explicitly.
+- Same Python source and wheel files run in pinned workerd. Both engines hash
+  the loaded entrypoints.py and match the wheel's digest. JSON/status/headers,
+  binary bytes, and eventual background KV writes pass. Workerd still uses the
+  historical 2025-06-01 envelope and on_fetch dispatch alias; not latest parity.
+- npm run build now prepares both fixtures, with cached SDK hash verification.
+  npm test includes the SDK comparison. Full suite: 18 records passed, no
+  failures. Evidence: 2026-09-21-sdk-passing.json and sdk-full-suite.txt under
+  the experiment evidence directory (both date-prefixed).
+- Next: turn the fixture bridge into generic SDK entrypoint/class adapters and
+  native Python deployment packaging. Module-level env/import hooks, package
+  startup patches, SDK DO bridge, and modern reference dates still need work.
+  Goal remains active; no native packaging or broad SDK parity claim.

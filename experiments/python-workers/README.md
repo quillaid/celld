@@ -3,7 +3,7 @@
 This runs Pyodide 0.28.3 (CPython 3.13.2, Emscripten ABI `2025_0`) inside celld.
 HTTP, KV, and outbound fetch work on unmodified 0.5.1. The full lifecycle suite
 requires this branch's host invalidation patch. It is **not** native `.py`
-deployment support or the Cloudflare Python SDK.
+deployment support. A separate fixture loads the unmodified Cloudflare Python SDK.
 
 ## Reproduce
 
@@ -98,6 +98,16 @@ RSS includes the whole node and KV work, so its difference is not a clean
 per-interpreter allocation measurement. Cold timing starts after celld announces
 readiness, excluding process startup and compiled-Wasm registration. This is a
 smoke measurement, not a comparative performance benchmark.
+
+## Released SDK fixture
+
+`npm run build` also verifies/downloads the pinned workers-runtime-sdk 1.9.0
+wheel and builds `dist/sdk.js`. Cached SDK bytes are hash checked; requests use
+only bundled assets. `npm run test:sdk` runs the same source through celld and
+pinned workerd, verifying loaded SDK identity, HTTP JSON/status/headers, binary
+bodies, and background KV work. See [SDK_AUDIT.md](SDK_AUDIT.md) for the host
+hooks, historical reference envelope, and remaining gaps. This fixture uses real
+SDK classes but does not provide native Python deployment.
 
 ## Adapter boundaries
 

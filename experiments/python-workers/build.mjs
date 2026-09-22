@@ -18,10 +18,11 @@ if (exports.join(',') !== 'create_sentinel,is_sentinel') throw new Error('Unexpe
 await writeFile('dist/sentinel.wasm', sentinel);
 await copyFile(`${runtime}pyodide.asm.wasm`, 'dist/pyodide.asm.wasm');
 await build({
-  entryPoints: ['worker.js'], outfile: 'dist/index.js', bundle: true,
+  absWorkingDir: process.cwd(),
+  entryPoints: [process.env.PYTHON_FIXTURE_ENTRY || 'worker.js'], outfile: process.env.PYTHON_FIXTURE_OUTPUT || 'dist/index.js', bundle: true,
   format: 'esm', platform: 'browser', target: 'es2022',
   external: ['node:*', './pyodide.asm.wasm', './sentinel.wasm'],
-  loader: { '.zip': 'binary', '.py': 'text' },
+  loader: { '.zip': 'binary', '.py': 'text', '.whl': 'binary' },
   // These definitions affect only this generated fixture, not host globals.
   define: { process: 'undefined', location: '"https://python-runtime.invalid/"' },
   inject: ['./runtime-assets.js'],
