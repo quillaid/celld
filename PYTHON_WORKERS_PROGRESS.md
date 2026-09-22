@@ -475,3 +475,22 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   Python finally path, not proxy reclamation, RSS bounds, upload cancellation,
   or cancellation without waitUntil. Those and the original remaining package,
   compatibility, event/binding and multi-node requirements remain open.
+
+## SDK upload disconnect checkpoint (2026-09-21)
+
+- An unfinished chunked HTTP request sends six bytes. Python acknowledges those
+  bytes through a separate callback before the client destroys its socket.
+  A task retained with waitUntil continues reading the body and records the
+  resulting read exception, then releases the reader and reports from finally.
+- Both celld and the historical workerd reference reject from read(), report
+  exactly six bytes consumed, and serve a normal follow-up request. Error text
+  differs, as recorded in evidence; no exact-message parity is claimed.
+- The focused SDK suite passes all existing cases and this new probe. No runtime
+  changes were required, so the native binary remains the previously qualified
+  one. Evidence: date-prefixed sdk-upload-cancellation-passing.json and
+  sdk-upload-cancellation-test.txt under experiments/python-workers/evidence/.
+  Diff checks pass; no unrelated full suite rerun for fixture-only changes.
+- Abrupt upload and response disconnects now have differential cleanup evidence.
+  Application-driven cancellation, cancellation without retained tasks, resource
+  reclamation/pressure, package resolution and the other original goal gates
+  remain open. Goal remains active, with no fleet or public changes.

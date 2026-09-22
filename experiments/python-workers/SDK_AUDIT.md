@@ -21,7 +21,7 @@ remain in ignored `.celld/` and `dist/` directories.
 | Seam | Current experiment | Remaining work |
 | --- | --- | --- |
 | `WorkerEntrypoint(ctx, env)` | Real SDK class; environment wrapper handles actual KV | Native class discovery/export generation and deployment adapter |
-| SDK Request / Response | Real conversions; JSON/status/headers, binary bodies, incremental identity-encoded response and upload streaming, buffered request-body passthrough, and response-producer cancellation/finally verified | Upload cancellation, forms, cloning and larger body matrix |
+| SDK Request / Response | Real conversions; JSON/status/headers, binary bodies, incremental identity-encoded response and upload streaming, buffered request-body passthrough, and response/upload disconnect cleanup verified | Application-driven cancellation, forms, cloning and larger body matrix |
 | `patchWaitUntil` helper | Retains borrowed Python awaitable synchronously; destroys owned proxy after settlement; delegates to celld context | Cancellation, rejection, DO contexts and leak accounting |
 | `_cloudflare_compat_flags` | Explicit historical fixture setting for Workflow dependencies; missing flags remain absent | Validate/map supported dates and flags |
 | `cloudflareWorkersModule`, `cloudflareSocketsModule` | Not supplied | Module-level env/wait_until, sockets and request isolation |

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
-import { createServer } from 'node:http';
+import { createServer, request as httpRequest } from 'node:http';
 import { once } from 'node:events';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -100,6 +100,13 @@ test('released Workers SDK HTTP, streaming, and background work match workerd', 
   assert.equal(value, 'saved');
   const gates = new Map();
   const server = createServer((request, response) => {
+    if (request.url.endsWith('/started')) {
+      const gate = gates.get(request.url.slice(0, -8));
+      if (!gate?.started) { response.writeHead(404).end(); return; }
+      response.end('observed');
+      gate.started();
+      return;
+    }
     if (request.url.endsWith('/done')) {
       const gate = gates.get(request.url.slice(0, -5));
       if (!gate?.finished) { response.writeHead(404).end(); return; }
@@ -276,5 +283,46 @@ test('released Workers SDK HTTP, streaming, and background work match workerd', 
   const afterCancellation = await call('after-cancellation');
   assert.equal(afterCancellation.status, 201);
   assert.deepEqual(await afterCancellation.json(), { body: 'after-cancellation', method: 'POST' });
+
+  evidence.uploadCancellation = [];
+  async function checkUploadCancellation(engine, url) {
+    const result = { engine, stage: 'request' };
+    evidence.uploadCancellation.push(result);
+    const gate = {};
+    const started = new Promise(resolve => { gate.started = resolve; });
+    const finished = new Promise(resolve => { gate.finished = resolve; });
+    const path = '/upload-cancel-' + engine;
+    gates.set(path, gate);
+    const request = httpRequest(url, { method: 'POST', headers: { 'x-observe-upload': '1', 'x-release-url': `http://127.0.0.1:${server.address().port}${path}` } });
+    request.on('error', error => { result.clientError = String(error); });
+    request.on('response', response => { result.earlyStatus = response.statusCode; response.resume(); });
+    const closed = new Promise(resolve => request.on('close', resolve));
+    async function deadline(promise, message) {
+      let timer;
+      try { return await Promise.race([promise, new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(message)), 5000); })]); }
+      finally { clearTimeout(timer); }
+    }
+    try {
+      request.write('first\n');
+      await deadline(started, 'Python did not observe the upload prefix');
+      result.stage = 'client-abort';
+      request.destroy();
+      await deadline(closed, 'Upload client did not close');
+      result.consumer = await deadline(finished, 'Python upload consumer did not finish after disconnect');
+      assert.equal(result.consumer.outcome, 'rejected');
+      assert.equal(result.consumer.stage, 'read');
+      assert.equal(result.consumer.bytes, 6);
+      result.stage = 'complete';
+    } catch (error) { result.error = String(error); throw error; }
+    finally { request.destroy(); }
+  }
+  const uploadCancellations = await Promise.allSettled([
+    checkUploadCancellation('celld', local.url),
+    checkUploadCancellation('workerd', await reference.ready),
+  ]);
+  assert.ok(uploadCancellations.every(result => result.status === 'fulfilled'), JSON.stringify(evidence.uploadCancellation));
+  const afterUploadCancellation = await call('after-upload-cancellation');
+  assert.equal(afterUploadCancellation.status, 201);
+  assert.deepEqual(await afterUploadCancellation.json(), { body: 'after-upload-cancellation', method: 'POST' });
 
 });

@@ -2,6 +2,36 @@ from workers import WorkerEntrypoint, Response
 
 class Default(WorkerEntrypoint):
     async def fetch(self, request):
+        if request.headers.get('x-observe-upload') == '1':
+            import asyncio
+            import json
+            from workers import fetch
+            report_url = request.headers.get('x-release-url')
+            async def consume():
+                reader = request.body.getReader()
+                outcome = {'outcome': 'eof', 'bytes': 0, 'stage': 'read'}
+                try:
+                    while True:
+                        outcome['stage'] = 'read'
+                        item = await reader.read()
+                        if item.done:
+                            break
+                        outcome['bytes'] += item.value.byteLength
+                        if outcome['bytes'] == 6:
+                            outcome['stage'] = 'notify'
+                            started = await fetch(report_url + '/started')
+                            await started.text()
+                except Exception as error:
+                    outcome['outcome'] = 'rejected'
+                    outcome['error'] = str(error)
+                finally:
+                    reader.releaseLock()
+                    reported = await fetch(report_url + '/done', method='POST', body=json.dumps(outcome))
+                    await reported.text()
+                return outcome
+            task = asyncio.create_task(consume())
+            self.ctx.waitUntil(task)
+            return Response.from_json(await task)
         if request.headers.get('x-echo-upload') == '1':
             return Response(request.body, headers={'content-type': 'text/plain'})
         body = await request.text()
