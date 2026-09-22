@@ -2585,6 +2585,21 @@ impl RuntimeManager {
         reason: String,
         was_clean: bool,
     ) -> anyhow::Result<Option<u64>> {
+        self.ws_terminated(cell, ws_id, code, reason, was_clean, !was_clean)
+            .await
+    }
+
+    /// Dispatch a transport-classified termination. An unclean EOF is a close
+    /// event, while a protocol or handler failure remains an error event.
+    pub async fn ws_terminated(
+        &self,
+        cell: String,
+        ws_id: u64,
+        code: u16,
+        reason: String,
+        was_clean: bool,
+        is_error: bool,
+    ) -> anyhow::Result<Option<u64>> {
         let (reply, receive) = tokio::sync::oneshot::channel();
         let job = CellJob::WsClosed {
             scope: cell.clone(),
@@ -2592,6 +2607,7 @@ impl RuntimeManager {
             code,
             reason,
             was_clean,
+            is_error,
             reply,
         };
         self.cell_event(&cell, job, receive, "cell isolate dropped WebSocket close")

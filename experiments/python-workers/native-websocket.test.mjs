@@ -26,7 +26,7 @@ test('native Python Durable Object WebSocket events match workerd', { timeout: 6
   const reference = new Miniflare(convertV4MiniflareOptions({
     name: 'native-websocket-reference', cf: false, modulesRoot: fileURLToPath(root),
     compatibilityDate: '2025-06-01', compatibilityFlags: ['python_workers', 'python_workers_20250116'],
-    modules: [{ type: 'PythonModule', path: fileURLToPath(new URL('native-websocket-reference.py', root)), contents: "import sys\nsys.path.insert(0, '/session/metadata/python_modules')\n" + source + '\nDefault.on_fetch = Default.fetch\nCounter.on_fetch = Counter.fetch\nCounter.on_webSocketMessage = Counter.webSocketMessage\nCounter.on_webSocketClose = Counter.webSocketClose\n' }, ...modules],
+    modules: [{ type: 'PythonModule', path: fileURLToPath(new URL('native-websocket-reference.py', root)), contents: "import sys\nsys.path.insert(0, '/session/metadata/python_modules')\n" + source + '\nDefault.on_fetch = Default.fetch\nCounter.on_fetch = Counter.fetch\nCounter.on_webSocketMessage = Counter.webSocketMessage\nCounter.on_webSocketClose = Counter.webSocketClose\nCounter.on_webSocketError = Counter.webSocketError\n' }, ...modules],
     durableObjects: { COUNTER: { className: 'Counter', useSQLite: true } },
   }));
   t.after(() => reference.dispose());
@@ -37,7 +37,7 @@ test('native Python Durable Object WebSocket events match workerd', { timeout: 6
     await writeFile(new URL('results/native-websocket.json', root), JSON.stringify(evidence, null, 2) + '\n');
   });
 
-  async function observe(url, label) {
+  async function observe(url, label, abrupt = false) {
     const socket = new WebSocket(url.replace(/^http/, 'ws'));
     socket.binaryType = 'arraybuffer';
     socket.on('unexpected-response', (_request, response) => {
@@ -60,10 +60,12 @@ test('native Python Durable Object WebSocket events match workerd', { timeout: 6
     for (const value of ['hello Python 🐍', new Uint8Array([0, 1, 127, 128, 255])]) {
       const received = event('message');
       socket.send(value);
-      results.push(JSON.parse((await received).data));
+      const data = (await received).data;
+      results.push(typeof data === 'string' ? JSON.parse(data) : { binary: Array.from(new Uint8Array(data)) });
     }
     const closed = event('close');
-    socket.close(1000, 'finished');
+    if (abrupt) socket.terminate();
+    else socket.close(1000, 'finished');
     const close = await closed;
     const response = await fetch(url);
     assert.equal(response.status, 200);
@@ -79,10 +81,13 @@ test('native Python Durable Object WebSocket events match workerd', { timeout: 6
   assert.deepEqual(evidence.local, evidence.reference);
   assert.deepEqual(evidence.local.results, [
     { value: 'hello Python 🐍', attachment: 'python-session' },
-    { value: [0, 1, 127, 128, 255], attachment: 'python-session' },
+    { binary: [0, 1, 127, 128, 255] },
   ]);
   assert.equal(evidence.local.stored.length, 3);
   evidence.restart = await local.restart({ crash: true });
   evidence.afterRestart = await (await fetch(local.url)).json();
   assert.deepEqual(evidence.afterRestart, evidence.local.stored);
+  evidence.abruptReference = await observe(referenceUrl, 'workerd-abrupt', true);
+  evidence.abruptLocal = await observe(local.url, 'celld-abrupt', true);
+  assert.deepEqual(evidence.abruptLocal, evidence.abruptReference);
 });

@@ -1,0 +1,257 @@
+{
+  "timestamp": "2026-09-22T04:59:00.632Z",
+  "workerd": "1.20260922.1",
+  "referenceDate": "2025-06-01",
+  "responses": [],
+  "workerdMessages": [
+    {
+      "value": "hello Python 🐍",
+      "attachment": "python-session"
+    },
+    {
+      "binary": [
+        0,
+        1,
+        127,
+        128,
+        255
+      ]
+    }
+  ],
+  "reference": {
+    "results": [
+      {
+        "value": "hello Python 🐍",
+        "attachment": "python-session"
+      },
+      {
+        "binary": [
+          0,
+          1,
+          127,
+          128,
+          255
+        ]
+      }
+    ],
+    "close": {
+      "code": 1000,
+      "reason": "finished",
+      "clean": true
+    },
+    "stored": [
+      {
+        "kind": "message",
+        "value": "\"hello Python \\ud83d\\udc0d\""
+      },
+      {
+        "kind": "message",
+        "value": "[0, 1, 127, 128, 255]"
+      },
+      {
+        "kind": "close",
+        "value": "{\"code\": 1000, \"reason\": \"finished\", \"clean\": true}"
+      }
+    ]
+  },
+  "celldMessages": [
+    {
+      "value": "hello Python 🐍",
+      "attachment": "python-session"
+    },
+    {
+      "binary": [
+        0,
+        1,
+        127,
+        128,
+        255
+      ]
+    }
+  ],
+  "local": {
+    "results": [
+      {
+        "value": "hello Python 🐍",
+        "attachment": "python-session"
+      },
+      {
+        "binary": [
+          0,
+          1,
+          127,
+          128,
+          255
+        ]
+      }
+    ],
+    "close": {
+      "code": 1000,
+      "reason": "finished",
+      "clean": true
+    },
+    "stored": [
+      {
+        "kind": "message",
+        "value": "\"hello Python \\ud83d\\udc0d\""
+      },
+      {
+        "kind": "message",
+        "value": "[0, 1, 127, 128, 255]"
+      },
+      {
+        "kind": "close",
+        "value": "{\"code\": 1000, \"reason\": \"finished\", \"clean\": true}"
+      }
+    ]
+  },
+  "restart": {
+    "stoppedPids": [
+      73825,
+      73869
+    ],
+    "pid": 74026,
+    "crash": true
+  },
+  "afterRestart": [
+    {
+      "kind": "message",
+      "value": "\"hello Python \\ud83d\\udc0d\""
+    },
+    {
+      "kind": "message",
+      "value": "[0, 1, 127, 128, 255]"
+    },
+    {
+      "kind": "close",
+      "value": "{\"code\": 1000, \"reason\": \"finished\", \"clean\": true}"
+    }
+  ],
+  "workerd-abruptMessages": [
+    {
+      "value": "hello Python 🐍",
+      "attachment": "python-session"
+    },
+    {
+      "binary": [
+        0,
+        1,
+        127,
+        128,
+        255
+      ]
+    }
+  ],
+  "abruptReference": {
+    "results": [
+      {
+        "value": "hello Python 🐍",
+        "attachment": "python-session"
+      },
+      {
+        "binary": [
+          0,
+          1,
+          127,
+          128,
+          255
+        ]
+      }
+    ],
+    "close": {
+      "code": 1006,
+      "reason": "",
+      "clean": false
+    },
+    "stored": [
+      {
+        "kind": "message",
+        "value": "\"hello Python \\ud83d\\udc0d\""
+      },
+      {
+        "kind": "message",
+        "value": "[0, 1, 127, 128, 255]"
+      },
+      {
+        "kind": "close",
+        "value": "{\"code\": 1000, \"reason\": \"finished\", \"clean\": true}"
+      },
+      {
+        "kind": "message",
+        "value": "\"hello Python \\ud83d\\udc0d\""
+      },
+      {
+        "kind": "message",
+        "value": "[0, 1, 127, 128, 255]"
+      },
+      {
+        "kind": "close",
+        "value": "{\"code\": 1006, \"reason\": \"WebSocket disconnected without sending Close frame.\", \"clean\": false}"
+      }
+    ]
+  },
+  "celld-abruptMessages": [
+    {
+      "value": "hello Python 🐍",
+      "attachment": "python-session"
+    },
+    {
+      "binary": [
+        0,
+        1,
+        127,
+        128,
+        255
+      ]
+    }
+  ],
+  "abruptLocal": {
+    "results": [
+      {
+        "value": "hello Python 🐍",
+        "attachment": "python-session"
+      },
+      {
+        "binary": [
+          0,
+          1,
+          127,
+          128,
+          255
+        ]
+      }
+    ],
+    "close": {
+      "code": 1006,
+      "reason": "",
+      "clean": false
+    },
+    "stored": [
+      {
+        "kind": "message",
+        "value": "\"hello Python \\ud83d\\udc0d\""
+      },
+      {
+        "kind": "message",
+        "value": "[0, 1, 127, 128, 255]"
+      },
+      {
+        "kind": "close",
+        "value": "{\"code\": 1000, \"reason\": \"finished\", \"clean\": true}"
+      },
+      {
+        "kind": "message",
+        "value": "\"hello Python \\ud83d\\udc0d\""
+      },
+      {
+        "kind": "message",
+        "value": "[0, 1, 127, 128, 255]"
+      },
+      {
+        "kind": "error",
+        "value": "Error: WebSocket closed abnormally"
+      }
+    ]
+  },
+  "logs": "<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T04:58:52.671772Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld dev\n  Project  /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-PYoRjv/wrangler.json\n  State    /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-PYoRjv/.celld/dev\n  Watch    disabled\n  ● opening the local storage\n  ● building the application\n celld 0.5.1\n───────────────────────────────────────────────\nTotal Upload: 13241.85 KiB / gzip: 5465.51 KiB\nYour Worker has access to the following bindings:\nBinding                    Resource\nenv.COUNTER (Counter)      Durable Object (SQLite)\nBundled python-runtime-probe (1.21 sec)\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T04:58:56.144973Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld listening on 127.0.0.1:60911 (ownership=dev)\ncelld internal listening on 127.0.0.1:60923 (advertise=127.0.0.1:60923)\n  ready  http://127.0.0.1:60911\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T04:59:07.936505Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld dev\n  Project  /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-PYoRjv/wrangler.json\n  State    /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-PYoRjv/.celld/dev\n  Watch    disabled\n  ● opening the local storage\n  ● building the application\n celld 0.5.1\n───────────────────────────────────────────────\nTotal Upload: 13241.85 KiB / gzip: 5465.51 KiB\nYour Worker has access to the following bindings:\nBinding                    Resource\nenv.COUNTER (Counter)      Durable Object (SQLite)\nBundled python-runtime-probe (1.20 sec)\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T04:59:11.360888Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld listening on 127.0.0.1:60911 (ownership=dev)\ncelld internal listening on 127.0.0.1:60944 (advertise=127.0.0.1:60944)\n  ready  http://127.0.0.1:60911\n"
+}

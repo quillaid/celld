@@ -2861,6 +2861,7 @@ pub enum CellJob {
         code: u16,
         reason: String,
         was_clean: bool,
+        is_error: bool,
         reply: tokio::sync::oneshot::Sender<Result<Option<u64>>>,
     },
     Alarm {
@@ -7948,6 +7949,7 @@ fn begin_cell(tc: &mut v8::PinScope, job: CellJob, event_time: i64) -> Begun {
             code,
             reason,
             was_clean,
+            is_error,
             reply,
         } => start_cell_event(tc, &scope, Answer::Ack(reply), None, None, false, |tc| {
             let f = internal_function(tc, "__wsClosed")?;
@@ -7957,6 +7959,7 @@ fn begin_cell(tc: &mut v8::PinScope, job: CellJob, event_time: i64) -> Begun {
                 v8::Number::new(tc, f64::from(code)).into(),
                 v8::String::new(tc, &reason).unwrap().into(),
                 v8::Boolean::new(tc, was_clean).into(),
+                v8::Boolean::new(tc, is_error).into(),
             ];
             let recv = v8::undefined(tc).into();
             f.call(tc, recv, &arguments)

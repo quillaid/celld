@@ -5739,17 +5739,16 @@ __celld.__wsBinary = async (scope, wsId, data) => {
     __endActorEvent(actorEvent);
   }
 };
-__celld.__wsClosed = async (scope, wsId, code, reason, wasClean) => {
+__celld.__wsClosed = async (scope, wsId, code, reason, wasClean, isError) => {
   const actorEvent = __beginActorEvent(scope);
   try {
     const inst = await _readyInstance(scope);
     const socket = inst.__celldState._socket(wsId);
     if (!socket._hibernatable && typeof socket._dispatchClose === "function")
       socket._dispatchClose(code, reason, wasClean);
-    else if (!wasClean && typeof inst.webSocketError === "function")
-      // A hibernatable socket reports an abnormal closure through
-      // webSocketError, which celld listed as a handler name and never
-      // called.
+    else if (isError && typeof inst.webSocketError === "function")
+      // The transport distinguishes an unclean EOF (close event) from an
+      // actual protocol/handler failure (error event).
       await inst.webSocketError(
         socket,
         new Error(reason ? `WebSocket closed abnormally: ${reason}` : "WebSocket closed abnormally"),

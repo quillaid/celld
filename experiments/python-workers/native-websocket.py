@@ -30,8 +30,15 @@ class Counter(DurableObject):
         else:
             value = list(message.to_py())
         self.ctx.storage.sql.exec('INSERT INTO events VALUES (?, ?)', 'message', json.dumps(value))
-        socket.send(json.dumps({'value': value, 'attachment': socket.deserializeAttachment()}))
+        if isinstance(message, str):
+            socket.send(json.dumps({'value': value, 'attachment': socket.deserializeAttachment()}))
+        else:
+            socket.send(message)
 
     async def webSocketClose(self, socket, code, reason, was_clean):
         self.ctx.storage.sql.exec('INSERT INTO events VALUES (?, ?)', 'close', json.dumps({'code': code, 'reason': reason, 'clean': was_clean}))
-        socket.close(code, reason)
+        if code != 1006:
+            socket.close(code, reason)
+
+    async def webSocketError(self, socket, error):
+        self.ctx.storage.sql.exec('INSERT INTO events VALUES (?, ?)', 'error', str(error))

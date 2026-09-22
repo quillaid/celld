@@ -89,6 +89,18 @@ async fn dispatch_ws_closed(
     reason: String,
     was_clean: bool,
 ) -> anyhow::Result<()> {
+    dispatch_ws_terminated(app, scope, ws_id, code, reason, was_clean, !was_clean).await
+}
+
+async fn dispatch_ws_terminated(
+    app: &AppHandle,
+    scope: &str,
+    ws_id: u64,
+    code: u16,
+    reason: String,
+    was_clean: bool,
+    is_error: bool,
+) -> anyhow::Result<()> {
     let Routed { request, route } = app
         .websocket_request(scope.to_string(), ws_id)
         .await
@@ -99,7 +111,7 @@ async fn dispatch_ws_closed(
         .runtime
         .as_ref()
         .context("no cell runtime")?
-        .ws_closed(scope.to_string(), ws_id, code, reason, was_clean)
+        .ws_terminated(scope.to_string(), ws_id, code, reason, was_clean, is_error)
         .await;
     gate_lifecycle_write(app, request, scope, &answer).await;
     answer.map(|_| ())
@@ -562,6 +574,7 @@ enum CloseInitiator {
 struct PumpClose {
     state: CloseState,
     initiator: CloseInitiator,
+    is_error: bool,
 }
 
 async fn write_ws_out<S>(ws: &SocketWriter<S>, out: celld::js::WsOut) -> bool
@@ -639,6 +652,7 @@ where
     let mut close = PumpClose {
         state: (1006, String::new(), false),
         initiator: CloseInitiator::Transport,
+        is_error: true,
     };
     let (stop_writer, mut stopped) = tokio::sync::oneshot::channel::<()>();
     {
@@ -660,8 +674,20 @@ where
 
         let read = async {
             loop {
-                let Ok(frame) = reader.read_frame(&mut obligated).await else {
-                    return None;
+                let frame = match reader.read_frame(&mut obligated).await {
+                    Ok(frame) => frame,
+                    Err(fastwebsockets::WebSocketError::UnexpectedEOF) => {
+                        return Some(PumpClose {
+                            state: (
+                                1006,
+                                "WebSocket disconnected without sending Close frame.".into(),
+                                false,
+                            ),
+                            initiator: CloseInitiator::Transport,
+                            is_error: false,
+                        });
+                    }
+                    Err(_) => return None,
                 };
                 let delivered = match frame.opcode {
                     OpCode::Text => {
@@ -677,6 +703,7 @@ where
                         return Some(PumpClose {
                             state: websocket_close_details(&frame.payload),
                             initiator: CloseInitiator::Peer,
+                            is_error: false,
                         });
                     }
                     _ => Ok(()),
@@ -704,6 +731,7 @@ where
                                     (1006, String::new(), false)
                                 },
                                 initiator: CloseInitiator::Application,
+                                is_error: !outbound_close_is_clean,
                             }),
                             _ => None,
                         };
@@ -790,13 +818,14 @@ pub(super) async fn websocket_task<S>(
         })
         .await
     };
-    if let Err(error) = dispatch_ws_closed(
+    if let Err(error) = dispatch_ws_terminated(
         &app,
         &target.scope,
         target.id,
         close.state.0,
         close.state.1.clone(),
         close.state.2,
+        close.is_error,
     )
     .await
     {
@@ -1128,4 +1157,48 @@ fn emit_websocket_connection_timing(
 #[cfg(all(test, celld_internal_tests))]
 mod socket_cancel_private {
     include!(env!("CELLD_CONFORMANCE_SOCKET_CANCEL_TESTS"));
+}
+
+#[cfg(test)]
+mod python_websocket_transport_tests {
+    use super::*;
+    use tokio::io::AsyncWriteExt;
+
+    async fn termination(bytes: &[u8]) -> PumpClose {
+        let (server, mut peer) = tokio::io::duplex(64);
+        peer.write_all(bytes).await.unwrap();
+        peer.shutdown().await.unwrap();
+        let socket =
+            fastwebsockets::WebSocket::after_handshake(server, fastwebsockets::Role::Server);
+        let (_sender, mut outputs) = mpsc::unbounded_channel();
+        let (closed, _) = tokio::time::timeout(
+            std::time::Duration::from_secs(2),
+            pump_cell_socket(socket, &mut outputs, false, |_| async { Ok(()) }),
+        )
+        .await
+        .unwrap();
+        closed
+    }
+
+    #[tokio::test]
+    async fn eof_is_an_unclean_close_but_invalid_frames_remain_errors() {
+        let eof = termination(&[]).await;
+        assert_eq!(
+            eof.state,
+            (
+                1006,
+                "WebSocket disconnected without sending Close frame.".into(),
+                false
+            )
+        );
+        assert_eq!(eof.initiator, CloseInitiator::Transport);
+        assert!(!eof.is_error);
+
+        // A masked empty text frame with an illegal RSV1 bit. This must not
+        // be mistaken for the EOF immediately following the invalid frame.
+        let invalid = termination(&[0xc1, 0x80, 0, 0, 0, 0]).await;
+        assert!(invalid.is_error);
+        assert_eq!(invalid.state.0, 1006);
+        assert!(!invalid.state.2);
+    }
 }

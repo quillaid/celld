@@ -245,12 +245,15 @@ RPC properties, returned capabilities, cross-node RPC and proxy reclamation
 remain unqualified. Python underscores are not an access-control boundary.
 
 `npm run test:websocket` compares native Python Durable Object WebSocket
-upgrades, incoming Unicode text and binary frames, async message handling,
-serialized attachments, and clean-close code/reason/status with pinned workerd.
+upgrades, Unicode text, incoming/outgoing binary frames, async message handling,
+serialized attachments, clean-close code/reason/status, and abrupt EOF disconnects
+with pinned workerd.
 SQL records acknowledged through socket replies survive a celld process crash.
 The fixture uses `acceptWebSocket`; it does not yet prove eviction with a live
-connection, attachment restoration after hibernation, binary outgoing frames,
-abnormal-close/error behavior, outbound sockets or cross-node forwarding.
+connection, attachment restoration after hibernation, protocol-error callback
+parity, outbound sockets or cross-node forwarding. An EOF without a close frame
+invokes the close handler with code 1006; it is distinct from a protocol error.
+The host transport unit test preserves that distinction for malformed frames.
 Lifecycle event arguments bypass SDK RPC conversion to preserve their FFI types.
 The pair contract test also checks `Object.values(new WebSocketPair())` has two
 entries: celld previously included an enumerable `length` property.

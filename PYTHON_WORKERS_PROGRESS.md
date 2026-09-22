@@ -712,3 +712,30 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   native-websocket/websocket-pair failure and passing JSON, full-suite log, and
   binary hash under evidence/. Diff checks pass. Goal remains active; all original
   unqualified lifecycle/distribution/SDK requirements remain in scope.
+
+## Binary WebSocket replies and abrupt disconnects (2026-09-21)
+
+- Previous turn was verified progress (7a4188c, 30 passing records). Extended the
+  same Python fixture to return actual binary frames, with the client verifying
+  byte-for-byte payloads rather than JSON representations. Binary output passes.
+- Abrupt TCP termination exposed a host mismatch: workerd invokes on_webSocketClose
+  with code 1006, reason "WebSocket disconnected without sending Close frame.",
+  and wasClean=false. Celld instead invoked webSocketError. Retained the failed
+  differential observation in evidence/2026-09-21-websocket-abrupt-failure.json.
+- The reader previously discarded its error and collapsed all unclean exits.
+  It now classifies fastwebsockets UnexpectedEOF as an unclean close, and carries
+  an explicit is_error bit through PumpClose, the cell event and JS dispatch.
+  Other existing failure paths keep their prior classification; no broad claim
+  of protocol-error or outbound-socket compatibility. Close reasons are data,
+  not used to choose the event handler.
+- Focused Python comparison now passes binary output, clean close and abrupt EOF
+  on both engines, alongside SQL persistence after a process crash. A host duplex
+  transport test confirms EOF is a close while an illegal RSV1 frame remains an
+  error even when immediately followed by EOF. Test passes.
+- Found the existing internal /evict/<scope> endpoint for the next live-socket
+  residency probe. No forced eviction has been qualified yet. Full original
+  hibernation/ownership/distribution/resource/SDK requirements remain open.
+- Rebuilt celld. All 30 full-suite records pass; the focused transport unit test
+  also passes. Evidence retains failure/passing observations, focused/full-suite
+  logs, unit output and the binary hash under date-prefixed websocket-abrupt and
+  websocket-transport names. Diff checks pass. Goal active; no public changes.
