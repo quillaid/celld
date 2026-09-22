@@ -18,7 +18,7 @@ class Default(WorkerEntrypoint):
             self.body = body
             await asyncio.sleep(0.01)
             return Response(self.body)
-        if body == 'stream':
+        if body in ('stream', 'cancel-stream'):
             from js import TransformStream, TextEncoder
             from workers import fetch
             stream = TransformStream.new()
@@ -26,14 +26,33 @@ class Default(WorkerEntrypoint):
             encoder = TextEncoder.new()
             release_url = request.headers.get('x-release-url')
             async def produce():
+                outcome = {'outcome': 'completed', 'writes': 0, 'stage': 'prefix'}
                 try:
                     await writer.write(encoder.encode('first\n'))
+                    outcome['stage'] = 'release'
                     released = await fetch(release_url)
                     await released.text()
-                    await writer.write(encoder.encode('second\n'))
+                    outcome['stage'] = 'writes'
+                    if body == 'cancel-stream':
+                        chunk = encoder.encode('x' * 65536)
+                        for _ in range(256):
+                            await writer.write(chunk)
+                            outcome['writes'] += 1
+                    else:
+                        await writer.write(encoder.encode('second\n'))
+                    outcome['stage'] = 'close'
                     await writer.close()
+                except Exception as error:
+                    if body != 'cancel-stream':
+                        raise
+                    outcome['outcome'] = 'rejected'
+                    outcome['error'] = str(error)
                 finally:
                     writer.releaseLock()
+                    if body == 'cancel-stream':
+                        import json
+                        reported = await fetch(release_url + '/done', method='POST', body=json.dumps(outcome))
+                        await reported.text()
             self.ctx.waitUntil(produce())
             return Response(stream.readable, headers={'content-type': 'text/plain'})
         if body == 'background':

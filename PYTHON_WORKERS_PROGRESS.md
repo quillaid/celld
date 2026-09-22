@@ -453,3 +453,25 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   date-prefixed sdk-upload-passing.json, sdk-upload-test.txt,
   sdk-upload-full-suite.txt and sdk-upload-build.sha256 under evidence/.
   No fleet or public changes; the goal remains active.
+
+## SDK response cancellation checkpoint (2026-09-21)
+
+- The real HTTP client reads a prefix, aborts its connection, then releases the
+  Python TransformStream producer's held HTTP gate. The producer must observe
+  rejected writes before completing a bounded 16 MiB payload. Its finally block
+  releases the writer and reports through a separate HTTP request.
+- Both celld and the pinned historical workerd reference pass. Stage evidence
+  distinguishes write rejection from a failure fetching the release gate.
+  Error strings and accepted write counts differ; those are recorded, not
+  asserted as identical. Both engines serve a normal request afterward.
+- The final focused SDK suite passes, including prior upload/response streaming,
+  exception, concurrency, SDK identity, binary and background-work assertions.
+  Evidence: date-prefixed sdk-cancellation-passing.json and
+  sdk-cancellation-test.txt under experiments/python-workers/evidence/.
+- No production runtime change was needed. The binary remains the one qualified
+  by the previous 23-record full suite; unrelated tests were not repeated for
+  this fixture-only checkpoint. Diff checks pass.
+- This proves cancellation of a waitUntil-retained response producer and its
+  Python finally path, not proxy reclamation, RSS bounds, upload cancellation,
+  or cancellation without waitUntil. Those and the original remaining package,
+  compatibility, event/binding and multi-node requirements remain open.

@@ -255,4 +255,14 @@ small Content-Length request covers buffered bodies. Celld's internal body
 streams now expose the standard ReadableStream constructor, which the unchanged
 SDK checks when accepting a response body. Internal read and tee implementations
 are preserved. Both upload cases pass against the historical reference envelope
-described above; cancellation and sustained upload resource limits remain open.
+described above; upload cancellation and sustained upload resource limits remain
+open.
+
+Response cancellation coverage reads the first bytes, aborts the actual HTTP
+client, then releases the Python producer's gate. Its subsequent TransformStream
+writes must reject before completing the bounded payload, and its finally block
+must release the writer and report completion through a separate HTTP request.
+Both engines then serve an ordinary follow-up request. Exact error text and the
+number of writes accepted before disconnect propagation differ; this check
+asserts the shared cancellation behavior. It does not measure proxy reclamation,
+RSS, upload cancellation, or cancellation without waitUntil keeping work alive.

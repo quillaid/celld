@@ -100,6 +100,15 @@ test('released Workers SDK HTTP, streaming, and background work match workerd', 
   assert.equal(value, 'saved');
   const gates = new Map();
   const server = createServer((request, response) => {
+    if (request.url.endsWith('/done')) {
+      const gate = gates.get(request.url.slice(0, -5));
+      if (!gate?.finished) { response.writeHead(404).end(); return; }
+      let body = '';
+      request.setEncoding('utf8');
+      request.on('data', chunk => { body += chunk; });
+      request.on('end', () => { response.end('recorded'); gate.finished(JSON.parse(body)); });
+      return;
+    }
     const gate = gates.get(request.url);
     if (!gate) { response.writeHead(404).end(); return; }
     gate.response = response;
@@ -219,5 +228,53 @@ test('released Workers SDK HTTP, streaming, and background work match workerd', 
     assert.equal(response.status, 200, body);
     assert.equal(body, 'buffered upload');
   }
+
+  evidence.cancellation = [];
+  async function checkCancellation(engine, url) {
+    const result = { engine, stage: 'request' };
+    evidence.cancellation.push(result);
+    const gate = {};
+    const arrived = new Promise(resolve => { gate.arrived = resolve; });
+    const finished = new Promise(resolve => { gate.finished = resolve; });
+    const path = '/cancel-' + engine;
+    gates.set(path, gate);
+    const controller = new AbortController();
+    const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(5000)]);
+    try {
+      const response = await fetch(url, { method: 'POST', body: 'cancel-stream', headers: { 'accept-encoding': 'identity', 'x-release-url': `http://127.0.0.1:${server.address().port}${path}` }, signal });
+      assert.equal(response.status, 200);
+      const reader = response.body.getReader();
+      const prefix = [];
+      let length = 0;
+      while (length < 6) {
+        const item = await reader.read();
+        assert.equal(item.done, false);
+        prefix.push(item.value);
+        length += item.value.byteLength;
+      }
+      assert.equal(Buffer.concat(prefix).toString(), 'first\n');
+      await arrived;
+      result.stage = 'client-abort';
+      controller.abort();
+      await reader.cancel().catch(() => {});
+      gate.response.end('release');
+      let timer;
+      try {
+        result.producer = await Promise.race([finished, new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('Python producer did not finish after client abort')), 5000); })]);
+      } finally { clearTimeout(timer); }
+      result.stage = 'complete';
+      assert.equal(result.producer.outcome, 'rejected');
+      assert.equal(result.producer.stage, 'writes');
+      assert.ok(result.producer.writes < 256);
+    } catch (error) { result.error = String(error); throw error; }
+  }
+  const cancellations = await Promise.allSettled([
+    checkCancellation('celld', local.url),
+    checkCancellation('workerd', await reference.ready),
+  ]);
+  assert.ok(cancellations.every(result => result.status === 'fulfilled'), JSON.stringify(evidence.cancellation));
+  const afterCancellation = await call('after-cancellation');
+  assert.equal(afterCancellation.status, 201);
+  assert.deepEqual(await afterCancellation.json(), { body: 'after-cancellation', method: 'POST' });
 
 });
