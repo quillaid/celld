@@ -40,26 +40,16 @@ Pinned upstream Pyodide 0.28.3 runs through real celld HTTP, bindings, and a fix
 
 ## Next action
 
-1. Extend the now-working Python Durable Object fixture to alarms, transactions,
-   restart, and remote durability/failure gates. Focused abort and input-gate
-   recovery now pass, but those results prove only the tested local lifecycle.
-   Add reference fixtures and audit the real Workers SDK before treating the
-   current custom class bridge as a supported programming interface.
-   Inspect pool placement/retirement and Dynamic Worker ownership. V8 clears the
-   isolate's termination flag, but Python's asyncio/native frames may still be
-   abandoned. The fixture's post-termination diagnostic now confirms a stale
-   `asyncio.tasks._current_tasks` entry: `PyodideTask pending`, with `handle`
-   still shown as running at the infinite loop. Synchronous Python evaluation
-   still works; the next async handler does not settle. This directly identifies
-   leftover scheduler state, without proving all interpreter state is safe.
-   Cloudflare SDK `DurableObjectContext.abort` similarly documents
-   that immediate V8 unwinding can leave Python task state behind. Preserve DO
-   durability/input/output gates under whole-isolate invalidation. Do not clear
-   `_current_tasks`: native/Wasm state may also have been interrupted. The host
-   needs a terminal-runtime contract before admitting another guest invocation,
-   including already-suspended work, rather than guest-controlled health checks.
-2. Measure remote I/O cancellation, process RSS, proxy cleanup, and eviction;
-   integrate the audited Workers SDK entrypoint bridge and native packaging.
+1. Audit and integrate the actual Workers SDK entrypoints and package contract;
+   add native Python build/deploy/dev inputs. The fixture bridge is not a
+   supported programming interface. Pin a reference contract before extending it.
+2. Extend lifecycle qualification to alarm retries, remote I/O cancellation,
+   process RSS/proxy bounds, eviction, and remote acknowledged-write durability
+   with ownership changes. Local SQL, basic alarms, crash restart, and focused
+   abort/input-gate recovery now pass; they prove only those tested paths.
+3. Extend RPC, streaming, WebSocket, and binding coverage against the plan's
+   compatibility matrix. Keep whole-isolate invalidation after hard termination;
+   never attempt recovery by clearing Python scheduler state alone.
 
 ## Goal continuation results (2026-09-21)
 
@@ -193,3 +183,34 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   process restart, remote acknowledged-write durability, multi-node ownership,
   memory/proxy bounds, full event/binding matrix, and native packaging/dev flow.
   The new local recovery proof does not establish those requirements.
+
+## Transactions, alarms, and process crash checkpoint (2026-09-21)
+
+- Python SQL rollback exposed an existing host incompatibility: public
+  transactionSync passed a transaction view to a callback that takes no arguments.
+  Corrected that contract and kept internal Workflow transaction views private.
+- A pinned workerd comparison then exposed nested root transactionSync calls
+  attempting a second top-level transaction. The host now tracks synchronous
+  transaction views per I/O context, using savepoints for nested calls. Both
+  engines return zero callback arguments, return value 42, and only the outer
+  inserted row after an inner rollback. Both initial failures are retained.
+- Existing JavaScript Workflow regression exercises waitForEvent/sendEvent and
+  a persisted step to completion; it covers the internal transaction-view users.
+  This is not a Python Workflow compatibility claim.
+- Actual Python Durable Objects pass intentional rollback, ten concurrent
+  increments, and alarm delivery. After eleven increments and another alarm are
+  acknowledged, the test kills the supervisor and its separately supervised node,
+  restarts on identical local storage, and verifies all values and the pending
+  alarm. Interpreter and Python instance IDs both change.
+- The first restart probe failed because celld dev's node has a separate process
+  group. The harness now captures only descendants of its own live supervisor,
+  kills both on a crash, waits for exit, and then reuses its store/listener. This
+  harness failure is retained separately from runtime failures.
+- Full integration suite: 17 test records passed, zero failures. Rust formatting
+  and diff checks passed. Tested debug binary SHA-256: `23282b741d61489c41a880dfcc0a8492d17b05d091c5d6d4fe6b8741ae4f0292`.
+  Evidence files use the date prefix with persistence-passing.json,
+  transaction-contract-passing.json, persistence-full-suite.txt, and
+  persistence-build.sha256 under experiments/python-workers/evidence/.
+- This qualifies persistent local dev storage only. Remote durability, multi-node
+  ownership, alarm retries, SDK/native packaging, and resource/transport bounds
+  remain open; the goal is active.

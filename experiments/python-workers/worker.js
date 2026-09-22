@@ -70,13 +70,19 @@ export class PythonCounter {
     });
   }
   async fetch(request) {
+    return this.invoke('fetch', request);
+  }
+  async alarm(info) {
+    return this.invoke('alarm', info);
+  }
+  async invoke(method, argument) {
     const instance = await this.instance;
-    const handler = instance.fetch;
+    const handler = instance[method];
     try {
-      const future = handler(request);
+      const future = handler(argument);
       try {
         const response = await future;
-        response.headers.set('x-python-instance-id', instanceId);
+        if (response instanceof Response) response.headers.set('x-python-instance-id', instanceId);
         return response;
       } finally { future.destroy(); }
     } finally { handler.destroy(); }

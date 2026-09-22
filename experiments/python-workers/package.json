@@ -4,11 +4,13 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
-    "test": "node --test smoke.test.mjs async-wasm.test.mjs resources.test.mjs pool-lifecycle.test.mjs durable.test.mjs",
+    "test": "node --test smoke.test.mjs async-wasm.test.mjs resources.test.mjs pool-lifecycle.test.mjs durable.test.mjs persistence.test.mjs transaction-contract.test.mjs workflow-regression.test.mjs",
     "test:durable": "node --test durable.test.mjs",
     "test:smoke": "node --test smoke.test.mjs",
     "test:wasm": "node --test async-wasm.test.mjs",
-    "test:resources": "node --test resources.test.mjs"
+    "test:resources": "node --test resources.test.mjs",
+    "test:persistence": "node --test persistence.test.mjs",
+    "test:transactions": "node --test transaction-contract.test.mjs workflow-regression.test.mjs"
   },
   "dependencies": {
     "pyodide": "0.28.3"

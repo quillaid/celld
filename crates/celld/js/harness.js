@@ -1742,12 +1742,30 @@ class DurableObjectStorage {
     control.rolledBack = true;
   }
   transactionSync(f) {
+    // The public synchronous callback takes no arguments. Internal workflow
+    // operations use a transaction view, but passing it to user callbacks
+    // breaks Python's strict arity (JS callbacks silently ignored it).
+    this._assertTransactionActive("transactionSync");
+    const root = this._transactionRoot;
+    const owner = String(__io_context_id());
+    const active = root._synchronousTransaction;
+    const storage = active?.owner === owner ? active.view : this;
+    return storage._transactionSyncWithView((view) => {
+      // Public callbacks access the root storage again for nested calls.
+      // Keep their synchronous savepoint stack distinct from async ownership.
+      const previous = root._synchronousTransaction;
+      root._synchronousTransaction = { owner, view };
+      try { return f(); }
+      finally { root._synchronousTransaction = previous; }
+    });
+  }
+  _transactionSyncWithView(f) {
     this._assertTransactionActive("transactionSync");
     const root = this._transactionRoot;
     const owner = String(__io_context_id());
     if (this._transactionDepth === 0 && owner !== "" &&
         root._transactionOwner === owner && root._activeTransaction !== null)
-      return root._activeTransaction.transactionSync(f);
+      return root._activeTransaction._transactionSyncWithView(f);
     const savepoint = this._transactionStart();
     const control = this._newTransactionControl(savepoint);
     try {
@@ -9660,7 +9678,7 @@ const __wfMakeStep = (driver) => {
         // arrival order -- the zero-padded sequence key makes list order
         // arrival order -- so an event sent before the step is reached is
         // buffered, not lost.
-        const consumed = storage.transactionSync((transaction) => {
+        const consumed = storage._transactionSyncWithView((transaction) => {
           const current = __wfKindCheck(transaction.kv.get(key), "event", name);
           if (current !== undefined && current.status === "completed") {
             return { value: current.value };
@@ -9712,7 +9730,7 @@ const __WorkflowCell = (() => {
     }
   }
   const transactionSync = (storage, callback) =>
-    storage.transactionSync((transaction) =>
+    storage._transactionSyncWithView((transaction) =>
       callback(new StorageTransaction(storage, transaction))
     );
   const clearInstance = (transaction) => {

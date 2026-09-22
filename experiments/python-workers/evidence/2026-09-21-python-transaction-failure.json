@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-09-22T03:13:38.692Z",
+  "storage": "celld dev persistent local object store",
+  "responses": [
+    {
+      "operation": "inc",
+      "status": 200,
+      "text": "{\"value\": 1, \"objectInstance\": \"470df3c0-f03e-43bd-9d89-951817d9cf7c\", \"fires\": 0, \"alarmAt\": null}",
+      "interpreter": "a5553def-ff52-4c0e-878d-c796de964ca9"
+    },
+    {
+      "operation": "rollback",
+      "status": 500,
+      "text": "Worker failed: rejected: Error: rejected: PythonError: Traceback (most recent call last):\n  File \"<exec>\", line 32, in fetch\n  File \"worker.js\", line 19395, in new_error\nTypeError: Counter.fetch.<locals>.change_and_fail() takes 0 positional arguments but 1 was given\n [File \"<exec>\", line 32, in fetch <- File \"worker.js\", line 19395, in new_error <- TypeError: Counter.fetch.<locals>.change_and_fail() takes 0 positional arguments but 1 was given] [File \"<exec>\", line 32, in fetch <- File \"worker.js\", line 19395, in new_error <- TypeError: Counter.fetch.<locals>.change_and_fail() takes 0 positional arguments but 1 was given]",
+      "interpreter": null
+    }
+  ]
+}

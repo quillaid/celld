@@ -67,7 +67,19 @@ failures are retained. The host now reports unusable heaps to the decision core,
 which reuses celld's bounded runtime-swap path at the same ownership epoch.
 Host input-gate claims retire without invoking guest cleanup. Both counters'
 acknowledged values remain readable after recovery. These local tests do not
-qualify alarms, process restart, remote durability, or transport cancellation.
+qualify remote durability or transport cancellation.
+
+`npm run test:persistence` verifies Python SQL rollback, ten concurrent increments,
+alarm delivery, and recovery of eleven acknowledged increments plus a pending
+alarm after killing the test supervisor and its separately supervised node.
+Restart uses exactly the same persistent local development store. Both Python
+instance and interpreter identities change. This does not qualify remote object
+storage, multi-node ownership transfer, or alarm retry behavior.
+
+`npm run test:transactions` compares zero-argument callbacks and nested rollback
+against pinned workerd and checks existing Workflow event consumption. Python's
+strict callback arity exposed the host's extra callback argument; the host now
+also creates savepoints for nested calls through the public root storage object.
 
 To run this full suite, build at the repository root with:
 

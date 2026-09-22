@@ -1,0 +1,22 @@
+{
+  "timestamp": "2026-09-22T03:22:13.865Z",
+  "workerd": "1.20260922.1",
+  "celld": {
+    "argumentsSeen": 0,
+    "value": 42,
+    "rows": [
+      {
+        "value": 1
+      }
+    ]
+  },
+  "reference": {
+    "argumentsSeen": 0,
+    "value": 42,
+    "rows": [
+      {
+        "value": 1
+      }
+    ]
+  }
+}

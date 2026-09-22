@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-09-22T03:16:58.060Z",
+  "workerd": "1.20260922.1",
+  "celld": {
+    "status": 500,
+    "text": "Worker failed: rejected: Error: rejected: Error: storage.transaction: cannot start a transaction within a transaction [at DurableObjectStorage._transactionStart (<anonymous>:1705:5) <- at DurableObjectStorage._transactionSyncWithView (<anonymous>:1757:28) <- at DurableObjectStorage.transactionSync (<anonymous>:1748:17)]"
+  },
+  "reference": {
+    "status": 200,
+    "text": "{\"argumentsSeen\":0,\"value\":42,\"rows\":[{\"value\":1}]}"
+  }
+}

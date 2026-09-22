@@ -1,0 +1,109 @@
+{
+  "timestamp": "2026-09-22T03:17:29.923Z",
+  "storage": "celld dev persistent local object store",
+  "responses": [
+    {
+      "operation": "inc",
+      "status": 200,
+      "text": "{\"value\": 1, \"objectInstance\": \"af98def4-e3a9-482a-b46e-d1a72a848f5c\", \"fires\": 0, \"alarmAt\": null}",
+      "interpreter": "7546e9f7-fd73-40c1-a326-68670a87b5ae"
+    },
+    {
+      "operation": "rollback",
+      "status": 500,
+      "text": "Worker failed: rejected: Error: rejected: PythonError: Traceback (most recent call last):\n  File \"<exec>\", line 32, in fetch\n  File \"worker.js\", line 19395, in new_error\n  File \"<exec>\", line 29, in change_and_fail\nValueError: intentional transaction rollback\n [File \"<exec>\", line 32, in fetch <- File \"worker.js\", line 19395, in new_error <- File \"<exec>\", line 29, in change_and_fail] [File \"<exec>\", line 32, in fetch <- File \"worker.js\", line 19395, in new_error <- File \"<exec>\", line 29, in change_and_fail]",
+      "interpreter": null
+    },
+    {
+      "operation": "read",
+      "status": 200,
+      "text": "{\"value\": 1, \"objectInstance\": \"af98def4-e3a9-482a-b46e-d1a72a848f5c\", \"fires\": 0, \"alarmAt\": null}",
+      "interpreter": "7546e9f7-fd73-40c1-a326-68670a87b5ae"
+    },
+    {
+      "operation": "inc",
+      "status": 200,
+      "text": "{\"value\": 2, \"objectInstance\": \"af98def4-e3a9-482a-b46e-d1a72a848f5c\", \"fires\": 0, \"alarmAt\": null}",
+      "interpreter": "7546e9f7-fd73-40c1-a326-68670a87b5ae"
+    },
+    {
+      "operation": "inc",
+      "status": 200,
+      "text": "{\"value\": 6, \"objectInstance\": \"af98def4-e3a9-482a-b46e-d1a72a848f5c\", \"fires\": 0, \"alarmAt\": null}",
+      "interpreter": "7546e9f7-fd73-40c1-a326-68670a87b5ae"
+    },
+    {
+      "operation": "inc",
+      "status": 200,
+      "text": "{\"value\": 5, \"objectInstance\": \"af98def4-e3a9-482a-b46e-d1a72a848f5c\", \"fires\": 0, \"alarmAt\": null}",
+      "interpreter": "7546e9f7-fd73-40c1-a326-68670a87b5ae"
+    },
+    {
+      "operation": "inc",
+      "status": 200,
+      "text": "{\"value\": 4, \"objectInstance\": \"af98def4-e3a9-482a-b46e-d1a72a848f5c\", \"fires\": 0, \"alarmAt\": null}",
+      "interpreter": "7546e9f7-fd73-40c1-a326-68670a87b5ae"
+    },
+    {
+      "operation": "inc",
+      "status": 200,
+      "text": "{\"value\": 7, \"objectInstance\": \"af98def4-e3a9-482a-b46e-d1a72a848f5c\", \"fires\": 0, \"alarmAt\": null}",
+      "interpreter": "7546e9f7-fd73-40c1-a326-68670a87b5ae"
+    },
+    {
+      "operation": "inc",
+      "status": 200,
+      "text": "{\"value\": 3, \"objectInstance\": \"af98def4-e3a9-482a-b46e-d1a72a848f5c\", \"fires\": 0, \"alarmAt\": null}",
+      "interpreter": "7546e9f7-fd73-40c1-a326-68670a87b5ae"
+    },
+    {
+      "operation": "inc",
+      "status": 200,
+      "text": "{\"value\": 9, \"objectInstance\": \"af98def4-e3a9-482a-b46e-d1a72a848f5c\", \"fires\": 0, \"alarmAt\": null}",
+      "interpreter": "7546e9f7-fd73-40c1-a326-68670a87b5ae"
+    },
+    {
+      "operation": "inc",
+      "status": 200,
+      "text": "{\"value\": 8, \"objectInstance\": \"af98def4-e3a9-482a-b46e-d1a72a848f5c\", \"fires\": 0, \"alarmAt\": null}",
+      "interpreter": "7546e9f7-fd73-40c1-a326-68670a87b5ae"
+    },
+    {
+      "operation": "inc",
+      "status": 200,
+      "text": "{\"value\": 10, \"objectInstance\": \"af98def4-e3a9-482a-b46e-d1a72a848f5c\", \"fires\": 0, \"alarmAt\": null}",
+      "interpreter": "7546e9f7-fd73-40c1-a326-68670a87b5ae"
+    },
+    {
+      "operation": "inc",
+      "status": 200,
+      "text": "{\"value\": 11, \"objectInstance\": \"af98def4-e3a9-482a-b46e-d1a72a848f5c\", \"fires\": 0, \"alarmAt\": null}",
+      "interpreter": "7546e9f7-fd73-40c1-a326-68670a87b5ae"
+    },
+    {
+      "operation": "arm",
+      "status": 200,
+      "text": "{\"value\": 11, \"objectInstance\": \"af98def4-e3a9-482a-b46e-d1a72a848f5c\", \"fires\": 0, \"alarmAt\": 1790047051032}",
+      "interpreter": "7546e9f7-fd73-40c1-a326-68670a87b5ae"
+    },
+    {
+      "operation": "read",
+      "status": 200,
+      "text": "{\"value\": 11, \"objectInstance\": \"af98def4-e3a9-482a-b46e-d1a72a848f5c\", \"fires\": 0, \"alarmAt\": 1790047051032}",
+      "interpreter": "7546e9f7-fd73-40c1-a326-68670a87b5ae"
+    },
+    {
+      "operation": "read",
+      "status": 200,
+      "text": "{\"value\": 11, \"objectInstance\": \"af98def4-e3a9-482a-b46e-d1a72a848f5c\", \"fires\": 1, \"alarmAt\": null}",
+      "interpreter": "7546e9f7-fd73-40c1-a326-68670a87b5ae"
+    },
+    {
+      "operation": "arm",
+      "status": 200,
+      "text": "{\"value\": 11, \"objectInstance\": \"af98def4-e3a9-482a-b46e-d1a72a848f5c\", \"fires\": 1, \"alarmAt\": 1790047056058}",
+      "interpreter": "7546e9f7-fd73-40c1-a326-68670a87b5ae"
+    }
+  ],
+  "preCrashPid": 99295
+}
