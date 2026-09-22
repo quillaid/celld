@@ -1,0 +1,294 @@
+{
+  "timestamp": "2026-09-22T03:39:12.393Z",
+  "observations": [
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    }
+  ],
+  "logs": "<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T03:39:04.532490Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld dev\n  Project  /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-T7rFWx/wrangler.json\n  State    /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-T7rFWx/.celld/dev\n  ● opening the local storage\n  ● building the application\n celld 0.5.1\n───────────────────────────────────────────────\nTotal Upload: 13236.36 KiB / gzip: 5464.31 KiB\nYour Worker has no bindings.\nBundled python-runtime-probe (1.15 sec)\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T03:39:07.921834Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld listening on 127.0.0.1:50272 (ownership=dev)\ncelld internal listening on 127.0.0.1:50304 (advertise=127.0.0.1:50304)\n  ready  http://127.0.0.1:50272\n  ● change detected; rebuilding the application\n celld 0.5.1\n───────────────────────────────────────────────\nTotal Upload: 13236.36 KiB / gzip: 5464.30 KiB\nYour Worker has no bindings.\nBundled python-runtime-probe (1.18 sec)\n  ● restarting the application\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T03:39:17.597939Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld listening on 127.0.0.1:50272 (ownership=dev)\ncelld internal listening on 127.0.0.1:50460 (advertise=127.0.0.1:50460)\n  ready  http://127.0.0.1:50272\n  ● change detected; rebuilding the application\n  error reload failed: Python build failed: Verified workers-runtime-sdk 1.9.0: 36209f94984686264db4e1fd410d51ac3460f2a2ab3cc29869699b975e1e1331\nTraceback (most recent call last):\n  File \"/lib/python313.zip/_pyodide/_base.py\", line 523, in eval_code\n    .run(globals, locals)\n     ~~~^^^^^^^^^^^^^^^^^\n  File \"/lib/python313.zip/_pyodide/_base.py\", line 357, in run\n    coroutine = eval(self.code, globals, locals)\n  File \"<exec>\", line 3, in <module>\n  File \"greeting.py\", line 1\n    value = (\n            ^\nSyntaxError: '(' was never closed\n\n\n  ● change detected; rebuilding the application\n celld 0.5.1\n───────────────────────────────────────────────\nTotal Upload: 13236.36 KiB / gzip: 5464.31 KiB\nYour Worker has no bindings.\nBundled python-runtime-probe (1.08 sec)\n  ● restarting the application\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T03:39:26.789530Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld listening on 127.0.0.1:50272 (ownership=dev)\ncelld internal listening on 127.0.0.1:50547 (advertise=127.0.0.1:50547)\n  ready  http://127.0.0.1:50272\n"
+}

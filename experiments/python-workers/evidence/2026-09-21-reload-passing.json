@@ -1,0 +1,22 @@
+{
+  "timestamp": "2026-09-22T03:40:06.527Z",
+  "observations": [
+    {
+      "status": 200,
+      "text": "first"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "second"
+    },
+    {
+      "status": 200,
+      "text": "third"
+    }
+  ],
+  "logs": "<jemalloc>: option background_thread currently supports pthread only\ncelld dev\n  Project  /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-xzNcKJ/wrangler.json\n  State    /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-xzNcKJ/.celld/dev\n  ● opening the local storage\n2026-09-22T03:39:58.482351Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\n  ● building the application\n celld 0.5.1\n───────────────────────────────────────────────\nTotal Upload: 13236.36 KiB / gzip: 5464.31 KiB\nYour Worker has no bindings.\nBundled python-runtime-probe (1.25 sec)\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T03:40:02.009225Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld listening on 127.0.0.1:50709 (ownership=dev)\ncelld internal listening on 127.0.0.1:50748 (advertise=127.0.0.1:50748)\n  ready  http://127.0.0.1:50709\n  ● change detected; rebuilding the application\n celld 0.5.1\n───────────────────────────────────────────────\nTotal Upload: 13236.36 KiB / gzip: 5464.30 KiB\nYour Worker has no bindings.\nBundled python-runtime-probe (1.11 sec)\n  ● restarting the application\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T03:40:11.400815Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld listening on 127.0.0.1:50709 (ownership=dev)\ncelld internal listening on 127.0.0.1:50813 (advertise=127.0.0.1:50813)\n  ready  http://127.0.0.1:50709\n  ● change detected; rebuilding the application\n  error reload failed: Python build failed: Verified workers-runtime-sdk 1.9.0: 36209f94984686264db4e1fd410d51ac3460f2a2ab3cc29869699b975e1e1331\nTraceback (most recent call last):\n  File \"/lib/python313.zip/_pyodide/_base.py\", line 523, in eval_code\n    .run(globals, locals)\n     ~~~^^^^^^^^^^^^^^^^^\n  File \"/lib/python313.zip/_pyodide/_base.py\", line 357, in run\n    coroutine = eval(self.code, globals, locals)\n  File \"<exec>\", line 3, in <module>\n  File \"greeting.py\", line 1\n    value = (\n            ^\nSyntaxError: '(' was never closed\n\n\n  ● change detected; rebuilding the application\n celld 0.5.1\n───────────────────────────────────────────────\nTotal Upload: 13236.36 KiB / gzip: 5464.31 KiB\nYour Worker has no bindings.\nBundled python-runtime-probe (1.07 sec)\n  ● restarting the application\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T03:40:21.643537Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld listening on 127.0.0.1:50709 (ownership=dev)\ncelld internal listening on 127.0.0.1:50880 (advertise=127.0.0.1:50880)\n  ready  http://127.0.0.1:50709\n"
+}

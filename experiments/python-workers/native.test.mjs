@@ -47,10 +47,14 @@ test('native Python deployment identity is reproducible and rejects unsupported 
   await writeFile(join(directories[1], 'worker.py'), source.replace('native', 'changed'));
   const changed = JSON.parse((await deploy(directories[1])).stdout).version;
   assert.notEqual(changed, versions[0]);
+  await writeFile(join(directories[1], 'worker.py'), source + '\nraise RuntimeError("do not execute application at build time")\n');
+  await deploy(directories[1]);
+  await writeFile(join(directories[1], 'worker.py'), source + '\ninvalid = (\n');
+  await assert.rejects(deploy(directories[1]), error => /SyntaxError/.test(error.stderr) && /worker\.py/.test(error.stderr) && !/var Module=moduleArg/.test(error.stderr));
   await writeFile(join(directories[0], 'pyproject.toml'), '[project]\nname="example"\ndependencies=["requests"]\n');
   await assert.rejects(deploy(directories[0]), error => /pending package resolver/.test(error.stderr));
   await rm(join(directories[0], 'pyproject.toml'));
   await writeFile(join(directories[0], 'wrangler.json'), JSON.stringify({ ...config, no_bundle: true }));
   await assert.rejects(deploy(directories[0]), error => /do not support no_bundle/.test(error.stderr));
-  await writeFile(new URL('results/native-identity.json', root), JSON.stringify({ timestamp: new Date().toISOString(), versions, changed, rejected: ['dependency manifest', 'no_bundle'] }, null, 2) + '\n');
+  await writeFile(new URL('results/native-identity.json', root), JSON.stringify({ timestamp: new Date().toISOString(), versions, changed, compileWithoutExecution: true, rejected: ['syntax error', 'dependency manifest', 'no_bundle'] }, null, 2) + '\n');
 });

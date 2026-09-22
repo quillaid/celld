@@ -313,3 +313,29 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   unit test passed, Rust formatting/diff checks passed. Evidence uses prefix
   2026-09-21-native-: python.json, identity.json, full-suite.txt,
   manifest-test.txt, and build.sha256 under experiments/python-workers/evidence/.
+
+## Syntax validation and watched reload (2026-09-21)
+
+- Native builds now compile every collected application source with the pinned
+  target CPython before bundling. They do not execute top-level application
+  code or invoke the machine's Python. The deployment check explicitly verifies
+  that a top-level RuntimeError is not executed, while invalid syntax fails.
+- The first reload test exposed unusable error reporting: an uncaught Pyodide
+  error made Node print its minified loader before the Python traceback, which
+  was truncated from the dev log. The helper now reports the exception message
+  directly. Retained evidence: reload-diagnostic-failure.json (date-prefixed).
+- Actual watched dev reload adopts a changed local Python module, retains the
+  working deployment after a syntax error, and adopts a corrected edit. The
+  test waits for the new node readiness signal on successful reloads.
+- A full-suite run observed a connection drop while dev stopped/restarted its
+  node for a valid edit. This is a measured availability gap, not hidden parity:
+  source confirms dev's existing stop/start implementation. Retained evidence:
+  reload-restart-window.json (date-prefixed). Readiness-based checks verify
+  adoption; the broken-edit check still directly requires the old code to serve.
+  No zero-downtime development reload is claimed.
+- Missing-import checks, package resolution, native DO exports, remote durability,
+  and the remaining objective are still open. Continue those next.
+- Final validation: all 21 integration records passed; diff checks passed.
+  Evidence: 2026-09-21-reload-passing.json, syntax-build.json, and
+  reload-full-suite.txt (all date-prefixed) under the experiment evidence/.
+  The tested celld binary is unchanged from the native-build checkpoint.

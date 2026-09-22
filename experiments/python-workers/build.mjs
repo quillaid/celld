@@ -36,6 +36,18 @@ for (const [name, expected] of Object.entries(runtimeLock.assets)) {
   const bytes = await readFile(runtime + name);
   if (createHash('sha256').update(bytes).digest('hex') !== expected.sha256) throw new Error('Pinned Python runtime hash mismatch: ' + name);
 }
+if (projectSources) {
+  // Validate with exactly the target CPython, without executing application
+  // top-level code or relying on the build machine's Python installation.
+  const { loadPyodide } = await import('pyodide');
+  const validator = await loadPyodide({ indexURL: resolve(runtime) + '/' });
+  validator.globals.set('_celld_sources_json', JSON.stringify(projectSources));
+  validator.runPython(`import json
+for _name, _source in json.loads(_celld_sources_json).items():
+    compile(_source, _name, 'exec', dont_inherit=True)
+del _name, _source, _celld_sources_json
+`);
+}
 // Pyodide embeds one tiny GC sentinel Wasm program in its JS loader. Give it
 // the same compiled-module treatment as the main interpreter. Fail on a changed
 // artifact shape rather than silently extracting the wrong embedded program.

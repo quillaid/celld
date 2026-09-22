@@ -203,7 +203,14 @@ changed source, and rejection of dependency manifests and `no_bundle`.
 This is an initial native path. Python dependency manifests are rejected pending
 the resolver, even if they declare no dependencies. Native Durable Object and
 Workflow configuration, `define`, `rules`, and `no_bundle` are rejected. Named
-exports, missing-import build checks, source/data selection, watched reload,
+exports, missing-import build checks, source/data selection,
 package startup hooks, release distribution, and the full compatibility matrix
 still need implementation or qualification. Existing fixture DO results do not
 prove native Python DO deployment.
+
+`npm run test:reload` checks native Python watched reloads: a local-module edit
+is adopted, a syntax error leaves the last good deployment serving, and a valid
+edit afterward recovers. The builder compiles every collected source with pinned
+CPython before emitting a bundle, without executing application top-level code.
+It reports Python diagnostics directly. This does not validate missing imports
+or promise uninterrupted service during celld dev's existing node restart.

@@ -9,7 +9,7 @@ const root = fileURLToPath(new URL('.', import.meta.url));
 
 // Small real-server harness for runtime probes. Files and storage belong only
 // to this invocation; cleanup never targets another celld process.
-export async function startCelld(files, config = {}, environment = {}) {
+export async function startCelld(files, config = {}, environment = {}, { watch = false } = {}) {
   await mkdir(resolve(root, '.celld'), { recursive: true });
   const project = await mkdtemp(resolve(root, '.celld/probe-'));
   let child, stopped, logs = '', closing;
@@ -80,7 +80,7 @@ export async function startCelld(files, config = {}, environment = {}) {
     const bin = process.env.CELLD_BIN || resolve(root, '../../.celld/tools/celld');
     const launch = async () => {
       let runLogs = '';
-      child = spawn(bin, ['dev', project, '--port', String(port), '--no-watch', '--logs'], {
+      child = spawn(bin, ['dev', project, '--port', String(port), ...(watch ? [] : ['--no-watch']), '--logs'], {
         detached: true, stdio: ['ignore', 'pipe', 'pipe'], env: { ...process.env, ...environment },
       });
       stopped = new Promise((done) => { child.once('exit', done); child.once('error', done); });
@@ -97,6 +97,10 @@ export async function startCelld(files, config = {}, environment = {}) {
     };
     await launch();
     return {
+      async write(name, contents) {
+        if (!/^[a-zA-Z_][a-zA-Z_0-9]*\.py$/.test(name)) throw new Error('Test source name must be a flat Python module');
+        await writeFile(resolve(project, name), contents);
+      },
       url: `http://127.0.0.1:${port}`, get pid() { return child.pid; }, close, logs: () => logs,
       async restart({ crash = false } = {}) {
         if (closing) throw new Error('Cannot restart a closed test server');
