@@ -1039,3 +1039,30 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   full-suite logs. No Rust changes; diff checks pass. Goal remains active, with
   cancellation/ASGI streaming, broader bindings/RPC, cross-node ownership and
   production distribution among the original unfinished requirements.
+
+## Causal ASGI response streaming and write-side disconnect (2026-09-21)
+
+- Previous turn was verified progress (155a6cc): SDK package hooks and all 39
+  full-suite records passed. This turn adds an independent ASGI transport probe;
+  no runtime or SDK changes were needed.
+- New asgi-stream.py uses the unchanged SDK ASGI adapter. A separate local HTTP
+  server holds the producer after its first chunk. The real HTTP client must
+  receive that chunk before the gate is released; only release permits the
+  second chunk. This provides causal delivery evidence beyond a timed sleep.
+- Client-abort case reads the prefix, aborts, then releases the waiting producer.
+  Its writes reject before the 256-chunk bound, and independent producer-finally
+  and lifespan-shutdown callbacks arrive. Accepted-write counts are retained
+  without forcing equality across the abort/buffering race. A subsequent gated
+  request streams and cleans up successfully in each engine.
+- Six final observations pass: stream/cancel/recovery on native celld and pinned
+  workerd over real loopback HTTP. The shutdown callback shows execution reaching
+  shutdown code; it is not a census of all released proxies or pending tasks.
+- Incoming ASGI body streaming, receive-only http.disconnect delivery, general
+  backpressure/memory bounds and ASGI WebSockets remain open. Source inspection
+  shows SDK process_request drains the body before invoking the app and receive
+  waits on finished_response after draining its queue. Next probe those paths
+  directly rather than extrapolating from successful write-side cancellation.
+- Added test:asgi-stream to the default suite. Focused final test passes; prior
+  39-record full-suite evidence remains the baseline because this turn only
+  adds a fixture/test and documentation. Retained asgi-stream-passing.json and
+  asgi-stream-test.txt. Diff checks pass; original goal remains active.

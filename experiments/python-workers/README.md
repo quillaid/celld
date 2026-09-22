@@ -311,8 +311,26 @@ query, response status/headers, and a two-chunk response path. Lifespan startup
 provides per-request state; shutdown writes a request-specific KV marker that
 must become observable after the response. This exercises module-level `workers.env`
 and `workers.wait_until`, whose Python awaitables are retained through settlement.
-It is a bare ASGI application, not FastAPI/framework qualification, and does not
-yet prove causal streaming delivery, ASGI backpressure, disconnects or WebSockets.
+It is a bare ASGI application; the separate FastAPI fixture is described below.
+
+`npm run test:asgi-stream` proves causal response delivery: the client receives
+`first` while the producer waits on a separate HTTP gate, and only releasing
+that gate permits `second`. Both engines use real HTTP clients with identity
+encoding. A second case aborts the client, releases the gated producer, and
+requires a later write to reject before all 256 64-KiB chunks complete. The
+producer's finally callback and lifespan shutdown callback must be observed.
+A third request then verifies successful streaming after cancellation. Raw
+accepted-write counts are retained; they can differ between engines as abort
+propagation races buffered writes.
+
+This qualifies write-side abort cleanup through the unchanged SDK adapter. It
+does not establish buffer limits or general backpressure bounds, `http.disconnect`
+delivery while an app waits only in `receive()`, streaming ASGI request bodies,
+or ASGI WebSockets. The pinned SDK source currently buffers the incoming body
+before starting the app and derives its receive-side disconnect from response
+completion. Those paths need their own probes; a successful response-stream
+test does not close those requirements.
+
 Lifecycle event arguments bypass SDK RPC conversion to preserve their FFI types.
 The pair contract test also checks `Object.values(new WebSocketPair())` has two
 entries: celld previously included an enumerable `length` property.

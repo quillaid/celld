@@ -1,0 +1,71 @@
+{
+  "timestamp": "2026-09-22T06:09:40.262Z",
+  "workerd": "1.20260922.1",
+  "compatibilityDate": "2025-06-01",
+  "observations": [
+    {
+      "engine": "celld",
+      "mode": "stream",
+      "firstBeforeRelease": true,
+      "body": "first\nsecond\n",
+      "producer": {
+        "outcome": "complete",
+        "writes": 0
+      },
+      "shutdown": "closed"
+    },
+    {
+      "engine": "celld",
+      "mode": "cancel",
+      "firstBeforeRelease": true,
+      "producer": {
+        "outcome": "rejected",
+        "writes": 0
+      },
+      "shutdown": "closed"
+    },
+    {
+      "engine": "celld",
+      "mode": "recovery",
+      "firstBeforeRelease": true,
+      "body": "first\nsecond\n",
+      "producer": {
+        "outcome": "complete",
+        "writes": 0
+      },
+      "shutdown": "closed"
+    },
+    {
+      "engine": "workerd",
+      "mode": "stream",
+      "firstBeforeRelease": true,
+      "body": "first\nsecond\n",
+      "producer": {
+        "outcome": "complete",
+        "writes": 0
+      },
+      "shutdown": "closed"
+    },
+    {
+      "engine": "workerd",
+      "mode": "cancel",
+      "firstBeforeRelease": true,
+      "producer": {
+        "outcome": "rejected",
+        "writes": 2
+      },
+      "shutdown": "closed"
+    },
+    {
+      "engine": "workerd",
+      "mode": "recovery",
+      "firstBeforeRelease": true,
+      "body": "first\nsecond\n",
+      "producer": {
+        "outcome": "complete",
+        "writes": 0
+      },
+      "shutdown": "closed"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+TAP version 13
+# Exception in ASGI application after response started
+# Traceback (most recent call last):
+#   File "/session/metadata/python_modules/workers/asgi.py", line 292, in run_app
+#     await app(request_to_scope(req, env, state=state), receive, send)
+#   File "/session/metadata/asgi-stream-reference.py", line 30, in app
+#     await send({'type': 'http.response.body', 'body': b'x' * 65536, 'more_body': True})
+#   File "/lib/python313.zip/contextlib.py", line 162, in __exit__
+#     self.gen.throw(value)
+#     ~~~~~~~~~~~~~~^^^^^^^
+#   File "/session/metadata/python_modules/workers/asgi.py", line 48, in acquire_js_buffer
+#     yield buf.data
+#   File "/session/metadata/python_modules/workers/asgi.py", line 252, in send
+#     await writer.write(jsbytes.slice())
+# pyodide.ffi.JsException: TypeError: The readable side of this TransformStream is no longer readable.
+# Subtest: ASGI response bytes precede producer release and disconnect reaches cleanup and lifespan shutdown
+ok 1 - ASGI response bytes precede producer release and disconnect reaches cleanup and lifespan shutdown
+  ---
+  duration_ms: 12819.610666
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 13086.224958
