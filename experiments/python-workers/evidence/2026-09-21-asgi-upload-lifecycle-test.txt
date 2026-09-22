@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: ASGI upload candidate releases unread bodies and delivers upload disconnect events
+ok 1 - ASGI upload candidate releases unread bodies and delivers upload disconnect events
+  ---
+  duration_ms: 16247.830667
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 16521.006625

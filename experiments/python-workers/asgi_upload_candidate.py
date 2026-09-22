@@ -1,8 +1,8 @@
 """Test-only SDK upload candidate; not installed by the celld runtime.
 
-Keep the released response/lifespan code and replace only eager body collection
-with demand-driven receive. Cancellation and unread-body cleanup remain gates
-before this can become a supported SDK overlay.
+Keep the released response/lifespan paths while reading the body on demand and
+closing owned input readers on application exit. Receive-only disconnect and
+response-completion races remain gates before a supported SDK overlay.
 """
 import hashlib
 import inspect
@@ -35,25 +35,57 @@ before = '''    receive_queue = Queue()
         return message
 '''
 after = '''    request_body = req.body
-    body_iterator = request_body.__aiter__() if request_body else None
+    body_reader = None
     body_complete = False
+    body_disconnected = False
+    from asyncio import Lock
+    receive_lock = Lock()
+
+    async def close_request_body():
+        nonlocal body_reader, body_complete
+        try:
+            if body_reader is not None:
+                if not body_complete:
+                    await body_reader.cancel()
+            elif request_body and not body_complete:
+                await request_body.cancel()
+        except Exception:
+            # An errored transport can reject cancellation as well as reads.
+            pass
+        finally:
+            if body_reader is not None:
+                body_reader.releaseLock()
+                body_reader = None
+            body_complete = True
 
     async def receive():
-        nonlocal body_complete
-        if not body_complete:
-            if body_iterator is not None:
-                try:
-                    data = await anext(body_iterator)
-                except StopAsyncIteration:
-                    body_complete = True
-                else:
-                    return {"type": "http.request", "body": data.to_bytes(), "more_body": True}
-            body_complete = True
-            return {"type": "http.request", "body": b"", "more_body": False}
-        await finished_response.wait()
-        return {"type": "http.disconnect"}
+        nonlocal body_reader, body_complete, body_disconnected
+        async with receive_lock:
+            if body_disconnected or finished_response.is_set():
+                return {"type": "http.disconnect"}
+            if not body_complete:
+                if request_body:
+                    if body_reader is None:
+                        body_reader = request_body.getReader()
+                    try:
+                        data = await body_reader.read()
+                    except Exception:
+                        body_disconnected = True
+                        await close_request_body()
+                        return {"type": "http.disconnect"}
+                    if not data.done:
+                        return {"type": "http.request", "body": data.value.to_bytes(), "more_body": True}
+                body_complete = True
+                await close_request_body()
+                return {"type": "http.request", "body": b"", "more_body": False}
+            await finished_response.wait()
+            return {"type": "http.disconnect"}
 '''
 source = inspect.getsource(asgi.process_request)
 if source.count(before) != 1:
     raise RuntimeError('ASGI upload candidate source anchor changed')
-exec(compile(source.replace(before, after), '<celld-asgi-upload-candidate>', 'exec'), asgi.__dict__)
+cleanup_anchor = '                    run_in_background(close_stream_quietly(writer))\n'
+if source.count(cleanup_anchor) != 1:
+    raise RuntimeError('ASGI upload candidate cleanup anchor changed')
+source = source.replace(before, after).replace(cleanup_anchor, cleanup_anchor + '        finally:\n            await close_request_body()\n')
+exec(compile(source, '<celld-asgi-upload-candidate>', 'exec'), asgi.__dict__)

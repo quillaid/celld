@@ -67,6 +67,8 @@ within its request deadline before waiting for the other engine to cold-start.
 The separate ASGI upload contract probe fails with the released SDK on both
 engines while direct SDK passthrough controls stream successfully. A guarded,
 test-only candidate that reads the body inside receive() passes the same gate
-on both engines. It is not integrated into the adapter; upload cancellation,
-unread-body cleanup, receive-only disconnect and SDK-overlay identity remain
-required before that behavior can be advertised.
+on both engines. Its lifecycle probe also verifies unread/partially read body
+cleanup and upload-abort disconnect events. It is not integrated into the
+adapter; pending-read cancellation, receive-only disconnect after EOF,
+response-completion races and SDK-overlay identity remain required before that
+behavior can be advertised.

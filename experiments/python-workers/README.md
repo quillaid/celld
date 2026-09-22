@@ -343,13 +343,24 @@ The streaming target follows the ASGI
 
 `npm run probe:asgi-upload-candidate` runs the same gate with a test-only SDK
 candidate, `asgi_upload_candidate.py`. It verifies the original `workers/asgi.py`
-digest and exact source anchor before replacing only the eager queue collection
-with body iteration inside `receive()`. Both engines then deliver the first
+digest and exact source anchors before replacing eager queue collection
+with reader operations inside `receive()` and cleanup when the app exits.
+Both engines then deliver the first
 bytes before upload close. This modifies the in-memory SDK function for this
 fixture; it is not loaded by `sdk-runtime.js` or native Python deployments.
 Candidate evidence records its hash and labels the altered SDK explicitly.
-Before integration it still needs upload-abort/error handling, unread-body
-cleanup, receive-only disconnects, completion/cancellation races, and regression
+`npm run probe:asgi-upload-lifecycle` additionally checks unread and partially
+read early-response bodies: after the app exits they must be unlocked, and a
+fresh reader must immediately report done. A client-aborted upload must reach
+the app as `http.disconnect`, followed by a successful recovery request. These
+cases pass on both engines after replacing implicit iterator ownership with
+an explicitly owned reader, lazy acquisition, and cancel/release in app cleanup.
+The initial candidate raised JsException for aborted reads on both engines and
+left unread bodies locked on workerd; both observations are retained.
+
+Before integration it still needs receive-only disconnect after upload EOF,
+application-error cleanup, pending-read task cancellation and response-completion
+races, and regression
 coverage with a reproducible SDK-overlay identity. This prototype does not close
 the incoming-streaming requirement for the default experiment runtime.
 

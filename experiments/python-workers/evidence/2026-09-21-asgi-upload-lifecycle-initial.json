@@ -1,0 +1,40 @@
+{
+  "timestamp": "2026-09-22T06:22:33.788Z",
+  "sdkMode": "test-only receive candidate",
+  "candidateSha256": "789442955e0279c3bc9b03ec6a8f2e09d7508ba665303fbaf69b74f9259be33f",
+  "workerd": "1.20260922.1",
+  "observations": [
+    {
+      "engine": "celld",
+      "early": {
+        "status": 200,
+        "body": "early",
+        "locked": "false"
+      },
+      "disconnect": {
+        "error": "JsException"
+      },
+      "recovery": {
+        "status": 200,
+        "body": "early",
+        "locked": "false"
+      }
+    },
+    {
+      "engine": "workerd",
+      "early": {
+        "status": 200,
+        "body": "early",
+        "locked": "true"
+      },
+      "disconnect": {
+        "error": "JsException"
+      },
+      "recovery": {
+        "status": 200,
+        "body": "early",
+        "locked": "true"
+      }
+    }
+  ]
+}

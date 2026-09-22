@@ -32,7 +32,8 @@
     "test:import-patches": "node --test import-patches.test.mjs",
     "test:asgi-stream": "node --test asgi-stream.test.mjs",
     "probe:asgi-upload": "node --test asgi-upload.probe.mjs",
-    "probe:asgi-upload-candidate": "CELLD_ASGI_UPLOAD_CANDIDATE=1 node --test asgi-upload.probe.mjs"
+    "probe:asgi-upload-candidate": "CELLD_ASGI_UPLOAD_CANDIDATE=1 node --test asgi-upload.probe.mjs",
+    "probe:asgi-upload-lifecycle": "node --test asgi-upload-lifecycle.probe.mjs"
   },
   "dependencies": {
     "pyodide": "0.28.3"

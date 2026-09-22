@@ -1,0 +1,39 @@
+TAP version 13
+# Subtest: ASGI upload candidate releases unread bodies and delivers upload disconnect events
+not ok 1 - ASGI upload candidate releases unread bodies and delivers upload disconnect events
+  ---
+  duration_ms: 15500.0975
+  type: 'test'
+  location: '/Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/asgi-upload-lifecycle.probe.mjs:16:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"timestamp":"2026-09-22T06:22:33.788Z","sdkMode":"test-only receive candidate","candidateSha256":"789442955e0279c3bc9b03ec6a8f2e09d7508ba665303fbaf69b74f9259be33f","workerd":"1.20260922.1","observations":[{"engine":"celld","early":{"status":200,"body":"early","locked":"false"},"disconnect":{"error":"JsException"},"recovery":{"status":200,"body":"early","locked":"false"}},{"engine":"workerd","early":{"status":200,"body":"early","locked":"true"},"disconnect":{"error":"JsException"},"recovery":{"status":200,"body":"early","locked":"true"}}]}
+    + actual - expected
+    
+      {
+    +   error: 'JsException'
+    -   event: 'http.disconnect'
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    event: 'http.disconnect'
+  actual:
+    error: 'JsException'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/asgi-upload-lifecycle.probe.mjs:69:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 15776.004625

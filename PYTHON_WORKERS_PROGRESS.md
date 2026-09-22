@@ -1098,3 +1098,34 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   and response-stream test remain valid; no runtime code changed this turn.
 - Retained final failing baseline and passing candidate logs/JSON. Diff checks
   pass. Original goal remains active; this SDK gap does not require user input.
+
+## ASGI candidate input ownership and upload-abort events (2026-09-21)
+
+- Previous turn was progress (5087e37): released-SDK buffering was isolated by
+  positive transport controls and an opt-in receive candidate passed the upload
+  gate. This turn checks that candidate's lifecycle before runtime integration.
+- Added a two-engine lifecycle probe. Initial candidate returned JsException
+  to the ASGI application after upload abort on both runtimes. Workerd also
+  retained a locked body on an early response without consuming it; celld did
+  not retain the lock in that case. Preserved the raw failure and differing
+  initial observations rather than normalizing them away.
+- Candidate now acquires a body reader lazily, serializes receive calls, maps
+  exceptions from the actual stream-read await to http.disconnect, and cancels
+  and releases its owned reader (or unread stream) in the app's finally path.
+  Data conversion is outside the read-error handler. The exact SDK file digest
+  and both replacement anchors remain checked before modifying the in-memory
+  process_request function. This is still test-only, not a default runtime patch.
+- Final lifecycle cases pass for each engine: early response without reading,
+  response after one chunk with the client still holding the tail, upload abort
+  while the app receives, and a subsequent recovery request. Early/partial
+  streams are unlocked and a fresh reader returns done, so the assertion checks
+  closure as well as lock release. Upload abort returns http.disconnect.
+- Re-ran the causal upload candidate probe against the same revised source;
+  all six direct/ASGI/recovery observations still stream before upload close.
+  Saved initial failure, passing lifecycle and candidate-regression logs/JSON.
+  Default runtime code and prior passing-suite baseline are unchanged.
+- Remaining integration gates include app-error cleanup, receive-only client
+  disconnect after upload EOF, and pending-read task cancellation/response-end
+  races. In particular, canceling a Python receive task must not silently lose
+  a chunk still owned by a JS read promise. Probe that before promoting this
+  candidate and declaring an SDK-overlay identity. Goal remains active.
