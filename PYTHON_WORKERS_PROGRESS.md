@@ -679,3 +679,36 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   streaming and cancellation probes. No Rust changes were required. Focused and
   full-suite logs and passing RPC observations are retained under evidence/.
   Diff checks pass. Goal remains active; no public or live-fleet changes.
+
+## Python Durable Object WebSocket events (2026-09-21)
+
+- Previous goal turn made verified progress: commit 63342b7 added bounded method
+  RPC and passed 28 suite records. This turn moves to the original WebSocket scope.
+- Same-source Python upgrades failed on celld while workerd successfully exchanged
+  Unicode text and binary input, a serialized attachment, and a clean close.
+  The host WebSocketPair included an enumerable length property, so Object.values
+  returned three entries. A small JS differential confirms the precise mismatch;
+  removed that property and retained the original failure evidence.
+- The next probe delivered text but failed on binary messages: SDK RPC conversion
+  transformed the ArrayBuffer to a memoryview before calling the Python handler.
+  Workerd's non-fetch lifecycle handlers use direct Pyodide FFI calls. The adapter
+  now bypasses RPC conversion for alarm/WebSocket message/close/error arguments.
+  Same-source text/binary/attachment/clean-close comparison now passes.
+- Native fixture uses acceptWebSocket and async handlers; SQL records both message
+  payloads and close metadata. The test additionally crashes celld after the clean
+  close and compares its stored records after restart. This does not prove live
+  connection survival across eviction, automatic hibernation, binary output,
+  abnormal-close/error semantics, outgoing sockets, or cross-node forwarding.
+- Reference: unchanged SDK 1.9.0 wheel, workerd 1.20260922.1, historical Python
+  date 2025-06-01 with on_fetch/on_webSocketMessage/on_webSocketClose aliases.
+  JS pair comparison uses 2026-09-21. API source consulted:
+  https://developers.cloudflare.com/durable-objects/examples/websocket-hibernation-server/
+  Pinned source investigation: c22e7ae3b5e2fc5fc1cf382eee0110550497668d,
+  src/pyodide/python-entrypoint-helper.ts lifecycle dispatch branch; source pin
+  is investigation provenance, not a claim about the binary's build revision.
+- Rebuilt celld and fixtures. All 30 full-suite records pass with two files at a
+  time, including native alarm/RPC, cancellation/streaming, packages/reload,
+  termination and WebSocket process-crash persistence. Retained date-prefixed
+  native-websocket/websocket-pair failure and passing JSON, full-suite log, and
+  binary hash under evidence/. Diff checks pass. Goal remains active; all original
+  unqualified lifecycle/distribution/SDK requirements remain in scope.

@@ -1,0 +1,135 @@
+{
+  "timestamp": "2026-09-22T04:56:27.697Z",
+  "workerd": "1.20260922.1",
+  "referenceDate": "2025-06-01",
+  "responses": [],
+  "workerdMessages": [
+    {
+      "value": "hello Python 🐍",
+      "attachment": "python-session"
+    },
+    {
+      "value": [
+        0,
+        1,
+        127,
+        128,
+        255
+      ],
+      "attachment": "python-session"
+    }
+  ],
+  "reference": {
+    "results": [
+      {
+        "value": "hello Python 🐍",
+        "attachment": "python-session"
+      },
+      {
+        "value": [
+          0,
+          1,
+          127,
+          128,
+          255
+        ],
+        "attachment": "python-session"
+      }
+    ],
+    "close": {
+      "code": 1000,
+      "reason": "finished",
+      "clean": true
+    },
+    "stored": [
+      {
+        "kind": "message",
+        "value": "\"hello Python \\ud83d\\udc0d\""
+      },
+      {
+        "kind": "message",
+        "value": "[0, 1, 127, 128, 255]"
+      },
+      {
+        "kind": "close",
+        "value": "{\"code\": 1000, \"reason\": \"finished\", \"clean\": true}"
+      }
+    ]
+  },
+  "celldMessages": [
+    {
+      "value": "hello Python 🐍",
+      "attachment": "python-session"
+    },
+    {
+      "value": [
+        0,
+        1,
+        127,
+        128,
+        255
+      ],
+      "attachment": "python-session"
+    }
+  ],
+  "local": {
+    "results": [
+      {
+        "value": "hello Python 🐍",
+        "attachment": "python-session"
+      },
+      {
+        "value": [
+          0,
+          1,
+          127,
+          128,
+          255
+        ],
+        "attachment": "python-session"
+      }
+    ],
+    "close": {
+      "code": 1000,
+      "reason": "finished",
+      "clean": true
+    },
+    "stored": [
+      {
+        "kind": "message",
+        "value": "\"hello Python \\ud83d\\udc0d\""
+      },
+      {
+        "kind": "message",
+        "value": "[0, 1, 127, 128, 255]"
+      },
+      {
+        "kind": "close",
+        "value": "{\"code\": 1000, \"reason\": \"finished\", \"clean\": true}"
+      }
+    ]
+  },
+  "restart": {
+    "stoppedPids": [
+      70912,
+      70934
+    ],
+    "pid": 71332,
+    "crash": true
+  },
+  "afterRestart": [
+    {
+      "kind": "message",
+      "value": "\"hello Python \\ud83d\\udc0d\""
+    },
+    {
+      "kind": "message",
+      "value": "[0, 1, 127, 128, 255]"
+    },
+    {
+      "kind": "close",
+      "value": "{\"code\": 1000, \"reason\": \"finished\", \"clean\": true}"
+    }
+  ],
+  "logs": "<jemalloc>: option background_thread currently supports pthread only\ncelld dev\n  Project  /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-5PnALU/wrangler.json\n  State    /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-5PnALU/.celld/dev\n2026-09-22T04:56:19.593001Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\n  Watch    disabled\n  ● opening the local storage\n  ● building the application\n celld 0.5.1\n───────────────────────────────────────────────\nTotal Upload: 13241.59 KiB / gzip: 5465.49 KiB\nYour Worker has access to the following bindings:\nBinding                    Resource\nenv.COUNTER (Counter)      Durable Object (SQLite)\nBundled python-runtime-probe (1.31 sec)\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T04:56:23.191340Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld listening on 127.0.0.1:60536 (ownership=dev)\ncelld internal listening on 127.0.0.1:60545 (advertise=127.0.0.1:60545)\n  ready  http://127.0.0.1:60536\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T04:56:33.725298Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld dev\n  Project  /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-5PnALU/wrangler.json\n  State    /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-5PnALU/.celld/dev\n  Watch    disabled\n  ● opening the local storage\n  ● building the application\n celld 0.5.1\n───────────────────────────────────────────────\nTotal Upload: 13241.59 KiB / gzip: 5465.49 KiB\nYour Worker has access to the following bindings:\nBinding                    Resource\nenv.COUNTER (Counter)      Durable Object (SQLite)\nBundled python-runtime-probe (1.20 sec)\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T04:56:37.152863Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld listening on 127.0.0.1:60536 (ownership=dev)\ncelld internal listening on 127.0.0.1:60576 (advertise=127.0.0.1:60576)\n  ready  http://127.0.0.1:60536\n"
+}

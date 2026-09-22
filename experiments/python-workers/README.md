@@ -244,6 +244,20 @@ late-added methods, arbitrary callable descriptors, dunder/host-reserved names,
 RPC properties, returned capabilities, cross-node RPC and proxy reclamation
 remain unqualified. Python underscores are not an access-control boundary.
 
+`npm run test:websocket` compares native Python Durable Object WebSocket
+upgrades, incoming Unicode text and binary frames, async message handling,
+serialized attachments, and clean-close code/reason/status with pinned workerd.
+SQL records acknowledged through socket replies survive a celld process crash.
+The fixture uses `acceptWebSocket`; it does not yet prove eviction with a live
+connection, attachment restoration after hibernation, binary outgoing frames,
+abnormal-close/error behavior, outbound sockets or cross-node forwarding.
+Lifecycle event arguments bypass SDK RPC conversion to preserve their FFI types.
+The pair contract test also checks `Object.values(new WebSocketPair())` has two
+entries: celld previously included an enumerable `length` property.
+See [Cloudflare's hibernation example](https://developers.cloudflare.com/durable-objects/examples/websocket-hibernation-server/)
+for the API contract; the actual comparison here retains the historical Python
+compatibility envelope and explicit `on_` event aliases.
+
 The default suite runs two test files at a time to bound simultaneous runtime
 startups. Individual concurrency probes and deadlines are unchanged. Earlier
 unbounded-file runs sometimes timed out waiting for the workerd SDK reference

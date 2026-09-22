@@ -1,0 +1,23 @@
+{
+  "timestamp": "2026-09-22T04:53:19.404Z",
+  "workerd": "1.20260922.1",
+  "actual": {
+    "keys": [
+      "0",
+      "1",
+      "length"
+    ],
+    "count": 3,
+    "length": "number",
+    "distinct": true
+  },
+  "expected": {
+    "keys": [
+      "0",
+      "1"
+    ],
+    "count": 2,
+    "length": "undefined",
+    "distinct": true
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "timestamp": "2026-09-22T04:54:23.977Z",
+  "workerd": "1.20260922.1",
+  "referenceDate": "2025-06-01",
+  "responses": [],
+  "workerdMessages": [
+    {
+      "value": "hello Python 🐍",
+      "attachment": "python-session"
+    },
+    {
+      "value": [
+        0,
+        1,
+        127,
+        128,
+        255
+      ],
+      "attachment": "python-session"
+    }
+  ],
+  "reference": {
+    "results": [
+      {
+        "value": "hello Python 🐍",
+        "attachment": "python-session"
+      },
+      {
+        "value": [
+          0,
+          1,
+          127,
+          128,
+          255
+        ],
+        "attachment": "python-session"
+      }
+    ],
+    "close": {
+      "code": 1000,
+      "reason": "finished",
+      "clean": true
+    },
+    "stored": [
+      {
+        "kind": "message",
+        "value": "\"hello Python \\ud83d\\udc0d\""
+      },
+      {
+        "kind": "message",
+        "value": "[0, 1, 127, 128, 255]"
+      },
+      {
+        "kind": "close",
+        "value": "{\"code\": 1000, \"reason\": \"finished\", \"clean\": true}"
+      }
+    ]
+  },
+  "celldMessages": [
+    {
+      "value": "hello Python 🐍",
+      "attachment": "python-session"
+    }
+  ],
+  "afterFailure": "[{\"kind\": \"message\", \"value\": \"\\\"hello Python \\\\ud83d\\\\udc0d\\\"\"}, {\"kind\": \"close\", \"value\": \"{\\\"code\\\": 1006, \\\"reason\\\": \\\"\\\", \\\"clean\\\": false}\"}]",
+  "logs": "<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T04:54:15.912216Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld dev\n  Project  /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-QUuh2H/wrangler.json\n  State    /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-QUuh2H/.celld/dev\n  Watch    disabled\n  ● opening the local storage\n  ● building the application\n celld 0.5.1\n───────────────────────────────────────────────\nTotal Upload: 13241.22 KiB / gzip: 5465.36 KiB\nYour Worker has access to the following bindings:\nBinding                    Resource\nenv.COUNTER (Counter)      Durable Object (SQLite)\nBundled python-runtime-probe (1.26 sec)\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T04:54:19.478963Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld listening on 127.0.0.1:60112 (ownership=dev)\ncelld internal listening on 127.0.0.1:60115 (advertise=127.0.0.1:60115)\n  ready  http://127.0.0.1:60112\n2026-09-22T04:54:30.827763Z  WARN celld::websocket: WebSocket close dispatch failed error=rejected: PythonError: Traceback (most recent call last):\n  File \"<exec>\", line 36, in dispatch\n  File \"/app/worker.py\", line 37, in webSocketClose\n    socket.close(code, reason)\n    ~~~~~~~~~~~~^^^^^^^^^^^^^^\n  File \"worker.js\", line 20692, in JsvFunction_CallBound\n  File \"???.js\", line 11595, in WebSocket.close\npyodide.ffi.JsException: InvalidAccessError: WebSocket close code 1006 is not permitted\n [File \"<exec>\", line 36, in dispatch <- File \"/app/worker.py\", line 37, in webSocketClose <- socket.close(code, reason)] scope=Counter:757f7f6263f02a1a40995cf9f2450cf0cc22aef81c6187d8306ab520ae8bbc2b websocket=1\n"
+}

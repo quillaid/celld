@@ -31,7 +31,13 @@ def load_durable(module_name, class_name, ctx, env):
 
     async def dispatch(method_name, *arguments):
         method = getattr(instance, method_name)
-        result = method(*(python_from_rpc(argument) for argument in arguments))
+        # workerd sends lifecycle events directly through Pyodide's FFI. RPC
+        # conversion would turn a binary WebSocket ArrayBuffer into a memoryview,
+        # changing the event API before the application can inspect it.
+        if method_name in ('alarm', 'webSocketMessage', 'webSocketClose', 'webSocketError'):
+            result = method(*arguments)
+        else:
+            result = method(*(python_from_rpc(argument) for argument in arguments))
         if inspect.isawaitable(result):
             result = await result
         return python_to_rpc(result)

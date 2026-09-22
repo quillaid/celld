@@ -11730,7 +11730,6 @@ globalThis.WebSocketPair = function WebSocketPair() {
   return {
     0: client,
     1: server,
-    length: 2,
     [Symbol.iterator]() {
       return [client, server][Symbol.iterator]();
     },
