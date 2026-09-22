@@ -331,6 +331,28 @@ before starting the app and derives its receive-side disconnect from response
 completion. Those paths need their own probes; a successful response-stream
 test does not close those requirements.
 
+`npm run probe:asgi-upload` is a failing contract probe kept outside the green
+regression suite. After warming each runtime, the client sends a first chunk
+and holds the tail. Direct SDK response-body passthrough streams within the
+1.5-second observation window, while the released ASGI adapter on both engines
+produces its first bytes only after the client releases the tail. Direct
+controls before and after the ASGI request pass and the final complete bodies
+match, isolating the eager ASGI body collection rather than a broken transport.
+The streaming target follows the ASGI
+[request receive event](https://asgi.readthedocs.io/en/stable/specs/www.html#request-receive-event).
+
+`npm run probe:asgi-upload-candidate` runs the same gate with a test-only SDK
+candidate, `asgi_upload_candidate.py`. It verifies the original `workers/asgi.py`
+digest and exact source anchor before replacing only the eager queue collection
+with body iteration inside `receive()`. Both engines then deliver the first
+bytes before upload close. This modifies the in-memory SDK function for this
+fixture; it is not loaded by `sdk-runtime.js` or native Python deployments.
+Candidate evidence records its hash and labels the altered SDK explicitly.
+Before integration it still needs upload-abort/error handling, unread-body
+cleanup, receive-only disconnects, completion/cancellation races, and regression
+coverage with a reproducible SDK-overlay identity. This prototype does not close
+the incoming-streaming requirement for the default experiment runtime.
+
 Lifecycle event arguments bypass SDK RPC conversion to preserve their FFI types.
 The pair contract test also checks `Object.values(new WebSocketPair())` has two
 entries: celld previously included an enumerable `length` property.

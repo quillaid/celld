@@ -63,3 +63,10 @@ The dispatch comparison additionally checks eight concurrent requests with
 instance-local state, application exceptions, successful calls after an error,
 and application filenames in celld tracebacks. It consumes each transport body
 within its request deadline before waiting for the other engine to cold-start.
+
+The separate ASGI upload contract probe fails with the released SDK on both
+engines while direct SDK passthrough controls stream successfully. A guarded,
+test-only candidate that reads the body inside receive() passes the same gate
+on both engines. It is not integrated into the adapter; upload cancellation,
+unread-body cleanup, receive-only disconnect and SDK-overlay identity remain
+required before that behavior can be advertised.

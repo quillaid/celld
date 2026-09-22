@@ -1066,3 +1066,35 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   39-record full-suite evidence remains the baseline because this turn only
   adds a fixture/test and documentation. Retained asgi-stream-passing.json and
   asgi-stream-test.txt. Diff checks pass; original goal remains active.
+
+## ASGI upload buffering diagnosis and isolated receive candidate (2026-09-21)
+
+- Previous turn was verified progress (29da8ae): causal response delivery,
+  write-side abort cleanup and recovery on both engines. This turn investigates
+  request streaming rather than inferring it from response streaming.
+- Added asgi-upload.probe.mjs. Warmed direct SDK body passthrough streams the
+  first upload chunk while the client holds the tail; the released SDK's ASGI
+  path does not, on either celld or pinned workerd. Releasing the tail lets both
+  finish with identical full bodies. Direct recovery controls also stream.
+  The baseline probe deliberately fails its streaming assertion and is outside
+  the default passing suite. It retains all six observations before failing.
+- An initial empty GET passthrough warmup returned 500; the upload probe now
+  warms with an explicit POST body. Empty-body passthrough was not diagnosed
+  or declared fixed by that test-setup change.
+- Source confirms process_request eagerly drains req.body into its receive
+  queue before running the ASGI app. A test-only candidate verifies the exact
+  released workers/asgi.py digest and source anchor, then replaces only that
+  block with demand-driven body iteration in receive(). It leaves response and
+  lifespan code intact. The probe explicitly injects it into both engines;
+  sdk-runtime.js and default native deployments do not load it.
+- Candidate gate passes: all six observations deliver first bytes before
+  upload close, and complete bodies still match. Evidence labels the altered
+  SDK and records candidate/source hashes. This is a successful causal prototype,
+  not stock workerd behavior or completed default-runtime upload support.
+- Next: qualify upload abort/errors, unused body/iterator cleanup, receive-only
+  disconnects and response-completion races before integrating any SDK overlay.
+  Overlay identity must become explicit in reproducible build metadata; do not
+  claim an unchanged SDK once integration happens. Prior full-suite baseline
+  and response-stream test remain valid; no runtime code changed this turn.
+- Retained final failing baseline and passing candidate logs/JSON. Diff checks
+  pass. Original goal remains active; this SDK gap does not require user input.
