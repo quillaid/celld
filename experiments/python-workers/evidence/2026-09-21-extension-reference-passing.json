@@ -1,0 +1,100 @@
+{
+  "timestamp": "2026-09-22T04:37:53.583Z",
+  "lock": {
+    "schema": 1,
+    "pyodide": "0.28.3",
+    "python": "3.13.2",
+    "resolver": {
+      "name": "micropip",
+      "version": "0.10.1"
+    },
+    "manifest": {
+      "name": "requirements.txt",
+      "sha256": "1b68241365c5cc74fa8220bda0faf710f827a56df0b885f83a45bfdd7df469cc"
+    },
+    "requirements": [
+      "MarkupSafe==3.0.2"
+    ],
+    "roots": [
+      "markupsafe"
+    ],
+    "abi": {
+      "abi_version": "2025_0",
+      "arch": "wasm32",
+      "platform": "emscripten_4_0_9",
+      "python": "3.13.2",
+      "version": "0.28.0.dev0"
+    },
+    "packages": [
+      {
+        "name": "markupsafe",
+        "version": "3.0.2",
+        "filename": "markupsafe-3.0.2-cp313-cp313-pyodide_2025_0_wasm32.whl",
+        "url": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/markupsafe-3.0.2-cp313-cp313-pyodide_2025_0_wasm32.whl",
+        "sha256": "31a48bf0c5914d64d442175520d803c6488681882ff152c3a07838736b1f3b60",
+        "depends": []
+      }
+    ]
+  },
+  "responses": [
+    {
+      "input": "<tag>&",
+      "status": 200,
+      "text": "{\"escaped\": \"&lt;tag&gt;&amp;\", \"module\": \"/packages/markupsafe/_speedups.cpython-313-wasm32-emscripten.so\", \"builtin\": true, \"extension_sha256\": \"08f1dd0eeb2aba849b316034d25650d94a9471caf99db501a334eeb83e4a4726\", \"sdk_sha256\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+    },
+    {
+      "input": "plain",
+      "status": 200,
+      "text": "{\"escaped\": \"plain\", \"module\": \"/packages/markupsafe/_speedups.cpython-313-wasm32-emscripten.so\", \"builtin\": true, \"extension_sha256\": \"08f1dd0eeb2aba849b316034d25650d94a9471caf99db501a334eeb83e4a4726\", \"sdk_sha256\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+    },
+    {
+      "input": "<snowman>☃&",
+      "status": 200,
+      "text": "{\"escaped\": \"&lt;snowman&gt;\\u2603&amp;\", \"module\": \"/packages/markupsafe/_speedups.cpython-313-wasm32-emscripten.so\", \"builtin\": true, \"extension_sha256\": \"08f1dd0eeb2aba849b316034d25650d94a9471caf99db501a334eeb83e4a4726\", \"sdk_sha256\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+    },
+    {
+      "input": "😀<&",
+      "status": 200,
+      "text": "{\"escaped\": \"\\ud83d\\ude00&lt;&amp;\", \"module\": \"/packages/markupsafe/_speedups.cpython-313-wasm32-emscripten.so\", \"builtin\": true, \"extension_sha256\": \"08f1dd0eeb2aba849b316034d25650d94a9471caf99db501a334eeb83e4a4726\", \"sdk_sha256\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+    }
+  ],
+  "dynamicLibraries": [
+    {
+      "path": "markupsafe/_speedups.cpython-313-wasm32-emscripten.so",
+      "module": "python-extension-08f1dd0eeb2aba849b316034d25650d94a9471caf99db501a334eeb83e4a4726.wasm",
+      "sha256": "08f1dd0eeb2aba849b316034d25650d94a9471caf99db501a334eeb83e4a4726"
+    }
+  ],
+  "offline": {
+    "status": 200,
+    "text": "{\"escaped\": \"&lt;offline&gt;\", \"module\": \"/packages/markupsafe/_speedups.cpython-313-wasm32-emscripten.so\", \"builtin\": true, \"extension_sha256\": \"08f1dd0eeb2aba849b316034d25650d94a9471caf99db501a334eeb83e4a4726\", \"sdk_sha256\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+  },
+  "reference": {
+    "workerd": "1.20260922.1",
+    "compatibilityDate": "2025-06-01",
+    "adapter": "Historical on_fetch alias; unchanged SDK; wheel contents mounted as read-only Worker Data modules",
+    "responses": [
+      {
+        "input": "<tag>&",
+        "status": 200,
+        "text": "{\"escaped\": \"&lt;tag&gt;&amp;\", \"module\": \"/session/metadata/python_modules/markupsafe/_speedups.cpython-313-wasm32-emscripten.so\", \"builtin\": true, \"extension_sha256\": \"08f1dd0eeb2aba849b316034d25650d94a9471caf99db501a334eeb83e4a4726\", \"sdk_sha256\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+      },
+      {
+        "input": "plain",
+        "status": 200,
+        "text": "{\"escaped\": \"plain\", \"module\": \"/session/metadata/python_modules/markupsafe/_speedups.cpython-313-wasm32-emscripten.so\", \"builtin\": true, \"extension_sha256\": \"08f1dd0eeb2aba849b316034d25650d94a9471caf99db501a334eeb83e4a4726\", \"sdk_sha256\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+      },
+      {
+        "input": "<snowman>☃&",
+        "status": 200,
+        "text": "{\"escaped\": \"&lt;snowman&gt;\\u2603&amp;\", \"module\": \"/session/metadata/python_modules/markupsafe/_speedups.cpython-313-wasm32-emscripten.so\", \"builtin\": true, \"extension_sha256\": \"08f1dd0eeb2aba849b316034d25650d94a9471caf99db501a334eeb83e4a4726\", \"sdk_sha256\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+      },
+      {
+        "input": "😀<&",
+        "status": 200,
+        "text": "{\"escaped\": \"\\ud83d\\ude00&lt;&amp;\", \"module\": \"/session/metadata/python_modules/markupsafe/_speedups.cpython-313-wasm32-emscripten.so\", \"builtin\": true, \"extension_sha256\": \"08f1dd0eeb2aba849b316034d25650d94a9471caf99db501a334eeb83e4a4726\", \"sdk_sha256\": \"07dc371cf68e5ebd4683a8c46cf515654798c5320a33f2e014c588b15e89ae49\"}"
+      }
+    ]
+  },
+  "logs": "<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T04:37:53.597222Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld dev\n  Project  /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-zQsyb1/wrangler.json\n  State    /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-zQsyb1/.celld/dev\n  Watch    disabled\n  ● opening the local storage\n  ● building the application\n celld 0.5.1\n───────────────────────────────────────────────\nTotal Upload: 13259.48 KiB / gzip: 5478.34 KiB\nYour Worker has no bindings.\nBundled python-runtime-probe (1.37 sec)\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T04:37:57.260988Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld listening on 127.0.0.1:58131 (ownership=dev)\ncelld internal listening on 127.0.0.1:58138 (advertise=127.0.0.1:58138)\n  ready  http://127.0.0.1:58131\n"
+}

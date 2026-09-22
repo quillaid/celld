@@ -623,3 +623,29 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   date-prefixed native-extension-passing.json, native-extension-test.txt,
   native-extension-full-suite.txt, native-extension-unit-test.txt and
   native-extension-build.sha256 under experiment evidence/. Goal remains active.
+
+## Compiled-extension workerd comparison (2026-09-21)
+
+- The first reference probe rejected PythonRequirement modules: the pinned
+  workerd reports that format is no longer supported. Inspected its current
+  source at c22e7ae3b5e2fc5fc1cf382eee0110550497668d and identified compilation
+  from trusted read-only filesystems. This source revision is provenance for
+  the investigation, not a claim that it built the pinned workerd binary.
+- Mounting extracted wheel files as Worker Data modules lets the reference load
+  the extension through that read-only path. Extended native-extension.test.mjs
+  now runs identical Python and the unchanged SDK in both engines, compares C
+  function outputs, and verifies the actual loaded .so and SDK source digests.
+- ASCII, BMP Unicode and astral Unicode cases pass with matching builtin-function
+  identity and output. Only module filesystem paths differ and are normalized;
+  both must still name the compiled .so. The celld offline-startup check remains
+  in the same test. Native servers are closed before starting the reference to
+  bound simultaneous interpreter startup pressure.
+- Final focused test passes. No runtime/binary changes were needed, so the prior
+  27-record full suite and host unit evidence remain the regression baseline.
+  Retained evidence: date-prefixed extension-reference-passing.json,
+  extension-reference-test.txt and obsolete-python-requirement.txt in experiment
+  evidence/. Diff checks pass.
+- This is workerd 1.20260922.1 with the historical 2025-06-01 Python envelope,
+  not current-date, package-resolver or snapshot parity. Multi-library graphs,
+  shared-library archives, extension lifecycle/pressure and the other original
+  SDK/event/durability/distribution requirements remain open. Goal active.

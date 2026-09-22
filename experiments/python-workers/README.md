@@ -350,7 +350,18 @@ through real HTTP. The test requires the `.so` module path and builtin-function
 identity, so the package's pure-Python fallback cannot satisfy it. The generated
 bundle also starts and executes the extension with global fetch disabled.
 
-This proves one C-extension wheel on celld. Compiled-package workerd comparison,
-multi-library dependency graphs, package-provided shared-library archives,
-NumPy-style workloads, extension reload and resource-pressure behavior remain
-unqualified. Pure-package workerd evidence does not cover these cases.
+The same test compares identical SDK Python and wheel bytes with workerd
+1.20260922.1 under the historical 2025-06-01 compatibility envelope. Wheel files,
+including the .so, are mounted as read-only Worker Data modules. The older
+PythonRequirement module type is rejected by that workerd build. Source
+inspection of [workerd at c22e7ae](https://github.com/cloudflare/workerd/blob/c22e7ae3b5e2fc5fc1cf382eee0110550497668d/src/pyodide/internal/python.ts)
+identified its read-only-filesystem compilation path; the executable comparison
+is the evidence that this mounting format works with the pinned binary.
+
+The engines report matching extension and SDK digests, builtin-function identity
+and results for ASCII, BMP Unicode and astral Unicode inputs. Only their module
+filesystem paths are normalized. This qualifies one C-extension wheel; it does
+not establish current-date compatibility, matching package resolution, or the
+same startup/snapshot implementation. Multi-library graphs, shared-library
+archives, NumPy-style workloads, extension reload and resource pressure remain
+unqualified.

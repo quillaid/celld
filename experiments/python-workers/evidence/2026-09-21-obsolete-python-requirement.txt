@@ -1,0 +1,27 @@
+*** Fatal uncaught kj::Exception: workerd/server/workerd-api.c++:504: failed: NOSENTRY Worker bundle specified Python requirement which is no longer supported
+stack: 102ca249b 102ca05f7 102b45553 102bf2c57 102bfc0ab 102bff407 102b3cdf7 105db569f 105dbbb4f 105db532b 105dbbb4f 105db3bd3 105db3967 102b289b7 1807c84e3
+The Workers runtime failed to start. There was likely a problem with the workerd binary or your configuration.
+Runtime stderr:
+*** Fatal uncaught kj::Exception: workerd/server/workerd-api.c++:504: failed: NOSENTRY Worker bundle specified Python requirement which is no longer supported
+stack: 102ca249b 102ca05f7 102b45553 102bf2c57 102bfc0ab 102bff407 102b3cdf7 105db569f 105dbbb4f 105db532b 105dbbb4f 105db3bd3 105db3967 102b289b7 1807c84e3
+/Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/node_modules/miniflare/dist/src/index.js:102431
+      throw new MiniflareCoreError(
+            ^
+
+MiniflareCoreError [ERR_RUNTIME_FAILURE]: The Workers runtime failed to start. There was likely a problem with the workerd binary or your configuration.
+Runtime stderr:
+*** Fatal uncaught kj::Exception: workerd/server/workerd-api.c++:504: failed: NOSENTRY Worker bundle specified Python requirement which is no longer supported
+stack: 102ca249b 102ca05f7 102b45553 102bf2c57 102bfc0ab 102bff407 102b3cdf7 105db569f 105dbbb4f 105db532b 105dbbb4f 105db3bd3 105db3967 102b289b7 1807c84e3
+    at StartupLogBuffer.handleStartupFailure (/Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/node_modules/miniflare/dist/src/index.js:102431:13)
+    at Runtime.updateConfig (/Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/node_modules/miniflare/dist/src/index.js:102511:24)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async #assembleAndUpdateConfig (/Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/node_modules/miniflare/dist/src/index.js:119464:30)
+    at async /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/node_modules/miniflare/dist/src/index.js:118239:7
+    at async Mutex.runWith (/Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/node_modules/miniflare/dist/src/index.js:55561:16)
+    at async #waitForReady (/Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/node_modules/miniflare/dist/src/index.js:119589:5)
+    at async file:///Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.scratch/obsolete-python-requirement.mjs:9:7 {
+  code: 'ERR_RUNTIME_FAILURE',
+  cause: undefined
+}
+
+Node.js v22.23.1

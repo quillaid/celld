@@ -29,7 +29,7 @@ remain in ignored `.celld/` and `dist/` directories.
 | `patch_env_helper` | Explicit unsupported error | Context-local patch semantics |
 | Package `.pth` hooks | Not run by unpacking wheel into `/sdk` | Audit/install entropy and package patches before framework support |
 | Application packages | Locked pure wheels bundled for native dev/deploy; humanize/dateutil/six HTTP/offline startup, package reload and same-wheel workerd comparison tested | Framework behavior; .pth and .data layouts explicitly rejected |
-| Compiled extensions | Exact cp313/Pyodide 2025_0 wheel tags; immutable Wasm imports and pinned `_api.loadDynlib`; MarkupSafe C function passes celld HTTP/offline startup | Workerd comparison, multi-library graphs, reload and pressure; other wheels/workloads unqualified |
+| Compiled extensions | Exact cp313/Pyodide 2025_0 wheel tags; immutable Wasm imports and pinned `_api.loadDynlib`; MarkupSafe C function passes celld HTTP/offline startup and same-extension/SDK-digest workerd comparison | Multi-library graphs, reload and pressure; other wheels/workloads unqualified |
 | SDK DurableObject / WorkflowEntrypoint | Native DO fetch/alarm class exports now tested separately | Other DO events/RPC, Workflow bridge and proxy bounds |
 
 `sdk-runtime.js` now loads ordinary application modules under `/app`. Its
