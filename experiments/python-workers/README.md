@@ -294,6 +294,16 @@ Python finalization under event execution limits and avoids interpreter entry
 during post-termination host cleanup. Without another event, cleanup is deferred
 until one arrives or the whole heap is freed. Returned RPC capabilities, retained
 tracebacks and long-run proxy/memory bounds remain separate qualification work.
+
+`npm run test:finalizer-limit` loads the generated SDK bundle as a Dynamic Worker
+and mounts its Python Durable Object class as facets of a native parent. A normal
+finalizer control completes once; arming that same finalizer's infinite-loop
+branch then reaches the configured 3000 ms CPU limit. Later calls to the old
+interpreter must report invalidation. A newly loaded interpreter restores the
+witness facet's previously acknowledged SQL write. This verifies the configured
+Dynamic Worker limit, not a top-level per-request CPU configuration or workerd
+facet parity. An exploratory write made inside the interrupted finalizer was
+not retained; it was not acknowledged and is not used as a durability guarantee.
 Lifecycle event arguments bypass SDK RPC conversion to preserve their FFI types.
 The pair contract test also checks `Object.values(new WebSocketPair())` has two
 entries: celld previously included an enumerable `length` property.

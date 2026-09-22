@@ -889,3 +889,28 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   pressure/shared-heap recovery and socket hibernation. Date-prefixed evidence
   retains failure/passing proxy observations, full-suite log and binary hash.
   Diff checks pass. Goal remains active; no public or fleet changes.
+
+## CPU-bounded Python finalization in Dynamic Worker facets (2026-09-21)
+
+- Prior turn was verified progress (571a86e): handler proxy cleanup and 35 full
+  regression records pass. This turn tests unbounded user work in __del__.
+- Top-level native requests have no per-call CPU knob in this implementation.
+  The fixture therefore loads the generated pinned SDK bundle through a real
+  Worker Loader with WorkerCode.limits.cpuMs=3000 and mounts Counter as facets
+  of a native parent Durable Object. It uses the actual adapter cleanup path.
+- Unarmed control: construct, abort and reconstruct the victim facet; the same
+  finalizer completes exactly once. Armed case: the same instance then enables
+  an infinite loop in __del__, and its next abort/reconstruction hits the CPU
+  limit (3009 ms observed). A call into the old witness facet reports the sticky
+  Python-runtime-invalidated error. A fresh loaded interpreter reconstructs that
+  witness from its acknowledged SQL state with a new instance UUID.
+- A console entry marker was not surfaced through this Dynamic Worker logging
+  path. An exploratory SQL marker inside the interrupted finalizer also was not
+  retained; it was an unacknowledged write, so it cannot establish durability or
+  finalizer entry. Preserved that observation as finalizer-unacknowledged-marker
+  evidence, and used the normal/armed finalizer control for the final probe.
+- Final focused test passes. Added it to the default suite; prior 35-record
+  regression evidence remains the baseline because no runtime code changed.
+  Retained finalizer-limit-passing.json and finalizer-limit-test.txt. Diff checks
+  pass. This is local Dynamic Worker/facet/limit qualification, not workerd facet
+  parity, top-level CPU-policy support, or broad finalizer safety. Goal active.

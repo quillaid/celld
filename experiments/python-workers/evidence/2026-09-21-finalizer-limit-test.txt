@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: Python facet finalizer is CPU-bounded and a replacement retains acknowledged SQL
+ok 1 - Python facet finalizer is CPU-bounded and a replacement retains acknowledged SQL
+  ---
+  duration_ms: 14092.084458
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 14154.876917
