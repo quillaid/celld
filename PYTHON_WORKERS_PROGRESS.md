@@ -805,3 +805,29 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   pressure eviction, process survival of live connections, workerd's eviction
   policy or cross-node ownership. Those and other original requirements remain
   open. Goal active; no public or fleet changes.
+
+## Python allocation pressure and delayed recovery (2026-09-21)
+
+- Prior turn was verified progress (0282e7a): configured idle hibernation while
+  keepalives continue. This turn probes real allocation pressure using a native
+  Python Durable Object, a 512 MiB node threshold and a retained 256 MiB bytearray.
+- Celld observes the allocation through its allocator-adjusted process RSS,
+  reports shedding=memory and evicts the object after acknowledging its SQL write.
+  The first ten-second recovery request timed out. Retained that failed trace as
+  native-pressure-recovery-failure.json rather than treating eviction as recovery.
+- Investigation found an empty cell pool still holding its interpreter. The
+  existing REAP_INTERVAL in runtime.rs is 30 seconds. During a follow-up probe,
+  that maintenance pass reports the heap freed, active memory drops below the
+  threshold, and pressure clears; a fresh Python instance reads the SQL write.
+  No production behavior was changed to make the test pass.
+- The fixture now separately asserts baseline below the threshold, observed
+  memory shedding, object retirement, empty-heap reclamation and pressure clearing
+  within the documented maintenance interval, then a ten-second HTTP recovery
+  bound. The original low-latency recovery limitation remains explicit.
+- This is macOS RSS-based pressure for one object. Linux cgroup behavior, shared
+  populated heaps, live-socket pressure, repeated cycles, extension allocations
+  and faster recovery remain open; other original goal requirements remain intact.
+- Final focused pressure test passes with the explicit phase assertions. Retained
+  native-pressure-passing.json and native-pressure-test.txt; the test joins the
+  default suite. No runtime changes, so prior regression evidence remains the
+  baseline. Diff checks pass. Goal remains active; no public/fleet changes.

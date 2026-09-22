@@ -271,6 +271,16 @@ to become empty while continuing matching ping/pong traffic. Automatic idle
 eviction, reconstruction, attachment/timestamp preservation, SQL continuity and
 closed-socket removal all pass. The one-second policy is a test configuration;
 celld leaves idle eviction disabled unless explicitly configured.
+
+`npm run test:native-pressure` uses a 512 MiB active-memory threshold and a
+retained 256 MiB Python allocation. It observes memory shedding, object eviction,
+empty-interpreter heap release, pressure clearing, and a new Python instance
+reading the acknowledged SQL write. On this macOS host, the initial immediate
+recovery request timed out at ten seconds: empty pools are reaped on a 30-second
+maintenance interval. The test explicitly observes that phase before issuing
+the recovery request; it does not claim low-latency recovery. Linux cgroup
+accounting, multiple occupied objects sharing one heap, pressure with live
+sockets, repeated pressure cycles and extension memory remain unqualified.
 Lifecycle event arguments bypass SDK RPC conversion to preserve their FFI types.
 The pair contract test also checks `Object.values(new WebSocketPair())` has two
 entries: celld previously included an enumerable `length` property.

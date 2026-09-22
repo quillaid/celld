@@ -1,0 +1,909 @@
+{
+  "timestamp": "2026-09-22T05:11:24.169Z",
+  "ceilingMb": 512,
+  "samples": [
+    {
+      "activating": 0,
+      "activation_waiting": 0,
+      "adopting": 0,
+      "allocator": {
+        "active_bytes": 28590080,
+        "allocated_bytes": 27524184,
+        "mapped_bytes": 30949376,
+        "resident_bytes": 30244864,
+        "retained_bytes": 0
+      },
+      "capacity_waiting": 0,
+      "cgroup_current_bytes": null,
+      "cgroup_working_set_bytes": null,
+      "deployment": {
+        "cells": {
+          "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d": 1
+        },
+        "draining": [],
+        "generation": 1,
+        "isolates": {
+          "cells": {
+            "python-runtime-probe": {
+              "cells": 1,
+              "external_bytes": 5656157,
+              "freed": 0,
+              "heap_bytes": 32407552,
+              "live": 1,
+              "live_empty": 0,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "services": {
+            "python-runtime-probe": {
+              "cells": 0,
+              "external_bytes": 8073011,
+              "freed": 0,
+              "heap_bytes": 36241408,
+              "live": 1,
+              "live_empty": 1,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "stateless": {
+            "cells": 0,
+            "external_bytes": 8073011,
+            "freed": 0,
+            "heap_bytes": 36241408,
+            "live": 1,
+            "live_empty": 1,
+            "requests": 0,
+            "retiring": 0,
+            "turns": 0
+          }
+        },
+        "prefix": "deploy/python-runtime-probe/7a782ea958b2abcd",
+        "swapping": 0,
+        "version": "7a782ea958b2abcd"
+      },
+      "evicting": 0,
+      "handed_off": 0,
+      "handoff_failed": 0,
+      "in_use_bytes": 374439000,
+      "libc_malloc": null,
+      "node_load": {
+        "bucket_format": 2,
+        "cgroup_current_bytes": null,
+        "cgroup_working_set_bytes": null,
+        "cpu_percent_x100": 0,
+        "draining": false,
+        "fd_limit": 9223372036854776000,
+        "host_websockets": 0,
+        "in_use_bytes": 374373464,
+        "memory_headroom": true,
+        "open_fds": 0,
+        "owned_cells": 1,
+        "placement_weight": 16,
+        "pressured": false,
+        "rebalance_paused": false,
+        "resident_cells": 1,
+        "restoring": 0,
+        "rss_bytes": 377094144,
+        "sampled_ms": 1790053886135,
+        "shed_cells": 0
+      },
+      "occupied": 1,
+      "owned_cells": 1,
+      "ownership": "dev",
+      "phases": {
+        "resident": 1
+      },
+      "published": [
+        "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d"
+      ],
+      "publishes": 1,
+      "quiescing": 0,
+      "rebalance_failed": 0,
+      "rebalanced": 0,
+      "releasing": 0,
+      "remote_route_refreshes": 0,
+      "residents": [
+        "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d"
+      ],
+      "restoring": 0,
+      "rss_bytes": 377159680,
+      "shedding": null,
+      "stops": 0
+    },
+    {
+      "activating": 0,
+      "activation_waiting": 0,
+      "adopting": 0,
+      "allocator": {
+        "active_bytes": 29573120,
+        "allocated_bytes": 28511624,
+        "mapped_bytes": 31834112,
+        "resident_bytes": 31145984,
+        "retained_bytes": 0
+      },
+      "capacity_waiting": 0,
+      "cgroup_current_bytes": null,
+      "cgroup_working_set_bytes": null,
+      "deployment": {
+        "cells": {
+          "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d": 1
+        },
+        "draining": [],
+        "generation": 1,
+        "isolates": {
+          "cells": {
+            "python-runtime-probe": {
+              "cells": 1,
+              "external_bytes": 5655185,
+              "freed": 0,
+              "heap_bytes": 31883264,
+              "live": 1,
+              "live_empty": 0,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "services": {
+            "python-runtime-probe": {
+              "cells": 0,
+              "external_bytes": 8073909,
+              "freed": 0,
+              "heap_bytes": 36241408,
+              "live": 1,
+              "live_empty": 1,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "stateless": {
+            "cells": 0,
+            "external_bytes": 8073909,
+            "freed": 0,
+            "heap_bytes": 36241408,
+            "live": 1,
+            "live_empty": 1,
+            "requests": 0,
+            "retiring": 0,
+            "turns": 0
+          }
+        },
+        "prefix": "deploy/python-runtime-probe/7a782ea958b2abcd",
+        "swapping": 0,
+        "version": "7a782ea958b2abcd"
+      },
+      "evicting": 0,
+      "handed_off": 0,
+      "handoff_failed": 0,
+      "in_use_bytes": 643829128,
+      "libc_malloc": null,
+      "node_load": {
+        "bucket_format": 2,
+        "cgroup_current_bytes": null,
+        "cgroup_working_set_bytes": null,
+        "cpu_percent_x100": 0,
+        "draining": false,
+        "fd_limit": 9223372036854776000,
+        "host_websockets": 0,
+        "in_use_bytes": 643829128,
+        "memory_headroom": true,
+        "open_fds": 0,
+        "owned_cells": 1,
+        "placement_weight": 16,
+        "pressured": false,
+        "rebalance_paused": false,
+        "resident_cells": 1,
+        "restoring": 0,
+        "rss_bytes": 646463488,
+        "sampled_ms": 1790053886172,
+        "shed_cells": 0
+      },
+      "occupied": 1,
+      "owned_cells": 1,
+      "ownership": "dev",
+      "phases": {
+        "resident": 1
+      },
+      "published": [
+        "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d"
+      ],
+      "publishes": 1,
+      "quiescing": 0,
+      "rebalance_failed": 0,
+      "rebalanced": 0,
+      "releasing": 0,
+      "remote_route_refreshes": 0,
+      "residents": [
+        "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d"
+      ],
+      "restoring": 0,
+      "rss_bytes": 646463488,
+      "shedding": null,
+      "stops": 0
+    },
+    {
+      "activating": 0,
+      "activation_waiting": 0,
+      "adopting": 0,
+      "allocator": {
+        "active_bytes": 29573120,
+        "allocated_bytes": 28511624,
+        "mapped_bytes": 31834112,
+        "resident_bytes": 31145984,
+        "retained_bytes": 0
+      },
+      "capacity_waiting": 0,
+      "cgroup_current_bytes": null,
+      "cgroup_working_set_bytes": null,
+      "deployment": {
+        "cells": {
+          "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d": 1
+        },
+        "draining": [],
+        "generation": 1,
+        "isolates": {
+          "cells": {
+            "python-runtime-probe": {
+              "cells": 1,
+              "external_bytes": 5655185,
+              "freed": 0,
+              "heap_bytes": 31883264,
+              "live": 1,
+              "live_empty": 0,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "services": {
+            "python-runtime-probe": {
+              "cells": 0,
+              "external_bytes": 8073909,
+              "freed": 0,
+              "heap_bytes": 36241408,
+              "live": 1,
+              "live_empty": 1,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "stateless": {
+            "cells": 0,
+            "external_bytes": 8073909,
+            "freed": 0,
+            "heap_bytes": 36241408,
+            "live": 1,
+            "live_empty": 1,
+            "requests": 0,
+            "retiring": 0,
+            "turns": 0
+          }
+        },
+        "prefix": "deploy/python-runtime-probe/7a782ea958b2abcd",
+        "swapping": 0,
+        "version": "7a782ea958b2abcd"
+      },
+      "evicting": 0,
+      "handed_off": 0,
+      "handoff_failed": 0,
+      "in_use_bytes": 643829128,
+      "libc_malloc": null,
+      "node_load": {
+        "bucket_format": 2,
+        "cgroup_current_bytes": null,
+        "cgroup_working_set_bytes": null,
+        "cpu_percent_x100": 0,
+        "draining": false,
+        "fd_limit": 9223372036854776000,
+        "host_websockets": 0,
+        "in_use_bytes": 643829128,
+        "memory_headroom": true,
+        "open_fds": 0,
+        "owned_cells": 1,
+        "placement_weight": 16,
+        "pressured": false,
+        "rebalance_paused": false,
+        "resident_cells": 1,
+        "restoring": 0,
+        "rss_bytes": 646463488,
+        "sampled_ms": 1790053886376,
+        "shed_cells": 0
+      },
+      "occupied": 1,
+      "owned_cells": 1,
+      "ownership": "dev",
+      "phases": {
+        "resident": 1
+      },
+      "published": [
+        "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d"
+      ],
+      "publishes": 1,
+      "quiescing": 0,
+      "rebalance_failed": 0,
+      "rebalanced": 0,
+      "releasing": 0,
+      "remote_route_refreshes": 0,
+      "residents": [
+        "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d"
+      ],
+      "restoring": 0,
+      "rss_bytes": 646463488,
+      "shedding": null,
+      "stops": 0
+    },
+    {
+      "activating": 0,
+      "activation_waiting": 0,
+      "adopting": 0,
+      "allocator": {
+        "active_bytes": 29655040,
+        "allocated_bytes": 28593544,
+        "mapped_bytes": 31834112,
+        "resident_bytes": 31145984,
+        "retained_bytes": 0
+      },
+      "capacity_waiting": 0,
+      "cgroup_current_bytes": null,
+      "cgroup_working_set_bytes": null,
+      "deployment": {
+        "cells": {
+          "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d": 1
+        },
+        "draining": [],
+        "generation": 1,
+        "isolates": {
+          "cells": {
+            "python-runtime-probe": {
+              "cells": 1,
+              "external_bytes": 5655185,
+              "freed": 0,
+              "heap_bytes": 31883264,
+              "live": 1,
+              "live_empty": 0,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "services": {
+            "python-runtime-probe": {
+              "cells": 0,
+              "external_bytes": 8073909,
+              "freed": 0,
+              "heap_bytes": 36241408,
+              "live": 1,
+              "live_empty": 1,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "stateless": {
+            "cells": 0,
+            "external_bytes": 8073909,
+            "freed": 0,
+            "heap_bytes": 36241408,
+            "live": 1,
+            "live_empty": 1,
+            "requests": 0,
+            "retiring": 0,
+            "turns": 0
+          }
+        },
+        "prefix": "deploy/python-runtime-probe/7a782ea958b2abcd",
+        "swapping": 0,
+        "version": "7a782ea958b2abcd"
+      },
+      "evicting": 0,
+      "handed_off": 0,
+      "handoff_failed": 0,
+      "in_use_bytes": 643911048,
+      "libc_malloc": null,
+      "node_load": {
+        "bucket_format": 2,
+        "cgroup_current_bytes": null,
+        "cgroup_working_set_bytes": null,
+        "cpu_percent_x100": 0,
+        "draining": false,
+        "fd_limit": 9223372036854776000,
+        "host_websockets": 0,
+        "in_use_bytes": 643911048,
+        "memory_headroom": true,
+        "open_fds": 0,
+        "owned_cells": 1,
+        "placement_weight": 16,
+        "pressured": false,
+        "rebalance_paused": false,
+        "resident_cells": 1,
+        "restoring": 0,
+        "rss_bytes": 646463488,
+        "sampled_ms": 1790053886582,
+        "shed_cells": 0
+      },
+      "occupied": 1,
+      "owned_cells": 1,
+      "ownership": "dev",
+      "phases": {
+        "resident": 1
+      },
+      "published": [
+        "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d"
+      ],
+      "publishes": 1,
+      "quiescing": 0,
+      "rebalance_failed": 0,
+      "rebalanced": 0,
+      "releasing": 0,
+      "remote_route_refreshes": 0,
+      "residents": [
+        "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d"
+      ],
+      "restoring": 0,
+      "rss_bytes": 646463488,
+      "shedding": null,
+      "stops": 0
+    },
+    {
+      "activating": 0,
+      "activation_waiting": 0,
+      "adopting": 0,
+      "allocator": {
+        "active_bytes": 29655040,
+        "allocated_bytes": 28593544,
+        "mapped_bytes": 31834112,
+        "resident_bytes": 31145984,
+        "retained_bytes": 0
+      },
+      "capacity_waiting": 0,
+      "cgroup_current_bytes": null,
+      "cgroup_working_set_bytes": null,
+      "deployment": {
+        "cells": {
+          "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d": 1
+        },
+        "draining": [],
+        "generation": 1,
+        "isolates": {
+          "cells": {
+            "python-runtime-probe": {
+              "cells": 1,
+              "external_bytes": 5655185,
+              "freed": 0,
+              "heap_bytes": 31883264,
+              "live": 1,
+              "live_empty": 0,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "services": {
+            "python-runtime-probe": {
+              "cells": 0,
+              "external_bytes": 8073909,
+              "freed": 0,
+              "heap_bytes": 36241408,
+              "live": 1,
+              "live_empty": 1,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "stateless": {
+            "cells": 0,
+            "external_bytes": 8073909,
+            "freed": 0,
+            "heap_bytes": 36241408,
+            "live": 1,
+            "live_empty": 1,
+            "requests": 0,
+            "retiring": 0,
+            "turns": 0
+          }
+        },
+        "prefix": "deploy/python-runtime-probe/7a782ea958b2abcd",
+        "swapping": 0,
+        "version": "7a782ea958b2abcd"
+      },
+      "evicting": 0,
+      "handed_off": 0,
+      "handoff_failed": 0,
+      "in_use_bytes": 643927432,
+      "libc_malloc": null,
+      "node_load": {
+        "bucket_format": 2,
+        "cgroup_current_bytes": null,
+        "cgroup_working_set_bytes": null,
+        "cpu_percent_x100": 0,
+        "draining": false,
+        "fd_limit": 9223372036854776000,
+        "host_websockets": 0,
+        "in_use_bytes": 643927432,
+        "memory_headroom": true,
+        "open_fds": 0,
+        "owned_cells": 1,
+        "placement_weight": 16,
+        "pressured": false,
+        "rebalance_paused": false,
+        "resident_cells": 1,
+        "restoring": 0,
+        "rss_bytes": 646479872,
+        "sampled_ms": 1790053886789,
+        "shed_cells": 0
+      },
+      "occupied": 1,
+      "owned_cells": 1,
+      "ownership": "dev",
+      "phases": {
+        "resident": 1
+      },
+      "published": [
+        "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d"
+      ],
+      "publishes": 1,
+      "quiescing": 0,
+      "rebalance_failed": 0,
+      "rebalanced": 0,
+      "releasing": 0,
+      "remote_route_refreshes": 0,
+      "residents": [
+        "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d"
+      ],
+      "restoring": 0,
+      "rss_bytes": 646479872,
+      "shedding": null,
+      "stops": 0
+    },
+    {
+      "activating": 0,
+      "activation_waiting": 0,
+      "adopting": 0,
+      "allocator": {
+        "active_bytes": 29949952,
+        "allocated_bytes": 28848904,
+        "mapped_bytes": 32079872,
+        "resident_bytes": 31391744,
+        "retained_bytes": 0
+      },
+      "capacity_waiting": 0,
+      "cgroup_current_bytes": null,
+      "cgroup_working_set_bytes": null,
+      "deployment": {
+        "cells": {
+          "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d": 1
+        },
+        "draining": [],
+        "generation": 1,
+        "isolates": {
+          "cells": {
+            "python-runtime-probe": {
+              "cells": 1,
+              "external_bytes": 5655185,
+              "freed": 0,
+              "heap_bytes": 31883264,
+              "live": 1,
+              "live_empty": 0,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "services": {
+            "python-runtime-probe": {
+              "cells": 0,
+              "external_bytes": 8073909,
+              "freed": 0,
+              "heap_bytes": 36241408,
+              "live": 1,
+              "live_empty": 1,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "stateless": {
+            "cells": 0,
+            "external_bytes": 8073909,
+            "freed": 0,
+            "heap_bytes": 36241408,
+            "live": 1,
+            "live_empty": 1,
+            "requests": 0,
+            "retiring": 0,
+            "turns": 0
+          }
+        },
+        "prefix": "deploy/python-runtime-probe/7a782ea958b2abcd",
+        "swapping": 0,
+        "version": "7a782ea958b2abcd"
+      },
+      "evicting": 0,
+      "handed_off": 0,
+      "handoff_failed": 0,
+      "in_use_bytes": 643986184,
+      "libc_malloc": null,
+      "node_load": {
+        "bucket_format": 2,
+        "cgroup_current_bytes": null,
+        "cgroup_working_set_bytes": null,
+        "cpu_percent_x100": 0,
+        "draining": false,
+        "fd_limit": 9223372036854776000,
+        "host_websockets": 0,
+        "in_use_bytes": 643986184,
+        "memory_headroom": true,
+        "open_fds": 0,
+        "owned_cells": 1,
+        "placement_weight": 16,
+        "pressured": false,
+        "rebalance_paused": false,
+        "resident_cells": 1,
+        "restoring": 0,
+        "rss_bytes": 646529024,
+        "sampled_ms": 1790053886995,
+        "shed_cells": 0
+      },
+      "occupied": 1,
+      "owned_cells": 1,
+      "ownership": "dev",
+      "phases": {
+        "resident": 1
+      },
+      "published": [
+        "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d"
+      ],
+      "publishes": 1,
+      "quiescing": 0,
+      "rebalance_failed": 0,
+      "rebalanced": 0,
+      "releasing": 0,
+      "remote_route_refreshes": 0,
+      "residents": [
+        "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d"
+      ],
+      "restoring": 0,
+      "rss_bytes": 646529024,
+      "shedding": null,
+      "stops": 0
+    },
+    {
+      "activating": 0,
+      "activation_waiting": 0,
+      "adopting": 0,
+      "allocator": {
+        "active_bytes": 30507008,
+        "allocated_bytes": 29478200,
+        "mapped_bytes": 33423360,
+        "resident_bytes": 32751616,
+        "retained_bytes": 0
+      },
+      "capacity_waiting": 0,
+      "cgroup_current_bytes": null,
+      "cgroup_working_set_bytes": null,
+      "deployment": {
+        "cells": {},
+        "draining": [],
+        "generation": 1,
+        "isolates": {
+          "cells": {
+            "python-runtime-probe": {
+              "cells": 0,
+              "external_bytes": 5655192,
+              "freed": 0,
+              "heap_bytes": 31883264,
+              "live": 1,
+              "live_empty": 1,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "services": {
+            "python-runtime-probe": {
+              "cells": 0,
+              "external_bytes": 8073909,
+              "freed": 0,
+              "heap_bytes": 36241408,
+              "live": 1,
+              "live_empty": 1,
+              "requests": 0,
+              "retiring": 0,
+              "turns": 0
+            }
+          },
+          "stateless": {
+            "cells": 0,
+            "external_bytes": 8073909,
+            "freed": 0,
+            "heap_bytes": 36241408,
+            "live": 1,
+            "live_empty": 1,
+            "requests": 0,
+            "retiring": 0,
+            "turns": 0
+          }
+        },
+        "prefix": "deploy/python-runtime-probe/7a782ea958b2abcd",
+        "swapping": 0,
+        "version": "7a782ea958b2abcd"
+      },
+      "evicting": 0,
+      "handed_off": 0,
+      "handoff_failed": 0,
+      "in_use_bytes": 643845432,
+      "libc_malloc": null,
+      "node_load": {
+        "bucket_format": 2,
+        "cgroup_current_bytes": null,
+        "cgroup_working_set_bytes": null,
+        "cpu_percent_x100": 0,
+        "draining": false,
+        "fd_limit": 9223372036854776000,
+        "host_websockets": 0,
+        "in_use_bytes": 643845432,
+        "memory_headroom": false,
+        "open_fds": 0,
+        "owned_cells": 0,
+        "placement_weight": 16,
+        "pressured": true,
+        "rebalance_paused": false,
+        "resident_cells": 0,
+        "restoring": 0,
+        "rss_bytes": 647118848,
+        "sampled_ms": 1790053887200,
+        "shed_cells": 1
+      },
+      "occupied": 0,
+      "owned_cells": 0,
+      "ownership": "dev",
+      "phases": {
+        "inactive": 1
+      },
+      "published": [],
+      "publishes": 1,
+      "quiescing": 0,
+      "rebalance_failed": 0,
+      "rebalanced": 0,
+      "releasing": 0,
+      "remote_route_refreshes": 0,
+      "residents": [],
+      "restoring": 0,
+      "rss_bytes": 647118848,
+      "shedding": "memory",
+      "stops": 1
+    }
+  ],
+  "warm": {
+    "instance": "b3245d01-5258-45f8-8a82-31e12b3ad1fb",
+    "count": 0,
+    "allocated": 0,
+    "scope": "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d"
+  },
+  "before": {
+    "activating": 0,
+    "activation_waiting": 0,
+    "adopting": 0,
+    "allocator": {
+      "active_bytes": 28590080,
+      "allocated_bytes": 27524184,
+      "mapped_bytes": 30949376,
+      "resident_bytes": 30244864,
+      "retained_bytes": 0
+    },
+    "capacity_waiting": 0,
+    "cgroup_current_bytes": null,
+    "cgroup_working_set_bytes": null,
+    "deployment": {
+      "cells": {
+        "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d": 1
+      },
+      "draining": [],
+      "generation": 1,
+      "isolates": {
+        "cells": {
+          "python-runtime-probe": {
+            "cells": 1,
+            "external_bytes": 5656157,
+            "freed": 0,
+            "heap_bytes": 32407552,
+            "live": 1,
+            "live_empty": 0,
+            "requests": 0,
+            "retiring": 0,
+            "turns": 0
+          }
+        },
+        "services": {
+          "python-runtime-probe": {
+            "cells": 0,
+            "external_bytes": 8073011,
+            "freed": 0,
+            "heap_bytes": 36241408,
+            "live": 1,
+            "live_empty": 1,
+            "requests": 0,
+            "retiring": 0,
+            "turns": 0
+          }
+        },
+        "stateless": {
+          "cells": 0,
+          "external_bytes": 8073011,
+          "freed": 0,
+          "heap_bytes": 36241408,
+          "live": 1,
+          "live_empty": 1,
+          "requests": 0,
+          "retiring": 0,
+          "turns": 0
+        }
+      },
+      "prefix": "deploy/python-runtime-probe/7a782ea958b2abcd",
+      "swapping": 0,
+      "version": "7a782ea958b2abcd"
+    },
+    "evicting": 0,
+    "handed_off": 0,
+    "handoff_failed": 0,
+    "in_use_bytes": 374439000,
+    "libc_malloc": null,
+    "node_load": {
+      "bucket_format": 2,
+      "cgroup_current_bytes": null,
+      "cgroup_working_set_bytes": null,
+      "cpu_percent_x100": 0,
+      "draining": false,
+      "fd_limit": 9223372036854776000,
+      "host_websockets": 0,
+      "in_use_bytes": 374373464,
+      "memory_headroom": true,
+      "open_fds": 0,
+      "owned_cells": 1,
+      "placement_weight": 16,
+      "pressured": false,
+      "rebalance_paused": false,
+      "resident_cells": 1,
+      "restoring": 0,
+      "rss_bytes": 377094144,
+      "sampled_ms": 1790053886135,
+      "shed_cells": 0
+    },
+    "occupied": 1,
+    "owned_cells": 1,
+    "ownership": "dev",
+    "phases": {
+      "resident": 1
+    },
+    "published": [
+      "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d"
+    ],
+    "publishes": 1,
+    "quiescing": 0,
+    "rebalance_failed": 0,
+    "rebalanced": 0,
+    "releasing": 0,
+    "remote_route_refreshes": 0,
+    "residents": [
+      "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d"
+    ],
+    "restoring": 0,
+    "rss_bytes": 377159680,
+    "shedding": null,
+    "stops": 0
+  },
+  "allocated": {
+    "instance": "b3245d01-5258-45f8-8a82-31e12b3ad1fb",
+    "count": 1,
+    "allocated": 268435456,
+    "scope": "Counter:5bda94134a07f4163325edc6bd4b90f1ac449af3c4f80ade33f1e9f5de87917d"
+  },
+  "logs": "<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T05:11:16.406774Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld dev\n  Project  /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-kkmLIH/wrangler.json\n  State    /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-kkmLIH/.celld/dev\n  Watch    disabled\n  ● opening the local storage\n  ● building the application\n celld 0.5.1\n───────────────────────────────────────────────\nTotal Upload: 13240.95 KiB / gzip: 5465.37 KiB\nYour Worker has access to the following bindings:\nBinding                    Resource\nenv.COUNTER (Counter)      Durable Object (SQLite)\nBundled python-runtime-probe (1.12 sec)\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T05:11:19.742548Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld listening on 127.0.0.1:62321 (ownership=dev)\ncelld internal listening on 127.0.0.1:62327 (advertise=127.0.0.1:62327)\n  ready  http://127.0.0.1:62321\n2026-09-22T05:11:37.206451Z  WARN celld: HTTP connections failed event=\"http_connection_failures\" total=1 since_last=1 cause=\"incomplete_message\" cause_total=1 surface=\"public\" peer=Some(127.0.0.1:62330) error=connection closed before message completed\n"
+}
