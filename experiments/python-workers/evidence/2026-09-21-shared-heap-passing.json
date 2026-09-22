@@ -1,0 +1,56 @@
+{
+  "timestamp": "2026-09-22T05:19:27.074Z",
+  "pools": [
+    {
+      "cells": 2,
+      "external_bytes": 5656031,
+      "freed": 0,
+      "heap_bytes": 33456128,
+      "live": 1,
+      "live_empty": 0,
+      "requests": 0,
+      "retiring": 0,
+      "turns": 0
+    },
+    {
+      "cells": 1,
+      "external_bytes": 5656038,
+      "freed": 0,
+      "heap_bytes": 33456128,
+      "live": 1,
+      "live_empty": 0,
+      "requests": 0,
+      "retiring": 0,
+      "turns": 0
+    },
+    {
+      "cells": 0,
+      "external_bytes": 0,
+      "freed": 1,
+      "heap_bytes": 0,
+      "live": 0,
+      "live_empty": 0,
+      "requests": 0,
+      "retiring": 0,
+      "turns": 0
+    }
+  ],
+  "first": {
+    "instance": "55898878-bb7b-4650-9204-115885fb7ed4",
+    "count": 0,
+    "allocated": 0,
+    "scope": "Counter:32eafa0991582f6418a16c97f1b4b705fbe53d6884990c83e730a4e8b2edcbe6"
+  },
+  "second": {
+    "instance": "799d32dc-7004-44c3-9ef1-5378ffae72a3",
+    "count": 0,
+    "allocated": 0,
+    "scope": "Counter:e9512f587ac57558b6bd7bb5409abdeda364c8682458a9ddadc8c1e2bc43e97e"
+  },
+  "survivor": {
+    "instance": "799d32dc-7004-44c3-9ef1-5378ffae72a3",
+    "count": 0,
+    "allocated": 0,
+    "scope": "Counter:e9512f587ac57558b6bd7bb5409abdeda364c8682458a9ddadc8c1e2bc43e97e"
+  }
+}

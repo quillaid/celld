@@ -43,20 +43,13 @@ test('memory pressure retires Python state and preserves acknowledged SQL writes
   }
   evidence.evictedAt = Date.now();
   assert.ok(evidence.samples.some(sample => sample.shedding === 'memory'), 'memory pressure, not an unrelated eviction, must be observed');
-  // RuntimeManager's normal empty-pool maintenance interval is 30 seconds.
-  // Observe release separately from the strict HTTP recovery deadline.
-  const releaseDeadline = Date.now() + 40000;
-  while (true) {
-    const current = await state();
-    const pools = Object.values(current.deployment.isolates.cells);
-    if (pools.some(pool => pool.freed > 0) && current.shedding === null) break;
-    assert.ok(Date.now() < releaseDeadline, 'empty Python heap must be freed and pressure must clear after maintenance');
-    await new Promise(resolve => setTimeout(resolve, 500));
-  }
-  evidence.releasedAt = Date.now();
-  assert.ok(evidence.samples.at(-1).in_use_bytes < 512 * 1024 * 1024);
+  assert.ok(Object.values(evidence.samples.at(-1).deployment.isolates.cells).some(pool => pool.freed > 0), 'the evicted heap must be freed before admitting its replacement');
   try { evidence.after = await call('read'); }
   catch (error) { evidence.recoveryFailure = String(error); await state(); throw error; }
+  const recovered = await state();
+  evidence.releasedAt = Date.now();
+  assert.equal(recovered.shedding, null);
+  assert.ok(recovered.in_use_bytes < 512 * 1024 * 1024);
   assert.notEqual(evidence.after.instance, evidence.allocated.instance);
   assert.equal(evidence.after.count, 1);
   assert.equal(evidence.after.allocated, 0);

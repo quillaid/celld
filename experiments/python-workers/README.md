@@ -275,11 +275,14 @@ celld leaves idle eviction disabled unless explicitly configured.
 `npm run test:native-pressure` uses a 512 MiB active-memory threshold and a
 retained 256 MiB Python allocation. It observes memory shedding, object eviction,
 empty-interpreter heap release, pressure clearing, and a new Python instance
-reading the acknowledged SQL write. On this macOS host, the initial immediate
-recovery request timed out at ten seconds: empty pools are reaped on a 30-second
-maintenance interval. The test explicitly observes that phase before issuing
-the recovery request; it does not claim low-latency recovery. Linux cgroup
-accounting, multiple occupied objects sharing one heap, pressure with live
+reading the acknowledged SQL write. The original immediate recovery request
+timed out while waiting for the 30-second pool reaper. Runtime shutdown now
+attempts guarded empty-pool reclamation as soon as object residency is dropped;
+the test requires the immediate recovery request to finish within ten seconds.
+Contended or still-active pools retain the periodic fallback. `shared-heap.test.mjs`
+verifies that stopping one of two objects preserves their shared interpreter and
+the surviving Python instance; stopping the last object frees the heap. Linux
+cgroup accounting, pressure across multiple occupied objects, pressure with live
 sockets, repeated pressure cycles and extension memory remain unqualified.
 Lifecycle event arguments bypass SDK RPC conversion to preserve their FFI types.
 The pair contract test also checks `Object.values(new WebSocketPair())` has two

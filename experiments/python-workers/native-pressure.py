@@ -4,7 +4,8 @@ from js import crypto
 
 class Default(WorkerEntrypoint):
     async def fetch(self, request):
-        return await self.env.COUNTER.getByName('pressure').fetch(request)
+        name = request.url.rsplit('/', 1)[-1] or 'pressure'
+        return await self.env.COUNTER.getByName(name).fetch(request)
 
 
 class Counter(DurableObject):

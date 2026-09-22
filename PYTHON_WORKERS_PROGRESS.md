@@ -831,3 +831,34 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   native-pressure-passing.json and native-pressure-test.txt; the test joins the
   default suite. No runtime changes, so prior regression evidence remains the
   baseline. Diff checks pass. Goal remains active; no public/fleet changes.
+
+## Prompt empty-heap reclamation after Python pressure eviction (2026-09-21)
+
+- Previous turn was verified progress (456b9de) but retained a real ten-second
+  recovery failure caused by waiting for the 30-second periodic reaper. This turn
+  addresses that delay instead of accepting it as the final recovery contract.
+- RuntimeManager::stop_cell now retains each stopped handle's generation, drops
+  its residency after storage closure, then invokes the existing guarded
+  reap_cell_pools policy. The policy excludes housed heaps; may_free additionally
+  requires zero turns and requests. Contended pools retain periodic fallback.
+  No admission limits, memory watermarks, deadlines or core policy were relaxed.
+- Pressure probe now immediately issues its recovery HTTP request after observing
+  retirement, with the original ten-second request deadline. It requires actual
+  freed-heap census evidence before replacement admission. The first tightened
+  run served correctly but checked freed too late: pool slots are reused, so that
+  census is not a cumulative counter. The assertion now uses the pre-recovery
+  snapshot, retaining the memory-release requirement.
+- New shared-heap regression creates two Python Durable Objects, verifies one
+  interpreter contains both, evicts the first and checks the second retains its
+  UUID and heap. Evicting the last object must immediately report one freed heap.
+  Focused shared-heap test passes. Native pressure fixture now routes named paths
+  to separate objects for this test; its existing root name remains unchanged.
+- Rebuilt celld; all 34 full-suite records pass, including forced and automatic
+  live-socket hibernation, pressure, shared-heap preservation, CPU termination,
+  SQL/alarm/restart and SDK comparisons. In this run, observed eviction to served
+  recovery was 2092 ms. This is measured local behavior, not a universal latency
+  guarantee; contended/active heaps still rely on safe later reclamation.
+- Evidence retained: prompt-pressure-recovery-passing.json, shared-heap-passing.json,
+  pressure-recovery-full-suite.txt and pressure-recovery-build.sha256 under the
+  date-prefixed experiment evidence paths. Rust formatting and diff checks pass.
+  Original delayed-recovery evidence remains. Goal active; no public/fleet changes.

@@ -2226,7 +2226,11 @@ impl RuntimeManager {
                 }
             }
         }
+        let mut stopped_generations = BTreeMap::new();
         for handle in stopped {
+            stopped_generations
+                .entry(handle.generation)
+                .or_insert_with(|| self.generation_by_id(handle.generation));
             // Give the cell back rather than shutting the isolate down: it
             // serves other cells. Taking the isolate for this turn is the
             // barrier — an event of this cell either finished its turn
@@ -2245,6 +2249,14 @@ impl RuntimeManager {
             // the isolate its place back — and what lets `retire` reclaim
             // the isolate once no cell is left in it.
             drop(handle);
+        }
+        // An evicted Python interpreter can retain hundreds of MiB until its
+        // empty heap is freed. Waiting for the periodic reaper leaves pressure
+        // admission closed despite having no resident object left to shed.
+        // Use the existing guarded pool policy: housed or active heaps remain
+        // protected, and a contended pool retries on normal maintenance.
+        for generation in stopped_generations.into_values() {
+            generation.reap_cell_pools();
         }
         if let Some(replication) = &self.replication {
             // Every stop releases the handle, and this does not consult
