@@ -254,6 +254,13 @@ connection, attachment restoration after hibernation, protocol-error callback
 parity, outbound sockets or cross-node forwarding. An EOF without a close frame
 invokes the close handler with code 1006; it is distinct from a protocol error.
 The host transport unit test preserves that distinction for malformed frames.
+
+`npm run test:socket-eviction` separately tests forced local eviction with two
+live connections. It requires new Python instance identities, constructor-time
+restoration of both sockets, separate attachments, retained tags and continuous
+SQL counts across three evictions. After one socket closes, another eviction
+must restore only the survivor. This does not qualify automatic idle hibernation,
+memory-pressure eviction, auto-response without waking, or ownership migration.
 Lifecycle event arguments bypass SDK RPC conversion to preserve their FFI types.
 The pair contract test also checks `Object.values(new WebSocketPair())` has two
 entries: celld previously included an enumerable `length` property.

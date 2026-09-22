@@ -1,0 +1,123 @@
+{
+  "timestamp": "2026-09-22T05:06:04.701Z",
+  "messages": [
+    {
+      "instance": "105738a3-181e-4a20-995d-e99a7cf72cc3",
+      "restored": 0,
+      "attachment": "first",
+      "tags": [
+        "python"
+      ],
+      "count": 1,
+      "message": "before",
+      "scope": "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c"
+    },
+    {
+      "instance": "105738a3-181e-4a20-995d-e99a7cf72cc3",
+      "restored": 0,
+      "attachment": "second",
+      "tags": [
+        "python"
+      ],
+      "count": 2,
+      "message": "second-before",
+      "scope": "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c"
+    },
+    {
+      "instance": "7f5b8a62-0094-4210-942f-42d4afe68ce2",
+      "restored": 2,
+      "attachment": "first",
+      "tags": [
+        "python"
+      ],
+      "count": 3,
+      "message": "after-1",
+      "scope": "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c"
+    },
+    {
+      "instance": "7f5b8a62-0094-4210-942f-42d4afe68ce2",
+      "restored": 2,
+      "attachment": "second",
+      "tags": [
+        "python"
+      ],
+      "count": 4,
+      "message": "second-after-1",
+      "scope": "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c"
+    },
+    {
+      "instance": "043b5eae-5fd7-474d-9ac6-6a6148fe5cb2",
+      "restored": 2,
+      "attachment": "first",
+      "tags": [
+        "python"
+      ],
+      "count": 5,
+      "message": "after-2",
+      "scope": "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c"
+    },
+    {
+      "instance": "043b5eae-5fd7-474d-9ac6-6a6148fe5cb2",
+      "restored": 2,
+      "attachment": "second",
+      "tags": [
+        "python"
+      ],
+      "count": 6,
+      "message": "second-after-2",
+      "scope": "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c"
+    },
+    {
+      "instance": "f4645356-e69f-4fe6-8ce0-97beaab53f74",
+      "restored": 2,
+      "attachment": "first",
+      "tags": [
+        "python"
+      ],
+      "count": 7,
+      "message": "after-3",
+      "scope": "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c"
+    },
+    {
+      "instance": "f4645356-e69f-4fe6-8ce0-97beaab53f74",
+      "restored": 2,
+      "attachment": "second",
+      "tags": [
+        "python"
+      ],
+      "count": 8,
+      "message": "second-after-3",
+      "scope": "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c"
+    },
+    {
+      "instance": "d4763b00-f9a3-49c5-ab0d-dc2547c86433",
+      "restored": 1,
+      "attachment": "second",
+      "tags": [
+        "python"
+      ],
+      "count": 9,
+      "message": "survivor",
+      "scope": "Counter:9b9b74dd31b52aa257a1d409193804f1292999a46829a74c2f5d509b4703cd9c"
+    }
+  ],
+  "evictions": [
+    {
+      "status": 200,
+      "body": "{\"ok\":true}"
+    },
+    {
+      "status": 200,
+      "body": "{\"ok\":true}"
+    },
+    {
+      "status": 200,
+      "body": "{\"ok\":true}"
+    },
+    {
+      "status": 200,
+      "body": "{\"ok\":true}"
+    }
+  ],
+  "logs": "<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T05:05:57.114625Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld dev\n  Project  /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-dSyvFE/wrangler.json\n  State    /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-dSyvFE/.celld/dev\n  Watch    disabled\n  ● opening the local storage\n  ● building the application\n celld 0.5.1\n───────────────────────────────────────────────\nTotal Upload: 13241.50 KiB / gzip: 5465.46 KiB\nYour Worker has access to the following bindings:\nBinding                    Resource\nenv.COUNTER (Counter)      Durable Object (SQLite)\nBundled python-runtime-probe (1.07 sec)\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T05:06:00.293563Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld listening on 127.0.0.1:61996 (ownership=dev)\ncelld internal listening on 127.0.0.1:62005 (advertise=127.0.0.1:62005)\n  ready  http://127.0.0.1:61996\n"
+}

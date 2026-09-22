@@ -739,3 +739,27 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   also passes. Evidence retains failure/passing observations, focused/full-suite
   logs, unit output and the binary hash under date-prefixed websocket-abrupt and
   websocket-transport names. Diff checks pass. Goal active; no public changes.
+
+## Python live-socket forced eviction (2026-09-21)
+
+- Previous turn made verified progress (eb9f3a6): binary output/EOF differential
+  plus transport regression and 30 full-suite records passed. This turn adds
+  direct evidence for the original live-socket residency requirement.
+- Added a native Python fixture with per-construction UUID, constructor-time
+  getWebSockets count, distinct serialized attachments, tags, and SQL message
+  count. The test uses only its isolated server's logged internal listener and
+  /evict/<scope> endpoint, requiring each eviction to return 200.
+- Two real TCP WebSockets survive three forced evictions of their shared Durable
+  Object. Each next application message is handled by a new Python instance,
+  the constructor recovers two sockets, attachments remain distinct, tags persist,
+  and SQL counts continue. Both sockets report the same new instance per cycle.
+- After one clean close, a fourth eviction restores just the survivor, retaining
+  its attachment and SQL count. The final connection also closes cleanly. Focused
+  test passes; nine acknowledged application messages and four successful
+  evictions are retained in evidence/2026-09-21-socket-eviction-passing.json with
+  the test log alongside it. No runtime changes were necessary. Prior 30-record
+  regression result remains the baseline; the new test joins the default suite.
+- This is local forced eviction, not a workerd eviction differential, automatic
+  idle hibernation, pressure-driven interpreter eviction, auto-response no-wake
+  proof, process survival of TCP sockets, or multi-node ownership migration.
+  Those and other original goal requirements remain open. Goal active.
