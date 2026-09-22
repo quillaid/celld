@@ -1,0 +1,59 @@
+{
+  "timestamp": "2026-09-22T05:34:22.438Z",
+  "workerd": "1.20260922.1",
+  "referenceDate": "2025-06-01",
+  "responses": [
+    {
+      "index": 2,
+      "actual": {
+        "status": 500,
+        "header": null,
+        "body": "Worker failed: rejected: PythonError: Traceback (most recent call last):\n  File \"<exec>\", line 19, in dispatch\n  File \"/sdk/workers/asgi.py\", line 479, in fetch\n    return await fetch(app, request, self.env, self.ctx)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/sdk/workers/asgi.py\", line 453, in fetch\n    from workers import wait_until  # noqa: PLC0415\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nImportError: cannot import name 'wait_until' from 'workers' (/sdk/workers/__init__.py)\n [File \"<exec>\", line 19, in dispatch <- File \"/sdk/workers/asgi.py\", line 479, in fetch <- return await fetch(app, request, self.env, self.ctx)]"
+      },
+      "expected": {
+        "status": 201,
+        "header": "python",
+        "body": "{\"path\": \"/caf\\u00e9\", \"query\": \"request=2\", \"body\": \"payload-2\", \"state\": {\"startup\": \"ready\"}}"
+      }
+    },
+    {
+      "index": 0,
+      "actual": {
+        "status": 500,
+        "header": null,
+        "body": "Worker failed: rejected: PythonError: Traceback (most recent call last):\n  File \"<exec>\", line 19, in dispatch\n  File \"/sdk/workers/asgi.py\", line 479, in fetch\n    return await fetch(app, request, self.env, self.ctx)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/sdk/workers/asgi.py\", line 453, in fetch\n    from workers import wait_until  # noqa: PLC0415\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nImportError: cannot import name 'wait_until' from 'workers' (/sdk/workers/__init__.py)\n [File \"<exec>\", line 19, in dispatch <- File \"/sdk/workers/asgi.py\", line 479, in fetch <- return await fetch(app, request, self.env, self.ctx)]"
+      },
+      "expected": {
+        "status": 201,
+        "header": "python",
+        "body": "{\"path\": \"/caf\\u00e9\", \"query\": \"request=0\", \"body\": \"payload-0\", \"state\": {\"startup\": \"ready\"}}"
+      }
+    },
+    {
+      "index": 3,
+      "actual": {
+        "status": 500,
+        "header": null,
+        "body": "Worker failed: rejected: PythonError: Traceback (most recent call last):\n  File \"<exec>\", line 19, in dispatch\n  File \"/sdk/workers/asgi.py\", line 479, in fetch\n    return await fetch(app, request, self.env, self.ctx)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/sdk/workers/asgi.py\", line 453, in fetch\n    from workers import wait_until  # noqa: PLC0415\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nImportError: cannot import name 'wait_until' from 'workers' (/sdk/workers/__init__.py)\n [File \"<exec>\", line 19, in dispatch <- File \"/sdk/workers/asgi.py\", line 479, in fetch <- return await fetch(app, request, self.env, self.ctx)]"
+      },
+      "expected": {
+        "status": 201,
+        "header": "python",
+        "body": "{\"path\": \"/caf\\u00e9\", \"query\": \"request=3\", \"body\": \"payload-3\", \"state\": {\"startup\": \"ready\"}}"
+      }
+    },
+    {
+      "index": 1,
+      "actual": {
+        "status": 500,
+        "header": null,
+        "body": "Worker failed: rejected: PythonError: Traceback (most recent call last):\n  File \"<exec>\", line 19, in dispatch\n  File \"/sdk/workers/asgi.py\", line 479, in fetch\n    return await fetch(app, request, self.env, self.ctx)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/sdk/workers/asgi.py\", line 453, in fetch\n    from workers import wait_until  # noqa: PLC0415\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nImportError: cannot import name 'wait_until' from 'workers' (/sdk/workers/__init__.py)\n [File \"<exec>\", line 19, in dispatch <- File \"/sdk/workers/asgi.py\", line 479, in fetch <- return await fetch(app, request, self.env, self.ctx)]"
+      },
+      "expected": {
+        "status": 201,
+        "header": "python",
+        "body": "{\"path\": \"/caf\\u00e9\", \"query\": \"request=1\", \"body\": \"payload-1\", \"state\": {\"startup\": \"ready\"}}"
+      }
+    }
+  ]
+}

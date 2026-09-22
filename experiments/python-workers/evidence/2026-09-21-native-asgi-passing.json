@@ -1,0 +1,67 @@
+{
+  "timestamp": "2026-09-22T05:36:31.247Z",
+  "workerd": "1.20260922.1",
+  "referenceDate": "2025-06-01",
+  "responses": [
+    {
+      "index": 2,
+      "actual": {
+        "status": 201,
+        "header": "python",
+        "body": "{\"path\": \"/caf\\u00e9\", \"query\": \"request=2\", \"body\": \"payload-2\", \"state\": {\"startup\": \"ready\"}}"
+      },
+      "expected": {
+        "status": 201,
+        "header": "python",
+        "body": "{\"path\": \"/caf\\u00e9\", \"query\": \"request=2\", \"body\": \"payload-2\", \"state\": {\"startup\": \"ready\"}}"
+      },
+      "celldShutdown": "closed",
+      "workerdShutdown": "closed"
+    },
+    {
+      "index": 0,
+      "actual": {
+        "status": 201,
+        "header": "python",
+        "body": "{\"path\": \"/caf\\u00e9\", \"query\": \"request=0\", \"body\": \"payload-0\", \"state\": {\"startup\": \"ready\"}}"
+      },
+      "expected": {
+        "status": 201,
+        "header": "python",
+        "body": "{\"path\": \"/caf\\u00e9\", \"query\": \"request=0\", \"body\": \"payload-0\", \"state\": {\"startup\": \"ready\"}}"
+      },
+      "celldShutdown": "closed",
+      "workerdShutdown": "closed"
+    },
+    {
+      "index": 1,
+      "actual": {
+        "status": 201,
+        "header": "python",
+        "body": "{\"path\": \"/caf\\u00e9\", \"query\": \"request=1\", \"body\": \"payload-1\", \"state\": {\"startup\": \"ready\"}}"
+      },
+      "expected": {
+        "status": 201,
+        "header": "python",
+        "body": "{\"path\": \"/caf\\u00e9\", \"query\": \"request=1\", \"body\": \"payload-1\", \"state\": {\"startup\": \"ready\"}}"
+      },
+      "celldShutdown": "closed",
+      "workerdShutdown": "closed"
+    },
+    {
+      "index": 3,
+      "actual": {
+        "status": 201,
+        "header": "python",
+        "body": "{\"path\": \"/caf\\u00e9\", \"query\": \"request=3\", \"body\": \"payload-3\", \"state\": {\"startup\": \"ready\"}}"
+      },
+      "expected": {
+        "status": 201,
+        "header": "python",
+        "body": "{\"path\": \"/caf\\u00e9\", \"query\": \"request=3\", \"body\": \"payload-3\", \"state\": {\"startup\": \"ready\"}}"
+      },
+      "celldShutdown": "closed",
+      "workerdShutdown": "closed"
+    }
+  ]
+}

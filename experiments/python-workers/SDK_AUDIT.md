@@ -20,12 +20,13 @@ remain in ignored `.celld/` and `dist/` directories.
 
 | Seam | Current experiment | Remaining work |
 | --- | --- | --- |
-| `WorkerEntrypoint(ctx, env)` | Real SDK class; environment wrapper handles actual KV | Native class discovery/export generation and deployment adapter |
+| `WorkerEntrypoint(ctx, env)` | Real SDK class; native `.py` build path generates exports and environment wrapper handles actual KV | Additional events, named service entrypoints and broader discovery |
 | SDK Request / Response | Real conversions; JSON/status/headers, binary bodies, incremental identity-encoded response and upload streaming, buffered request-body passthrough, and response/upload disconnect cleanup verified | Application-driven cancellation, forms, cloning and larger body matrix |
 | `patchWaitUntil` helper | Retains borrowed Python awaitable synchronously; destroys owned proxy after settlement; delegates to celld context | Cancellation, rejection, DO contexts and leak accounting |
 | Durable Object handler proxies | Eight shared-interpreter evictions return the Python weak-reference census to one survivor and finalize each retired instance once; Dynamic Worker facet finalizer loop reaches configured CPU limit and replacement restores acknowledged SQL | Retained tracebacks, returned RPC capabilities, other adversarial finalizers and long-run bounds |
 | `_cloudflare_compat_flags` | Explicit historical fixture setting for Workflow dependencies; missing flags remain absent | Validate/map supported dates and flags |
-| `cloudflareWorkersModule`, `cloudflareSocketsModule` | Not supplied | Module-level env/wait_until, sockets and request isolation |
+| `cloudflareWorkersModule`, `cloudflareSocketsModule` | Workers module supplied; retained module-level wait_until and env/KV verified through concurrent ASGI lifespan requests | Sockets module, other module exports and cross-binding request isolation |
+| SDK ASGI adapter | Unmodified adapter handles concurrent request bodies, decoded paths/query, status/headers, two-chunk response path and observable lifespan startup/shutdown against workerd | Framework dependencies, causal streaming/backpressure, WebSockets and disconnect behavior |
 | `doAnImport` | Explicit unsupported error | Permitted JS imports and SDK companion modules |
 | `patch_env_helper` | Explicit unsupported error | Context-local patch semantics |
 | Package `.pth` hooks | Not run by unpacking wheel into `/sdk` | Audit/install entropy and package patches before framework support |
@@ -37,7 +38,8 @@ remain in ignored `.celld/` and `dist/` directories.
 `sdk-dispatch.py` adapter validates the selected WorkerEntrypoint class, creates
 a request-scoped instance, and uses the SDK's argument/result conversions.
 Application source needs no celld-specific dispatch function. This remains an
-experimental adapter, not native `.py` deployment support.
+experimental adapter used by the native `.py` build path through the configured
+external builder; it is not a bundled production toolchain.
 
 ## Reference envelope and proof
 

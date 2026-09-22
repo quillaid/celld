@@ -4,19 +4,23 @@ import lockFileContents from 'pyodide/pyodide-lock.json';
 import wheel from './.celld/workers_runtime_sdk-1.9.0-py3-none-any.whl';
 import adapter from './sdk-dispatch.py';
 import { DurableObject as HostDurableObject } from 'cloudflare:workers';
+import * as cloudflareWorkers from 'cloudflare:workers';
 
 const patched = new WeakSet();
+function retainedAwaitable(value) {
+  const owned = typeof value?.copy === 'function' ? value.copy() : value;
+  return (async () => {
+    try { await owned; }
+    finally { owned?.destroy?.(); }
+  })();
+}
 function patchWaitUntil(ctx) {
   if (patched.has(ctx)) return;
   const waitUntil = ctx.waitUntil.bind(ctx);
   ctx.waitUntil = (value) => {
     // A Python-to-JS argument is borrowed. Retain it synchronously before
     // returning to Python, then release the owned proxy after settlement.
-    const owned = typeof value?.copy === 'function' ? value.copy() : value;
-    waitUntil((async () => {
-      try { await owned; }
-      finally { owned?.destroy?.(); }
-    })());
+    waitUntil(retainedAwaitable(value));
   };
   patched.add(ctx);
 }
@@ -30,6 +34,10 @@ async function initialize({ files, packages = [], dynamicLibraries = [] }) {
   python.registerJsModule('_cloudflare_compat_flags', { python_workflows_implicit_dependencies: false });
   python.registerJsModule('_pyodide_entrypoint_helper', {
     patchWaitUntil,
+    cloudflareWorkersModule: {
+      ...cloudflareWorkers,
+      waitUntil(value) { cloudflareWorkers.waitUntil(retainedAwaitable(value)); },
+    },
     // These hooks are deliberately explicit failures until their host contract
     // is implemented; basic SDK HTTP must not silently emulate them.
     doAnImport(name) { throw new Error(`SDK JavaScript module import not implemented: ${name}`); },

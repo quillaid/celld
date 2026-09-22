@@ -304,6 +304,15 @@ witness facet's previously acknowledged SQL write. This verifies the configured
 Dynamic Worker limit, not a top-level per-request CPU configuration or workerd
 facet parity. An exploratory write made inside the interrupted finalizer was
 not retained; it was not acknowledged and is not used as a durability guarantee.
+
+`npm run test:asgi` runs the unchanged SDK's ASGI entrypoint adapter in both celld
+and pinned workerd. Four concurrent requests compare body, decoded Unicode path,
+query, response status/headers, and a two-chunk response path. Lifespan startup
+provides per-request state; shutdown writes a request-specific KV marker that
+must become observable after the response. This exercises module-level `workers.env`
+and `workers.wait_until`, whose Python awaitables are retained through settlement.
+It is a bare ASGI application, not FastAPI/framework qualification, and does not
+yet prove causal streaming delivery, ASGI backpressure, disconnects or WebSockets.
 Lifecycle event arguments bypass SDK RPC conversion to preserve their FFI types.
 The pair contract test also checks `Object.values(new WebSocketPair())` has two
 entries: celld previously included an enumerable `length` property.

@@ -914,3 +914,29 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   Retained finalizer-limit-passing.json and finalizer-limit-test.txt. Diff checks
   pass. This is local Dynamic Worker/facet/limit qualification, not workerd facet
   parity, top-level CPU-policy support, or broad finalizer safety. Goal active.
+
+## Released SDK ASGI adapter and module-level context (2026-09-21)
+
+- Previous turn was verified progress (7eabbf0): bounded finalizer/Dynamic Worker
+  facet test. Rechecked the original plan and SDK audit; ASGI/framework support
+  and broader bindings/events/distribution remain explicit unfinished scope.
+- Added bare ASGI fixture through the unmodified SDK entrypoint(app) adapter.
+  Its response path failed on celld with import of workers.wait_until while the
+  reference served successfully. Retained native-asgi-failure.json.
+- The bridge now supplies cloudflareWorkersModule from the actual host module.
+  Its waitUntil copies borrowed Python awaitables immediately and destroys owned
+  proxies after settlement, sharing the retention helper with ctx.waitUntil.
+  Arbitrary doAnImport, sockets and patch_env remain unsupported.
+- Focused comparison passes four concurrent requests, request bodies, Unicode
+  path/query, status/header/body equality, lifespan state and per-request shutdown
+  KV markers. The marker requires module-level env and background wait_until to
+  complete after the response. Both engines use the same source and SDK wheel;
+  reference remains workerd 1.20260922.1 under the historical 2025-06-01 envelope.
+- This exercises the two-chunk streaming code path but is not causal streaming,
+  backpressure/cancellation or ASGI WebSocket proof. No framework dependency is
+  claimed yet. Corrected stale SDK audit statements about native .py export/build
+  support while preserving the original plan and its remaining requirements.
+- Rebuilt fixtures; all 37 full-suite records pass, including ASGI shutdown
+  markers, finalizer CPU containment, shared-interpreter cleanup, pressure and
+  socket lifecycle. Retained date-prefixed native-asgi failure/passing JSON and
+  full-suite log. No new Rust changes. Diff checks pass. Goal remains active.
