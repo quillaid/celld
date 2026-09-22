@@ -41,8 +41,13 @@ export default {
       try { termination = await invoke(stub, 'spin', 25); }
       catch (error) { termination = { error: String(error) }; }
       const terminationElapsedMs = Date.now() - started;
+      const pendingResult = await Promise.race([
+        pending,
+        new Promise((done) => setTimeout(() => done({ error: 'suspended request did not wake after invalidation within 2000ms' }), 2000)),
+      ]);
+      const pendingElapsedMs = Date.now() - started;
       if (new URL(request.url).pathname === '/terminate-only') {
-        return Response.json({ warm, termination, terminationElapsedMs, pendingStarted, pending: await pending });
+        return Response.json({ warm, termination, terminationElapsedMs, pendingStarted, pendingElapsedMs, pending: pendingResult });
       }
       let diagnostics;
       try {
@@ -58,7 +63,7 @@ export default {
       const secondAfter = await invoke(stub, 'second-after-termination').catch((error) => ({ error: String(error) }));
       const replacement = env.LOADER.load(code());
       try {
-        return Response.json({ warm, termination, terminationElapsedMs, diagnostics, after, secondAfter, pendingStarted, pending: await pending, replacement: await invoke(replacement, 'replacement') });
+        return Response.json({ warm, termination, terminationElapsedMs, diagnostics, after, secondAfter, pendingStarted, pendingElapsedMs, pending: pendingResult, replacement: await invoke(replacement, 'replacement') });
       } finally { replacement.dispose(); }
     } finally { stub.dispose(); }
   },

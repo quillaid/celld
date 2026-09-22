@@ -238,7 +238,16 @@ impl Slot {
             TurnLane::Stateless => "stateless".to_string(),
             TurnLane::Cell(scope) => scope,
         });
-        f(worker)
+        let result = f(worker);
+        // A terminal guest VM can still have affiliated requests and Durable
+        // Objects. Stop new placement now; normal drain counters retain its
+        // heap until those owners release it. Already-affiliated turns return
+        // to the same Worker to fail through its storage and response gates.
+        if worker.is_invalidated() && !self.retiring.swap(true, Ordering::Relaxed) {
+            tracing::info!(isolate = %self.heap_id, slot = self.id, "invalidated isolate retiring");
+            self.freed.notify_waiters();
+        }
+        result
     }
 
     /// Reserve one event through its complete lifetime, including the reply

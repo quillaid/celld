@@ -40,13 +40,13 @@ Bootstrap a pinned upstream Pyodide 0.28.3 inside the real celld 0.5.1 HTTP path
 
 ## Next action
 
-1. Extend the now-tested host invalidation to pool retirement and prompt
-   cancellation of suspended events. The initial patch rejects new calls and
-   continuations when they next enter the isolate. A timer-backed suspended
-   request is tested; a hung outbound operation does not yet have a dedicated
-   invalidation wakeup. Do not silently retry the operation that exceeded CPU.
-2. Verify Durable Object recovery, retained input/output gates, and alarm retry
+1. Verify Durable Object recovery, retained input/output gates, and alarm retry
    state under invalidation before enabling a production Python deployment path.
+   Stateless pool retirement and prompt suspended-event wakeups now pass real
+   Python probes (see latest checkpoint below). DO input-gate ownership still
+   requires a focused test: `reject_invalidated_entry` calls `abandon`, but a
+   cross-entry claim can keep `keeps_native_ops` / `retired` live. Investigate
+   host claim retirement without running guest callbacks or bypassing durability.
    Inspect pool placement/retirement and Dynamic Worker ownership. V8 clears the
    isolate's termination flag, but Python's asyncio/native frames may still be
    abandoned. The fixture's post-termination diagnostic now confirms a stale
@@ -60,7 +60,7 @@ Bootstrap a pinned upstream Pyodide 0.28.3 inside the real celld 0.5.1 HTTP path
    `_current_tasks`: native/Wasm state may also have been interrupted. The host
    needs a terminal-runtime contract before admitting another guest invocation,
    including already-suspended work, rather than guest-controlled health checks.
-3. Measure cancellation, process RSS, proxy cleanup, and eviction, then audit and
+2. Measure cancellation, process RSS, proxy cleanup, and eviction, then audit and
    reuse the current Workers SDK entrypoint bridge before native packaging/DOs.
 
 ## Goal continuation results (2026-09-21)
@@ -125,3 +125,34 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   and eviction are still unqualified. Existing suspended contexts fail only
   when driven again. The host guard must survive future native packaging and
   old-node capability rejection rather than relying on an ignored flag.
+
+## Suspended events and pool retirement checkpoint (2026-09-21)
+
+- Strengthened the suspended Python test to wait 60 seconds rather than one.
+  The preceding build fails the explicit 2-second invalidation deadline. The
+  retained red evidence is `evidence/2026-09-21-suspended-invalidation-failure.json`.
+- Invalidation now broadcasts a host notification. Each in-flight request
+  subscribes before checking the sticky terminal state, avoiding a lost wakeup.
+  It stops listening once it has handled invalidation so pending output gates
+  can settle on their ordinary path rather than spin on a ready notification.
+- The 60-second Python sleeper now rejects around the 25 ms CPU cutoff (28–30 ms
+  in the first passing capture). Native operation cleanup remains in the existing
+  driver. This tests timer-backed suspension, not remote I/O transport teardown.
+- Pool slots mark themselves retiring after observing terminal runtime state.
+  Existing affiliations keep the heap alive to fail through normal event gates;
+  new placement skips it. No user operation is retried automatically.
+- `pool-lifecycle.test.mjs` starts actual Python interpreters in a pool capped at
+  one active stateless isolate, then repeatedly terminates Python through a
+  fixture-only FFI capability to `globalThis.process.exit(1)`. Five distinct
+  interpreter IDs serve successfully across repeated replacement. This validates
+  pooled hard termination; the Dynamic Worker test separately validates CPU
+  cutoff. Top-level HTTP does not currently expose the per-call CPU limit knob.
+- The named `node:process.exit` export is still a celld unsupported stub; the
+  existing host-implemented global method is used deliberately in this fixture.
+  Fixing that separate node compatibility gap is outside this slice.
+- Tested debug binary SHA-256:
+  `759dcfc53adbd23ea6a904ba86f58ad408bdddf229b5b5b9b40b875e571d49a2`.
+  Full suite: 13 records passed, zero failures; formatting and diff checks pass.
+  New evidence uses the `2026-09-21-retirement-*` prefix under `evidence/`.
+  Remaining work includes DO recovery and gate retirement, transport cancellation,
+  resource bounds, SDK/packaging, and the full compatibility matrix.

@@ -52,9 +52,14 @@ The branch's `python_workers` flag now makes hard termination invalidate the
 isolate at the host boundary. New calls and continuations are explicitly
 rejected; they cannot re-enter Python. Tests prove rejection of two new calls
 and an already-suspended Python task, then successful explicit replacement.
-All 12 current test records pass on the patched source build. Automatic pool
-replacement and prompt cancellation of hung I/O still need implementation and
-tests; Python Durable Object recovery is not yet qualified.
+The host wakes suspended invocations on invalidation; a Python request sleeping
+for 60 seconds is rejected around the CPU cutoff, rather than waiting for its
+timer. Invalidated pool slots retire through the existing reference counters.
+A separate test caps the stateless pool at one active isolate and verifies five
+distinct Python interpreters across repeated hard terminations. That fixture
+uses Python FFI to the host's global `process.exit` method; the Dynamic Worker
+test exercises CPU limits. Python Durable Object recovery, input-gate cleanup,
+and remote transport cancellation are not yet qualified.
 
 To run this full suite, build at the repository root with:
 

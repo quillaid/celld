@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026-09-22T02:59:58.353Z",
+  "terminationTrigger": "Python FFI to globalThis.process.exit(1)",
+  "maxStatelessIsolates": 1,
+  "samples": [
+    {
+      "instance": "f5ae28a2-73c0-4968-aad5-7f2b4e0a3bdd",
+      "termination": "Worker failed: __CELLD_PROCESS_EXIT__:The Node.js process.exit(1) API was called."
+    },
+    {
+      "instance": "610f2af5-0d75-4201-b6ac-9990aad19f7b",
+      "termination": "Worker failed: __CELLD_PROCESS_EXIT__:The Node.js process.exit(1) API was called."
+    },
+    {
+      "instance": "146c469b-973d-412f-b68f-09da8d12f4ee",
+      "termination": "Worker failed: __CELLD_PROCESS_EXIT__:The Node.js process.exit(1) API was called."
+    },
+    {
+      "instance": "fb8390a0-0cdf-4f07-88a8-804633887af2",
+      "termination": "Worker failed: __CELLD_PROCESS_EXIT__:The Node.js process.exit(1) API was called."
+    },
+    {
+      "instance": "3f3cdfc5-8304-4465-ab75-b7619101da03",
+      "termination": "Worker failed: __CELLD_PROCESS_EXIT__:The Node.js process.exit(1) API was called."
+    }
+  ]
+}

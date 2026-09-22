@@ -13,10 +13,13 @@ async def handle(request, env):
     if body == "spin":
         while True:
             pass
+    if body == "exit":
+        from js import fixture_exit
+        fixture_exit(1)
     if body == "delay":
         global delay_started
         delay_started = True
-        await asyncio.sleep(1)
+        await asyncio.sleep(60)
     if body == "allocate":
         scratch = bytearray(16 * 1024 * 1024)
         scratch[0] = 1

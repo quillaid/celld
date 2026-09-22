@@ -1,0 +1,122 @@
+{
+  "timestamp": "2026-09-22T02:59:54.614Z",
+  "memory": {
+    "samples": [
+      {
+        "status": 200,
+        "instance": "8afad9e9-762f-4f8b-9658-fbb07d9ae14c",
+        "linearMemory": 20971520,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"warm\", \"binding\": null, \"outbound\": null}"
+      },
+      {
+        "status": 200,
+        "instance": "8afad9e9-762f-4f8b-9658-fbb07d9ae14c",
+        "linearMemory": 35323904,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"allocate\", \"binding\": null, \"outbound\": null}"
+      },
+      {
+        "status": 200,
+        "instance": "8afad9e9-762f-4f8b-9658-fbb07d9ae14c",
+        "linearMemory": 35323904,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"allocate\", \"binding\": null, \"outbound\": null}"
+      },
+      {
+        "status": 200,
+        "instance": "8afad9e9-762f-4f8b-9658-fbb07d9ae14c",
+        "linearMemory": 35323904,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"allocate\", \"binding\": null, \"outbound\": null}"
+      },
+      {
+        "status": 200,
+        "instance": "8afad9e9-762f-4f8b-9658-fbb07d9ae14c",
+        "linearMemory": 35323904,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"allocate\", \"binding\": null, \"outbound\": null}"
+      },
+      {
+        "status": 200,
+        "instance": "8afad9e9-762f-4f8b-9658-fbb07d9ae14c",
+        "linearMemory": 35323904,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"allocate\", \"binding\": null, \"outbound\": null}"
+      },
+      {
+        "status": 200,
+        "instance": "8afad9e9-762f-4f8b-9658-fbb07d9ae14c",
+        "linearMemory": 35323904,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"allocate\", \"binding\": null, \"outbound\": null}"
+      },
+      {
+        "status": 200,
+        "instance": "8afad9e9-762f-4f8b-9658-fbb07d9ae14c",
+        "linearMemory": 35323904,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"allocate\", \"binding\": null, \"outbound\": null}"
+      },
+      {
+        "status": 200,
+        "instance": "8afad9e9-762f-4f8b-9658-fbb07d9ae14c",
+        "linearMemory": 35323904,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"allocate\", \"binding\": null, \"outbound\": null}"
+      },
+      {
+        "status": 200,
+        "instance": "8afad9e9-762f-4f8b-9658-fbb07d9ae14c",
+        "linearMemory": 35323904,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"allocate\", \"binding\": null, \"outbound\": null}"
+      },
+      {
+        "status": 200,
+        "instance": "8afad9e9-762f-4f8b-9658-fbb07d9ae14c",
+        "linearMemory": 35323904,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"allocate\", \"binding\": null, \"outbound\": null}"
+      }
+    ]
+  },
+  "terminationOnly": {
+    "warm": {
+      "status": 200,
+      "instance": "29d366e6-74ee-4b4a-b358-3daae545f903",
+      "linearMemory": 20971520,
+      "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"warm\", \"binding\": null, \"outbound\": null}"
+    },
+    "termination": {
+      "error": "Error: Worker exceeded CPU limit of 25 ms"
+    },
+    "terminationElapsedMs": 29,
+    "pendingStarted": true,
+    "pendingElapsedMs": 29,
+    "pending": {
+      "error": "Error: Python runtime invalidated after execution termination; recreate the worker"
+    }
+  },
+  "termination": {
+    "warm": {
+      "status": 200,
+      "instance": "6b54a191-dfc9-4bda-9372-98402076a819",
+      "linearMemory": 20971520,
+      "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"warm\", \"binding\": null, \"outbound\": null}"
+    },
+    "termination": {
+      "error": "Error: Worker exceeded CPU limit of 25 ms"
+    },
+    "terminationElapsedMs": 27,
+    "diagnostics": {
+      "error": "Error: Python runtime invalidated after execution termination; recreate the worker"
+    },
+    "after": {
+      "error": "Error: Python runtime invalidated after execution termination; recreate the worker"
+    },
+    "secondAfter": {
+      "error": "Error: Python runtime invalidated after execution termination; recreate the worker"
+    },
+    "pendingStarted": true,
+    "pendingElapsedMs": 27,
+    "pending": {
+      "error": "Error: Python runtime invalidated after execution termination; recreate the worker"
+    },
+    "replacement": {
+      "status": 200,
+      "instance": "a33fca38-a5da-45b1-9be2-08c1bef92283",
+      "linearMemory": 20971520,
+      "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"replacement\", \"binding\": null, \"outbound\": null}"
+    }
+  }
+}
