@@ -1,0 +1,184 @@
+{
+  "timestamp": "2026-09-22T05:49:35.586Z",
+  "lock": {
+    "schema": 1,
+    "pyodide": "0.28.3",
+    "python": "3.13.2",
+    "resolver": {
+      "name": "micropip",
+      "version": "0.10.1"
+    },
+    "manifest": {
+      "name": "requirements.txt",
+      "sha256": "6560f131b6d82cef455b70cd8952a814dd3811dec73108d69b3d9206c95c9573"
+    },
+    "requirements": [
+      "pydantic==2.10.6"
+    ],
+    "roots": [
+      "pydantic"
+    ],
+    "abi": {
+      "abi_version": "2025_0",
+      "arch": "wasm32",
+      "platform": "emscripten_4_0_9",
+      "python": "3.13.2",
+      "version": "0.28.0.dev0"
+    },
+    "packages": [
+      {
+        "name": "annotated-types",
+        "version": "0.7.0",
+        "filename": "annotated_types-0.7.0-py3-none-any.whl",
+        "url": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/annotated_types-0.7.0-py3-none-any.whl",
+        "sha256": "f2cffbe760f3c616b680279d54d4ae97185c69f6d68eb5b94675f73a834efb67",
+        "depends": []
+      },
+      {
+        "name": "pydantic",
+        "version": "2.10.6",
+        "filename": "pydantic-2.10.6-py3-none-any.whl",
+        "url": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/pydantic-2.10.6-py3-none-any.whl",
+        "sha256": "6773062f6635c42f052e4e836edd4ff433c0718b2dee6714d684786e59b756eb",
+        "depends": [
+          "annotated-types",
+          "pydantic-core",
+          "typing-extensions"
+        ]
+      },
+      {
+        "name": "pydantic-core",
+        "version": "2.27.2",
+        "filename": "pydantic_core-2.27.2-cp313-cp313-pyodide_2025_0_wasm32.whl",
+        "url": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/pydantic_core-2.27.2-cp313-cp313-pyodide_2025_0_wasm32.whl",
+        "sha256": "3695112ef99b222e48e0a2837b055ec818b43ff5e2e0802e99f5d6d2dd36af7b",
+        "depends": [
+          "typing-extensions"
+        ]
+      },
+      {
+        "name": "typing-extensions",
+        "version": "4.14.1",
+        "filename": "typing_extensions-4.14.1-py3-none-any.whl",
+        "url": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/typing_extensions-4.14.1-py3-none-any.whl",
+        "sha256": "cacfad0508850d9e87aaa4ba2af8c8fcd392cbb5a3c7ad33e76ab907da34544c",
+        "depends": []
+      }
+    ]
+  },
+  "validation": {
+    "valid": {
+      "name": "café",
+      "count": 3
+    },
+    "invalid": [
+      {
+        "type": "greater_than",
+        "loc": [
+          "count"
+        ],
+        "msg": "Input should be greater than 0",
+        "input": 0,
+        "ctx": {
+          "gt": 0
+        }
+      }
+    ],
+    "extension": "/packages/pydantic_core/_pydantic_core.cpython-313-wasm32-emscripten.so"
+  },
+  "reproducible": true,
+  "anyioLock": {
+    "schema": 1,
+    "pyodide": "0.28.3",
+    "python": "3.13.2",
+    "resolver": {
+      "name": "micropip",
+      "version": "0.10.1"
+    },
+    "manifest": {
+      "name": "requirements.txt",
+      "sha256": "c60546c04da0e4925e9b9dbf1de660deec807129fce92003d0bccc6cfb105c5a"
+    },
+    "requirements": [
+      "anyio==4.9.0"
+    ],
+    "roots": [
+      "anyio"
+    ],
+    "abi": {
+      "abi_version": "2025_0",
+      "arch": "wasm32",
+      "platform": "emscripten_4_0_9",
+      "python": "3.13.2",
+      "version": "0.28.0.dev0"
+    },
+    "packages": [
+      {
+        "name": "anyio",
+        "version": "4.9.0",
+        "filename": "anyio-4.9.0-py3-none-any.whl",
+        "url": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/anyio-4.9.0-py3-none-any.whl",
+        "sha256": "72b5d6b66bffbc584350772be5959e4506cb3c9d4e830fc9f15d74186c9ee0c4",
+        "depends": [
+          "idna",
+          "sniffio",
+          "ssl",
+          "typing-extensions"
+        ]
+      },
+      {
+        "name": "idna",
+        "version": "3.10",
+        "filename": "idna-3.10-py3-none-any.whl",
+        "url": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/idna-3.10-py3-none-any.whl",
+        "sha256": "03afc91d39e676e8684c421beb900c09269148d67b137c3fb45b7f319e8cd8b4",
+        "depends": []
+      },
+      {
+        "name": "libopenssl",
+        "version": "1.1.1w",
+        "filename": "libopenssl-1.1.1w.zip",
+        "url": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/libopenssl-1.1.1w.zip",
+        "sha256": "48965994b6ace00d3ebbc2dc1b65c11978582620f4ef6c71a50d9ea4c5fc7437",
+        "depends": [],
+        "kind": "shared-library"
+      },
+      {
+        "name": "sniffio",
+        "version": "1.3.1",
+        "filename": "sniffio-1.3.1-py3-none-any.whl",
+        "url": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/sniffio-1.3.1-py3-none-any.whl",
+        "sha256": "94160100b8695f765d7742d4d7cad8fe11a6ca9df48c49633cab5b3664fcf168",
+        "depends": []
+      },
+      {
+        "name": "ssl",
+        "version": "1.0.0",
+        "filename": "ssl-1.0.0-cp313-cp313-pyodide_2025_0_wasm32.whl",
+        "url": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/ssl-1.0.0-cp313-cp313-pyodide_2025_0_wasm32.whl",
+        "sha256": "68e1ac39f5e5a83d0eda2baec3771d5322a04c0bc5d6395db2cd6ff0ef57b00a",
+        "depends": [
+          "libopenssl"
+        ]
+      },
+      {
+        "name": "typing-extensions",
+        "version": "4.14.1",
+        "filename": "typing_extensions-4.14.1-py3-none-any.whl",
+        "url": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/typing_extensions-4.14.1-py3-none-any.whl",
+        "sha256": "cacfad0508850d9e87aaa4ba2af8c8fcd392cbb5a3c7ad33e76ab907da34544c",
+        "depends": []
+      }
+    ]
+  },
+  "artifactOrder": [
+    "idna-3.10-py3-none-any.whl",
+    "sniffio-1.3.1-py3-none-any.whl",
+    "libopenssl-1.1.1w.zip",
+    "ssl-1.0.0-cp313-cp313-pyodide_2025_0_wasm32.whl",
+    "typing_extensions-4.14.1-py3-none-any.whl",
+    "anyio-4.9.0-py3-none-any.whl"
+  ],
+  "archiveTamperingRejected": true,
+  "qualification": "Node-hosted pinned Pyodide; native-fastapi.test.mjs separately checks celld/workerd"
+}

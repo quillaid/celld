@@ -30,6 +30,7 @@ async function initialize({ files, packages = [], dynamicLibraries = [] }) {
   python.runPython("import sys; sys.path.insert(0, '/sdk')");
   for (const bytes of packages) python.unpackArchive(bytes, 'zip', { extractDir: '/packages' });
   if (packages.length) python.runPython("sys.path.insert(1, '/packages')");
+  if (dynamicLibraries.length) python.runPython("import os; os.environ['LD_LIBRARY_PATH'] = '/packages:' + os.environ.get('LD_LIBRARY_PATH', '')");
   for (const path of dynamicLibraries) await python._api.loadDynlib('/packages/' + path);
   python.registerJsModule('_cloudflare_compat_flags', { python_workflows_implicit_dependencies: false });
   python.registerJsModule('_pyodide_entrypoint_helper', {

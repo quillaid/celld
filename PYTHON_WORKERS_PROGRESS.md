@@ -966,3 +966,39 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   reload and workerd regression tests pass. Retained date-prefixed resolver,
   Pydantic, archive-rejection and regression evidence. No Rust/runtime changes;
   prior 37-record full-suite result remains the broader baseline. Goal active.
+
+## Shared-library archives and FastAPI HTTP (2026-09-21)
+
+- Previous turn was progress (3d5a64a): dependency closure fixes and a precise
+  OpenSSL archive rejection. This turn implements that missing packaging path.
+- Resolver and consumer now support shared-library archives whose identity,
+  source, hash and dependency graph match the verified pinned runtime index.
+  Artifacts are unpacked only after path, symlink, collision and Wasm checks.
+  Supported archives currently contain flat .so files. Dependency cycles and
+  other layouts remain explicit failures, not silently dropped dependencies.
+- Consumer orders packages by dependency. Builder emits immutable Wasm modules
+  for libcrypto, libssl, _ssl and Pydantic core; the adapter adds /packages to
+  LD_LIBRARY_PATH before preloading. No Rust changes were needed. The archive
+  identity and library digests participate in the existing deployment manifest.
+- FastAPI 0.115.12 with Starlette 0.46.2, Pydantic 2.10.6 and AnyIO 4.9.0 now
+  serves six HTTP cases through native .py deployment and the generated bundle
+  with fetch disabled: valid JSON coercion, body/path/query validation errors,
+  OpenAPI, and SSLContext construction with verification enabled. Pydantic and
+  _ssl extension hashes are asserted against the pinned artifacts.
+- Strengthening the reference with _ssl hashing exposed historical workerd's
+  pre-imported bundled SSL module. Preserved that failed comparison. Reference
+  bootstrap now removes ssl/_ssl from sys.modules before importing the mounted
+  application packages; exact extension hashes and all six JSON responses then
+  match. This does not prove identical interpreter/preloaded OpenSSL state or
+  TLS networking parity. Source and SDK code are unchanged between engines.
+- Three package-tool tests pass, including reproducible AnyIO locks, the idna
+  edge, archive tampering and malformed archive rejection. Full regression run
+  returned 37 passes and the one reference SSL mismatch; the corrected FastAPI
+  test passes separately afterward. Retained both the failed full-run evidence
+  and the passing focused/native-offline-reference evidence. All current tests
+  are covered by those runs; no claim of a single green 38-record run is made.
+- Next framework seam: the pinned SDK's _workers_sdk_package_patches.py patches
+  anyio.to_thread.run_sync to execute inline through _cloudflare.import_patch_manager.
+  Our SDK .pth hooks/import-patch manager are not installed yet. Qualify that
+  contract and synchronous framework paths rather than stopping at async routes.
+  Broader original goal requirements remain unfinished; goal stays active.

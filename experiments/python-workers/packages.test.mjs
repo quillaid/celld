@@ -8,6 +8,7 @@ import { createHash } from 'node:crypto';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { loadPyodide } from 'pyodide';
+import { consumePackages } from './consume-packages.mjs';
 const root = fileURLToPath(new URL('.', import.meta.url));
 const exec = promisify(execFile);
 test('target package resolution pins transitive wheels and supports offline target imports', { timeout: 60000 }, async (t) => {
@@ -105,14 +106,61 @@ json.dumps({'valid': valid, 'invalid': invalid, 'extension': core.__file__})
   assert.equal(validation.invalid[0].type, 'greater_than');
   assert.match(validation.extension, /pydantic_core\/.*\.so$/);
   // AnyIO's Pyodide index omits idna even though its wheel requires it. Resolve
-  // that missing wheel, then reject the still-unsupported OpenSSL archive.
+  // that missing wheel and retain its edge alongside SSL's native libraries.
   await writeFile(join(directory, 'requirements.txt'), 'anyio==4.9.0\n');
-  let rejection;
-  await assert.rejects(run(), error => {
-    rejection = error.stderr;
-    return /Shared-library archives are not yet supported: libopenssl/.test(error.stderr);
-  });
-  assert.equal(await readFile(lockPath, 'utf8'), first);
+  await run();
+  const anyioText = await readFile(lockPath, 'utf8');
+  await run();
+  assert.equal(await readFile(lockPath, 'utf8'), anyioText);
+  const anyioLock = JSON.parse(anyioText);
+  assert.ok(anyioLock.packages.find(item => item.name === 'anyio').depends.includes('idna'));
+  const archive = anyioLock.packages.find(item => item.name === 'libopenssl');
+  assert.equal(archive.kind, 'shared-library');
+  const consumed = await consumePackages(directory);
+  const order = consumed.artifacts.map(item => item.filename);
+  assert.ok(order.indexOf(archive.filename) < order.findIndex(name => name.startsWith('ssl-')));
+  const tampered = structuredClone(anyioLock);
+  tampered.packages.find(item => item.name === 'libopenssl').sha256 = 'a'.repeat(64);
+  await writeFile(lockPath, JSON.stringify(tampered));
+  await assert.rejects(consumePackages(directory), /Shared-library archive must match the pinned runtime index/);
+  await writeFile(lockPath, anyioText);
+  const archivePath = join(directory, '.celld/python-wheels', archive.sha256 + '.zip');
+  const validArchive = await readFile(archivePath);
+  await writeFile(archivePath, 'corrupted shared library archive');
+  await assert.rejects(consumePackages(directory), /Package artifact hash mismatch/);
+  await writeFile(archivePath, validArchive);
   await mkdir(join(root, 'results'), { recursive: true });
-  await writeFile(join(root, 'results/pydantic-packages.json'), JSON.stringify({ timestamp: new Date().toISOString(), lock, validation, reproducible: true, anyioRejection: rejection, priorLockPreserved: true, qualification: 'Node-hosted pinned Pyodide only; celld/workerd framework qualification remains pending' }, null, 2) + '\n');
+  await writeFile(join(root, 'results/pydantic-packages.json'), JSON.stringify({ timestamp: new Date().toISOString(), lock, validation, reproducible: true, anyioLock, artifactOrder: order, archiveTamperingRejected: true, qualification: 'Node-hosted pinned Pyodide; native-fastapi.test.mjs separately checks celld/workerd' }, null, 2) + '\n');
+});
+
+test('shared-library archive validation rejects unsafe paths, collisions and non-Wasm payloads', async () => {
+  const python = await loadPyodide({ indexURL: join(root, 'node_modules/pyodide/') });
+  const validator = await readFile(join(root, 'validate-wheels.py'), 'utf8');
+  python.globals.set('_validator', validator);
+  python.runPython(`
+import json, zipfile, stat
+from pathlib import Path
+Path('/wheel-input').mkdir()
+_celld_wheel_count = 1
+_celld_wheel_filenames = json.dumps(['library.zip'])
+_celld_artifact_kinds = json.dumps(['shared-library'])
+def check_archive(names, payload=b'\\x00asm\\x01\\x00\\x00\\x00', symlink=False):
+    with zipfile.ZipFile('/wheel-input/0.whl', 'w') as archive:
+        for name in names:
+            info = zipfile.ZipInfo(name)
+            if symlink:
+                info.external_attr = (stat.S_IFLNK | 0o777) << 16
+            archive.writestr(info, payload)
+    exec(compile(_validator, 'validate-wheels.py', 'exec'), globals())
+`);
+  python.runPython("check_archive(['libcrypto.so', 'libssl.so'])");
+  for (const [expression, pattern] of [
+    ["check_archive(['../escape.so'])", /Invalid wheel path/],
+    ["check_archive(['/escape.so'])", /Invalid wheel path/],
+    ["check_archive(['nested/library.so'])", /flat .so files/],
+    ["check_archive(['hook.pth'])", /flat .so files/],
+    ["check_archive(['library.so'], symlink=True)", /symlinks are unsupported/],
+    ["check_archive(['library.so'], payload=b'ELF-native')", /not a target Wasm module/],
+    ["check_archive(['library.so', 'library.so'])", /file collision/],
+  ]) assert.throws(() => python.runPython(expression), pattern);
 });

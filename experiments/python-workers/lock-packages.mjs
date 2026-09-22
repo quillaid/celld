@@ -111,7 +111,9 @@ json.dumps({'roots': sorted(set(canonicalize_name(req.name) for req in _active))
     const entry = frozen.get(name);
     if (!entry) throw new Error('Resolved dependency missing from freeze: ' + name);
     const filename = basename(entry.file_name.startsWith('https://') ? new URL(entry.file_name).pathname : entry.file_name);
-    if (!filename.endsWith('.whl')) throw new Error('Shared-library archives are not yet supported: ' + name + ' (' + filename + ')');
+    const bundled = runtimeIndex.packages[name];
+    const shared = bundled?.package_type === 'shared_library' && bundled.install_dir === 'dynlib' && bundled.file_name === filename && bundled.version === entry.version && bundled.sha256 === entry.sha256;
+    if (!filename.endsWith('.whl') && !shared) throw new Error('Unsupported runtime archive: ' + name + ' (' + filename + ')');
     // Runtime dependencies such as ssl may have no distribution metadata.
     // They are still required by, and pinned to, the verified runtime index.
     if (resolution.versions[name] !== undefined && resolution.versions[name] !== entry.version) throw new Error('Frozen dependency does not match verified installed version: ' + name);
@@ -119,7 +121,7 @@ json.dumps({'roots': sorted(set(canonicalize_name(req.name) for req in _active))
       const bundled = runtimeIndex.packages[name];
       if (!bundled || bundled.version !== entry.version || bundled.sha256 !== entry.sha256) throw new Error('Unverified runtime dependency: ' + name);
     }
-    selected.set(name, entry);
+    selected.set(name, { ...entry, ...(shared ? { kind: 'shared-library' } : {}) });
     for (const dependency of entry.depends) visit(dependency);
   }
   resolution.required.forEach(visit);
@@ -134,10 +136,10 @@ json.dumps({'roots': sorted(set(canonicalize_name(req.name) for req in _active))
     const filename = basename(new URL(url).pathname);
     // Native wheels must match the pinned CPython and Pyodide ABI exactly.
     // Platform wheels for the build machine are never deployment artifacts.
-    if (!/-(?:(?:py3|py2\.py3)-none-any|cp313-cp313-pyodide_2025_0_wasm32)\.whl$/.test(filename)) throw new Error('Wheel does not match the supported Python/Pyodide ABI: ' + filename);
+    if (entry.kind !== 'shared-library' && !/-(?:(?:py3|py2\.py3)-none-any|cp313-cp313-pyodide_2025_0_wasm32)\.whl$/.test(filename)) throw new Error('Wheel does not match the supported Python/Pyodide ABI: ' + filename);
     if (!/^[a-f0-9]{64}$/.test(entry.sha256)) throw new Error('Package lacks a SHA-256 digest: ' + name);
-    await verifiedDownload(url, entry.sha256, join(wheelDirectory, entry.sha256 + '.whl'));
-    packages.push({ name, version: entry.version, filename, url, sha256: entry.sha256, depends: [...entry.depends].sort() });
+    await verifiedDownload(url, entry.sha256, join(wheelDirectory, entry.sha256 + (entry.kind === 'shared-library' ? '.zip' : '.whl')));
+    packages.push({ name, version: entry.version, filename, url, sha256: entry.sha256, depends: [...entry.depends].sort(), ...(entry.kind ? { kind: entry.kind } : {}) });
   }
   const lock = {
     schema: 1, pyodide: '0.28.3', python: '3.13.2',

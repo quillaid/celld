@@ -62,6 +62,7 @@ if (projectSources) {
   packageArtifacts.forEach((artifact, index) => validator.FS.writeFile(`/wheel-input/${index}.whl`, artifact.bytes));
   validator.globals.set('_celld_wheel_count', packageArtifacts.length);
   validator.globals.set('_celld_wheel_filenames', JSON.stringify(packageArtifacts.map(item => item.filename)));
+  validator.globals.set('_celld_artifact_kinds', JSON.stringify(packageArtifacts.map(item => item.kind || 'wheel')));
   const nativePaths = JSON.parse(validator.runPython(await readFile('validate-wheels.py', 'utf8')));
   for (const artifact of packageArtifacts) validator.unpackArchive(new Uint8Array(artifact.bytes), 'zip', { extractDir: '/packages' });
   for (const path of nativePaths) {

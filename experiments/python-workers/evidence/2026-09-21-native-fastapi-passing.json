@@ -1,0 +1,150 @@
+{
+  "timestamp": "2026-09-22T05:52:15.803Z",
+  "workerd": "1.20260922.1",
+  "referenceDate": "2025-06-01",
+  "responses": [
+    {
+      "path": "/items/7?scale=2",
+      "init": {
+        "method": "POST",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": "{\"name\":\"café\",\"count\":\"3\"}"
+      },
+      "actual": {
+        "status": 201,
+        "text": "{\"id\":7,\"item\":{\"name\":\"café\",\"count\":3},\"total\":6}"
+      },
+      "offline": {
+        "status": 201,
+        "text": "{\"id\":7,\"item\":{\"name\":\"café\",\"count\":3},\"total\":6}"
+      },
+      "expected": {
+        "status": 201,
+        "text": "{\"id\":7,\"item\":{\"name\":\"café\",\"count\":3},\"total\":6}"
+      }
+    },
+    {
+      "path": "/items/7",
+      "init": {
+        "method": "POST",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": "{\"name\":\"bad\",\"count\":0}"
+      },
+      "actual": {
+        "status": 422,
+        "text": "{\"detail\":[{\"type\":\"greater_than\",\"loc\":[\"body\",\"count\"],\"msg\":\"Input should be greater than 0\",\"input\":0,\"ctx\":{\"gt\":0}}]}"
+      },
+      "offline": {
+        "status": 422,
+        "text": "{\"detail\":[{\"type\":\"greater_than\",\"loc\":[\"body\",\"count\"],\"msg\":\"Input should be greater than 0\",\"input\":0,\"ctx\":{\"gt\":0}}]}"
+      },
+      "expected": {
+        "status": 422,
+        "text": "{\"detail\":[{\"type\":\"greater_than\",\"loc\":[\"body\",\"count\"],\"msg\":\"Input should be greater than 0\",\"input\":0,\"ctx\":{\"gt\":0}}]}"
+      }
+    },
+    {
+      "path": "/items/no",
+      "init": {
+        "method": "POST",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": "{\"name\":\"bad\",\"count\":2}"
+      },
+      "actual": {
+        "status": 422,
+        "text": "{\"detail\":[{\"type\":\"int_parsing\",\"loc\":[\"path\",\"item_id\"],\"msg\":\"Input should be a valid integer, unable to parse string as an integer\",\"input\":\"no\"}]}"
+      },
+      "offline": {
+        "status": 422,
+        "text": "{\"detail\":[{\"type\":\"int_parsing\",\"loc\":[\"path\",\"item_id\"],\"msg\":\"Input should be a valid integer, unable to parse string as an integer\",\"input\":\"no\"}]}"
+      },
+      "expected": {
+        "status": 422,
+        "text": "{\"detail\":[{\"type\":\"int_parsing\",\"loc\":[\"path\",\"item_id\"],\"msg\":\"Input should be a valid integer, unable to parse string as an integer\",\"input\":\"no\"}]}"
+      }
+    },
+    {
+      "path": "/items/7?scale=no",
+      "init": {
+        "method": "POST",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": "{\"name\":\"bad\",\"count\":2}"
+      },
+      "actual": {
+        "status": 422,
+        "text": "{\"detail\":[{\"type\":\"int_parsing\",\"loc\":[\"query\",\"scale\"],\"msg\":\"Input should be a valid integer, unable to parse string as an integer\",\"input\":\"no\"}]}"
+      },
+      "offline": {
+        "status": 422,
+        "text": "{\"detail\":[{\"type\":\"int_parsing\",\"loc\":[\"query\",\"scale\"],\"msg\":\"Input should be a valid integer, unable to parse string as an integer\",\"input\":\"no\"}]}"
+      },
+      "expected": {
+        "status": 422,
+        "text": "{\"detail\":[{\"type\":\"int_parsing\",\"loc\":[\"query\",\"scale\"],\"msg\":\"Input should be a valid integer, unable to parse string as an integer\",\"input\":\"no\"}]}"
+      }
+    },
+    {
+      "path": "/runtime",
+      "init": {},
+      "actual": {
+        "status": 200,
+        "text": "{\"openssl\":\"OpenSSL 1.1.1w  11 Sep 2023\",\"core_sha256\":\"d261b91efa348675340f5267d00c66c83e026051ef7dcb9986fbbc1782d6d5ef\",\"ssl_sha256\":\"817994e3e64195d4510bddcb2f686a1857e2c8b828cb6c202df41d69af4adde4\",\"verify_mode\":2,\"check_hostname\":true}"
+      },
+      "offline": {
+        "status": 200,
+        "text": "{\"openssl\":\"OpenSSL 1.1.1w  11 Sep 2023\",\"core_sha256\":\"d261b91efa348675340f5267d00c66c83e026051ef7dcb9986fbbc1782d6d5ef\",\"ssl_sha256\":\"817994e3e64195d4510bddcb2f686a1857e2c8b828cb6c202df41d69af4adde4\",\"verify_mode\":2,\"check_hostname\":true}"
+      },
+      "expected": {
+        "status": 200,
+        "text": "{\"openssl\":\"OpenSSL 1.1.1w  11 Sep 2023\",\"core_sha256\":\"d261b91efa348675340f5267d00c66c83e026051ef7dcb9986fbbc1782d6d5ef\",\"ssl_sha256\":\"817994e3e64195d4510bddcb2f686a1857e2c8b828cb6c202df41d69af4adde4\",\"verify_mode\":2,\"check_hostname\":true}"
+      }
+    },
+    {
+      "path": "/openapi.json",
+      "init": {},
+      "actual": {
+        "status": 200,
+        "text": "{\"openapi\":\"3.1.0\",\"info\":{\"title\":\"FastAPI\",\"version\":\"0.1.0\"},\"paths\":{\"/items/{item_id}\":{\"post\":{\"summary\":\"Create Item\",\"operationId\":\"create_item_items__item_id__post\",\"parameters\":[{\"name\":\"item_id\",\"in\":\"path\",\"required\":true,\"schema\":{\"type\":\"integer\",\"title\":\"Item Id\"}},{\"name\":\"scale\",\"in\":\"query\",\"required\":false,\"schema\":{\"type\":\"integer\",\"default\":1,\"title\":\"Scale\"}}],\"requestBody\":{\"required\":true,\"content\":{\"application/json\":{\"schema\":{\"$ref\":\"#/components/schemas/Item\"}}}},\"responses\":{\"201\":{\"description\":\"Successful Response\",\"content\":{\"application/json\":{\"schema\":{}}}},\"422\":{\"description\":\"Validation Error\",\"content\":{\"application/json\":{\"schema\":{\"$ref\":\"#/components/schemas/HTTPValidationError\"}}}}}}},\"/runtime\":{\"get\":{\"summary\":\"Runtime\",\"operationId\":\"runtime_runtime_get\",\"responses\":{\"200\":{\"description\":\"Successful Response\",\"content\":{\"application/json\":{\"schema\":{}}}}}}}},\"components\":{\"schemas\":{\"HTTPValidationError\":{\"properties\":{\"detail\":{\"items\":{\"$ref\":\"#/components/schemas/ValidationError\"},\"type\":\"array\",\"title\":\"Detail\"}},\"type\":\"object\",\"title\":\"HTTPValidationError\"},\"Item\":{\"properties\":{\"name\":{\"type\":\"string\",\"title\":\"Name\"},\"count\":{\"type\":\"integer\",\"exclusiveMinimum\":0.0,\"title\":\"Count\"}},\"type\":\"object\",\"required\":[\"name\",\"count\"],\"title\":\"Item\"},\"ValidationError\":{\"properties\":{\"loc\":{\"items\":{\"anyOf\":[{\"type\":\"string\"},{\"type\":\"integer\"}]},\"type\":\"array\",\"title\":\"Location\"},\"msg\":{\"type\":\"string\",\"title\":\"Message\"},\"type\":{\"type\":\"string\",\"title\":\"Error Type\"}},\"type\":\"object\",\"required\":[\"loc\",\"msg\",\"type\"],\"title\":\"ValidationError\"}}}}"
+      },
+      "offline": {
+        "status": 200,
+        "text": "{\"openapi\":\"3.1.0\",\"info\":{\"title\":\"FastAPI\",\"version\":\"0.1.0\"},\"paths\":{\"/items/{item_id}\":{\"post\":{\"summary\":\"Create Item\",\"operationId\":\"create_item_items__item_id__post\",\"parameters\":[{\"name\":\"item_id\",\"in\":\"path\",\"required\":true,\"schema\":{\"type\":\"integer\",\"title\":\"Item Id\"}},{\"name\":\"scale\",\"in\":\"query\",\"required\":false,\"schema\":{\"type\":\"integer\",\"default\":1,\"title\":\"Scale\"}}],\"requestBody\":{\"required\":true,\"content\":{\"application/json\":{\"schema\":{\"$ref\":\"#/components/schemas/Item\"}}}},\"responses\":{\"201\":{\"description\":\"Successful Response\",\"content\":{\"application/json\":{\"schema\":{}}}},\"422\":{\"description\":\"Validation Error\",\"content\":{\"application/json\":{\"schema\":{\"$ref\":\"#/components/schemas/HTTPValidationError\"}}}}}}},\"/runtime\":{\"get\":{\"summary\":\"Runtime\",\"operationId\":\"runtime_runtime_get\",\"responses\":{\"200\":{\"description\":\"Successful Response\",\"content\":{\"application/json\":{\"schema\":{}}}}}}}},\"components\":{\"schemas\":{\"HTTPValidationError\":{\"properties\":{\"detail\":{\"items\":{\"$ref\":\"#/components/schemas/ValidationError\"},\"type\":\"array\",\"title\":\"Detail\"}},\"type\":\"object\",\"title\":\"HTTPValidationError\"},\"Item\":{\"properties\":{\"name\":{\"type\":\"string\",\"title\":\"Name\"},\"count\":{\"type\":\"integer\",\"exclusiveMinimum\":0.0,\"title\":\"Count\"}},\"type\":\"object\",\"required\":[\"name\",\"count\"],\"title\":\"Item\"},\"ValidationError\":{\"properties\":{\"loc\":{\"items\":{\"anyOf\":[{\"type\":\"string\"},{\"type\":\"integer\"}]},\"type\":\"array\",\"title\":\"Location\"},\"msg\":{\"type\":\"string\",\"title\":\"Message\"},\"type\":{\"type\":\"string\",\"title\":\"Error Type\"}},\"type\":\"object\",\"required\":[\"loc\",\"msg\",\"type\"],\"title\":\"ValidationError\"}}}}"
+      },
+      "expected": {
+        "status": 200,
+        "text": "{\"openapi\":\"3.1.0\",\"info\":{\"title\":\"FastAPI\",\"version\":\"0.1.0\"},\"paths\":{\"/items/{item_id}\":{\"post\":{\"summary\":\"Create Item\",\"operationId\":\"create_item_items__item_id__post\",\"parameters\":[{\"name\":\"item_id\",\"in\":\"path\",\"required\":true,\"schema\":{\"type\":\"integer\",\"title\":\"Item Id\"}},{\"name\":\"scale\",\"in\":\"query\",\"required\":false,\"schema\":{\"type\":\"integer\",\"default\":1,\"title\":\"Scale\"}}],\"requestBody\":{\"required\":true,\"content\":{\"application/json\":{\"schema\":{\"$ref\":\"#/components/schemas/Item\"}}}},\"responses\":{\"201\":{\"description\":\"Successful Response\",\"content\":{\"application/json\":{\"schema\":{}}}},\"422\":{\"description\":\"Validation Error\",\"content\":{\"application/json\":{\"schema\":{\"$ref\":\"#/components/schemas/HTTPValidationError\"}}}}}}},\"/runtime\":{\"get\":{\"summary\":\"Runtime\",\"operationId\":\"runtime_runtime_get\",\"responses\":{\"200\":{\"description\":\"Successful Response\",\"content\":{\"application/json\":{\"schema\":{}}}}}}}},\"components\":{\"schemas\":{\"HTTPValidationError\":{\"properties\":{\"detail\":{\"items\":{\"$ref\":\"#/components/schemas/ValidationError\"},\"type\":\"array\",\"title\":\"Detail\"}},\"type\":\"object\",\"title\":\"HTTPValidationError\"},\"Item\":{\"properties\":{\"name\":{\"type\":\"string\",\"title\":\"Name\"},\"count\":{\"type\":\"integer\",\"exclusiveMinimum\":0.0,\"title\":\"Count\"}},\"type\":\"object\",\"required\":[\"name\",\"count\"],\"title\":\"Item\"},\"ValidationError\":{\"properties\":{\"loc\":{\"items\":{\"anyOf\":[{\"type\":\"string\"},{\"type\":\"integer\"}]},\"type\":\"array\",\"title\":\"Location\"},\"msg\":{\"type\":\"string\",\"title\":\"Message\"},\"type\":{\"type\":\"string\",\"title\":\"Error Type\"}},\"type\":\"object\",\"required\":[\"loc\",\"msg\",\"type\"],\"title\":\"ValidationError\"}}}}"
+      }
+    }
+  ],
+  "dynamicLibraries": [
+    {
+      "path": "libcrypto.so",
+      "module": "python-extension-2aff50f534fd0c71b7c138d5140563b0cee5127ad757091c5ba4c2a7a8079819.wasm",
+      "sha256": "2aff50f534fd0c71b7c138d5140563b0cee5127ad757091c5ba4c2a7a8079819"
+    },
+    {
+      "path": "libssl.so",
+      "module": "python-extension-dafd94f5d400db32c310aca0e6c866002953fb4d2cdcd39486d7645f290affa8.wasm",
+      "sha256": "dafd94f5d400db32c310aca0e6c866002953fb4d2cdcd39486d7645f290affa8"
+    },
+    {
+      "path": "_ssl.so",
+      "module": "python-extension-817994e3e64195d4510bddcb2f686a1857e2c8b828cb6c202df41d69af4adde4.wasm",
+      "sha256": "817994e3e64195d4510bddcb2f686a1857e2c8b828cb6c202df41d69af4adde4"
+    },
+    {
+      "path": "pydantic_core/_pydantic_core.cpython-313-wasm32-emscripten.so",
+      "module": "python-extension-d261b91efa348675340f5267d00c66c83e026051ef7dcb9986fbbc1782d6d5ef.wasm",
+      "sha256": "d261b91efa348675340f5267d00c66c83e026051ef7dcb9986fbbc1782d6d5ef"
+    }
+  ],
+  "logs": "<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T05:52:15.816876Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld dev\n  Project  /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-b5ExJF/wrangler.json\n  State    /Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/.celld/probe-b5ExJF/.celld/dev\n  Watch    disabled\n  ● opening the local storage\n  ● building the application\n celld 0.5.1\n───────────────────────────────────────────────\nTotal Upload: 31548.71 KiB / gzip: 13409.96 KiB\nYour Worker has no bindings.\nBundled python-runtime-probe (2.22 sec)\n<jemalloc>: option background_thread currently supports pthread only\n2026-09-22T05:52:23.535488Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.\ncelld listening on 127.0.0.1:51567 (ownership=dev)\ncelld internal listening on 127.0.0.1:51589 (advertise=127.0.0.1:51589)\n  ready  http://127.0.0.1:51567\n"
+}

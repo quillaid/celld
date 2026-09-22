@@ -395,9 +395,9 @@ package-tool test, not part of the celld HTTP suite.
 It additionally locks Pydantic 2.10.6 and its compiled core, checks repeatability,
 and runs successful coercion and rejected validation offline in Node-hosted
 Pyodide. That does not yet qualify Pydantic HTTP execution on celld or workerd.
-The candidate FastAPI manifest in `fastapi/` currently fails explicitly at the
-OpenSSL shared-library archive pulled in by AnyIO. Shared-library archives need
-packaging and dependency-ordered loading support before framework qualification.
+The separate FastAPI fixture below exercises Pydantic through both engines.
+The package-tool tests also verify AnyIO's missing `idna` edge, shared-library
+archive hashes, dependency ordering, and malformed archive rejection.
 
 Native dev/deploy now consumes this lock from the project root, including when
 the Python entry lives in a subdirectory. The builder rejects missing/stale
@@ -429,7 +429,7 @@ Cache hits verify without rewriting files. Missing wheels are verified and
 published by atomic rename, so concurrent readers cannot see partial cache
 contents. Corrupt cached artifacts remain errors.
 
-Package startup hooks, broader wheel layouts and framework behavior remain
+Package startup hooks, broader wheel layouts and broader framework behavior remain
 unqualified. The builder is still a local experimental helper, not a published
 distribution.
 
@@ -460,6 +460,35 @@ The engines report matching extension and SDK digests, builtin-function identity
 and results for ASCII, BMP Unicode and astral Unicode inputs. Only their module
 filesystem paths are normalized. This qualifies one C-extension wheel; it does
 not establish current-date compatibility, matching package resolution, or the
-same startup/snapshot implementation. Multi-library graphs, shared-library
-archives, NumPy-style workloads, extension reload and resource pressure remain
-unqualified.
+same startup/snapshot implementation. A separate FastAPI checkpoint below
+qualifies one shared-library graph. NumPy-style workloads, other library graphs,
+extension reload and resource pressure remain unqualified.
+
+### FastAPI and shared-library archives
+
+`npm run test:fastapi` runs FastAPI 0.115.12, Starlette 0.46.2, Pydantic 2.10.6
+and AnyIO 4.9.0 through the unchanged SDK ASGI entrypoint. The pinned manifest
+and lock live in `fastapi/`. Native Python deployment, a generated bundle with
+network fetch disabled, and the pinned workerd reference compare successful
+JSON coercion, body/path/query validation errors, generated OpenAPI, and an
+SSLContext with certificate verification enabled. The compiled Pydantic core
+and `_ssl` module digests must match the locked artifacts. This is not a TLS
+networking test, synchronous-endpoint/thread-pool qualification, or broad
+FastAPI compatibility claim.
+The historical workerd reference preloads its bundled SSL module. The reference
+bootstrap removes `ssl` and `_ssl` from Python's module cache before application
+import; otherwise its `_ssl` digest differs, a retained failed comparison.
+This verifies the application extension bytes, not identical underlying
+interpreter or preloaded shared-library state between the two runtimes.
+
+AnyIO brings in Pyodide's SSL module and the OpenSSL shared-library archive.
+The lock marks archives as `shared-library`; consumers accept them only when
+name, version, filename, URL, hash and dependency edges match the verified
+runtime index. The currently supported layout is flat Wasm `.so` files.
+Traversal, symlinks, collisions and other archive layouts are rejected before
+unpacking. Packages are ordered by dependency, then their native modules load
+through the same immutable-module bridge used for extension wheels. All files
+are unpacked before loading; `/packages` is added to `LD_LIBRARY_PATH` so the
+linker can find dependencies within an archive. Dependency cycles currently
+fail explicitly. This verifies the libcrypto/libssl/_ssl/Pydantic graph;
+general graph/layout support, upgrades and rollback remain unfinished.
