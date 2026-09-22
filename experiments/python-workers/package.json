@@ -2,7 +2,19 @@
   "name": "celld-python-workers-spike",
   "private": true,
   "type": "module",
-  "scripts": { "build": "node build.mjs", "test": "node --test smoke.test.mjs" },
-  "dependencies": { "pyodide": "0.28.3" },
-  "devDependencies": { "esbuild": "0.28.2" }
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test smoke.test.mjs async-wasm.test.mjs resources.test.mjs",
+    "test:smoke": "node --test smoke.test.mjs",
+    "test:wasm": "node --test async-wasm.test.mjs",
+    "test:resources": "node --test resources.test.mjs"
+  },
+  "dependencies": {
+    "pyodide": "0.28.3"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "miniflare": "5.20260921.0-alpha",
+    "workerd": "1.20260922.1"
+  }
 }

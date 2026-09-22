@@ -1,0 +1,111 @@
+{
+  "timestamp": "2026-09-22T02:49:17.905Z",
+  "memory": {
+    "samples": [
+      {
+        "status": 200,
+        "instance": "3df6dfcb-a37f-451e-a399-a0eae0ae3a7b",
+        "linearMemory": 20971520,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"warm\", \"binding\": null, \"outbound\": null}"
+      },
+      {
+        "status": 200,
+        "instance": "3df6dfcb-a37f-451e-a399-a0eae0ae3a7b",
+        "linearMemory": 35323904,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"allocate\", \"binding\": null, \"outbound\": null}"
+      },
+      {
+        "status": 200,
+        "instance": "3df6dfcb-a37f-451e-a399-a0eae0ae3a7b",
+        "linearMemory": 35323904,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"allocate\", \"binding\": null, \"outbound\": null}"
+      },
+      {
+        "status": 200,
+        "instance": "3df6dfcb-a37f-451e-a399-a0eae0ae3a7b",
+        "linearMemory": 35323904,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"allocate\", \"binding\": null, \"outbound\": null}"
+      },
+      {
+        "status": 200,
+        "instance": "3df6dfcb-a37f-451e-a399-a0eae0ae3a7b",
+        "linearMemory": 35323904,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"allocate\", \"binding\": null, \"outbound\": null}"
+      },
+      {
+        "status": 200,
+        "instance": "3df6dfcb-a37f-451e-a399-a0eae0ae3a7b",
+        "linearMemory": 35323904,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"allocate\", \"binding\": null, \"outbound\": null}"
+      },
+      {
+        "status": 200,
+        "instance": "3df6dfcb-a37f-451e-a399-a0eae0ae3a7b",
+        "linearMemory": 35323904,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"allocate\", \"binding\": null, \"outbound\": null}"
+      },
+      {
+        "status": 200,
+        "instance": "3df6dfcb-a37f-451e-a399-a0eae0ae3a7b",
+        "linearMemory": 35323904,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"allocate\", \"binding\": null, \"outbound\": null}"
+      },
+      {
+        "status": 200,
+        "instance": "3df6dfcb-a37f-451e-a399-a0eae0ae3a7b",
+        "linearMemory": 35323904,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"allocate\", \"binding\": null, \"outbound\": null}"
+      },
+      {
+        "status": 200,
+        "instance": "3df6dfcb-a37f-451e-a399-a0eae0ae3a7b",
+        "linearMemory": 35323904,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"allocate\", \"binding\": null, \"outbound\": null}"
+      },
+      {
+        "status": 200,
+        "instance": "3df6dfcb-a37f-451e-a399-a0eae0ae3a7b",
+        "linearMemory": 35323904,
+        "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"allocate\", \"binding\": null, \"outbound\": null}"
+      }
+    ]
+  },
+  "terminationOnly": {
+    "warm": {
+      "status": 200,
+      "instance": "7d7c172e-e137-42e5-8259-5a600f5d6dab",
+      "linearMemory": 20971520,
+      "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"warm\", \"binding\": null, \"outbound\": null}"
+    },
+    "termination": {
+      "error": "Error: Worker exceeded CPU limit of 25 ms"
+    },
+    "terminationElapsedMs": 28
+  },
+  "termination": {
+    "warm": {
+      "status": 200,
+      "instance": "58e31f3a-0204-4b03-91f8-441a01f17130",
+      "linearMemory": 20971520,
+      "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"warm\", \"binding\": null, \"outbound\": null}"
+    },
+    "termination": {
+      "error": "Error: Worker exceeded CPU limit of 25 ms"
+    },
+    "terminationElapsedMs": 30,
+    "diagnostics": {
+      "instance": "58e31f3a-0204-4b03-91f8-441a01f17130",
+      "currentTasks": "{<pyodide.webloop.WebLoop object at 0xfe65b8>: <PyodideTask pending name='Task-2' coro=<handle() running at <exec>:11> cb=[WebLoop._decrement_in_progress(), <FutureDoneCallback object at 0x101a078>()]>}",
+      "startupLog": []
+    },
+    "after": {
+      "error": "post-termination request did not settle within 2000ms"
+    },
+    "replacement": {
+      "status": 200,
+      "instance": "72a0b317-5d77-484b-8943-77e9a883af4a",
+      "linearMemory": 20971520,
+      "body": "{\"language\": \"python\", \"version\": \"3.13.2\", \"body\": \"replacement\", \"binding\": null, \"outbound\": null}"
+    }
+  }
+}

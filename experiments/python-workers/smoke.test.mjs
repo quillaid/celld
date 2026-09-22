@@ -3,10 +3,13 @@ import assert from 'node:assert/strict';
 import { spawn, execFileSync } from 'node:child_process';
 import { once } from 'node:events';
 import { createServer } from 'node:http';
-import { mkdtemp, mkdir, copyFile, writeFile, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, copyFile, readFile, writeFile, rm } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
+import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
+import workerd from 'workerd';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 const bin = process.env.CELLD_BIN || resolve(root, '../../.celld/tools/celld');
@@ -19,7 +22,7 @@ const listen = async (server) => {
 test('Pyodide through the real celld HTTP, KV, and fetch paths', { timeout: 90000 }, async (t) => {
   await mkdir(resolve(root, '.celld'), { recursive: true });
   const project = await mkdtemp(resolve(root, '.celld/smoke-'));
-  for (const name of ['index.js', 'pyodide.asm.wasm']) {
+  for (const name of ['index.js', 'pyodide.asm.wasm', 'sentinel.wasm']) {
     await copyFile(resolve(root, 'dist', name), resolve(project, name));
   }
   await writeFile(resolve(project, 'wrangler.json'), JSON.stringify({
@@ -118,6 +121,53 @@ test('Pyodide through the real celld HTTP, KV, and fetch paths', { timeout: 9000
     }
   });
   measurements.nodeAfterRequests = sampleNodeMemory();
+  await t.test('same Python source matches pinned workerd HTTP, KV, fetch, and errors', async () => {
+    const pythonSource = await readFile(resolve(root, 'worker.py'), 'utf8');
+    const previousPath = process.env.MINIFLARE_WORKERD_PATH;
+    process.env.MINIFLARE_WORKERD_PATH = workerd.default;
+    const reference = new Miniflare(convertV4MiniflareOptions({
+      name: 'python-reference', cf: false, modulesRoot: root,
+      compatibilityDate: '2025-06-01',
+      compatibilityFlags: ['python_workers', 'python_workers_20250116'],
+      modules: [
+        { type: 'PythonModule', path: resolve(root, 'reference-entry.py'), contents: await readFile(resolve(root, 'reference-entry.py'), 'utf8') },
+        { type: 'PythonModule', path: resolve(root, 'worker.py'), contents: pythonSource },
+      ], kvNamespaces: ['CACHE'],
+    }));
+    try {
+      await reference.ready;
+      const outputs = [];
+      const referenceRequest = (body) => reference.dispatchFetch('http://local/', {
+        method: 'POST', body, headers: { 'x-echo-url': `http://127.0.0.1:${echoPort}/` },
+      });
+      for (const input of ['hello', 'binding', 'fetch']) {
+        const [actual, expected] = await Promise.all([request(input), referenceRequest(input)]);
+        const [actualText, expectedText] = await Promise.all([actual.text(), expected.text()]);
+        assert.equal(expected.status, 200, expectedText);
+        assert.equal(actual.status, expected.status, actualText);
+        const [a, e] = [JSON.parse(actualText), JSON.parse(expectedText)];
+        assert.deepEqual(a, e);
+        outputs.push({ input, status: actual.status, celld: a, workerd: e });
+      }
+      const [actual, expected] = await Promise.all([request('raise'), referenceRequest('raise')]);
+      assert.equal(actual.status, 500);
+      assert.equal(expected.status, 500);
+      const errors = await Promise.all([actual.text(), expected.text()]);
+      for (const error of errors) assert.match(error, /ValueError: intentional Python traceback/);
+      measurements.reference = {
+        workerd: workerd.version, miniflare: '5.20260921.0-alpha',
+        compatibilityDate: '2025-06-01', pyodide: '0.28.2 (Cloudflare bundle)',
+        sourceSha256: createHash('sha256').update(pythonSource).digest('hex'),
+        adapter: 'historical WorkerEntrypoint.on_fetch delegates unchanged source',
+        normalization: 'parse JSON for success; compare status and Python type/message for errors',
+        outputs, errors,
+      };
+    } finally {
+      await reference.dispose();
+      if (previousPath === undefined) delete process.env.MINIFLARE_WORKERD_PATH;
+      else process.env.MINIFLARE_WORKERD_PATH = previousPath;
+    }
+  });
   await mkdir(resolve(root, 'results'), { recursive: true });
   await writeFile(resolve(root, 'results/smoke.json'), JSON.stringify(measurements, null, 2) + '\n');
   t.diagnostic(JSON.stringify(measurements));

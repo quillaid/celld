@@ -1,5 +1,7 @@
 // Fixture-only bridge: use local bundled bytes, never download runtime assets.
 import interpreter from './pyodide.asm.wasm';
+import sentinel from './sentinel.wasm';
+import sentinelBytes from 'pyodide-sentinel-bytes';
 import stdlib from 'pyodide/python_stdlib.zip';
 
 const wasmResponse = new WeakSet();
@@ -30,20 +32,25 @@ export async function fetch(input, init) {
 // celld provides a compiled-module import, so use its shared code cache.
 // The object is lexical to the generated bundle; global WebAssembly is untouched.
 export const WebAssembly = Object.create(globalThis.WebAssembly);
-// Spike workaround: resolve through the JS microtask queue. Native asynchronous
-// Wasm compilation needs a separate celld platform-task-pumping investigation.
-WebAssembly.compile = async (bytes) => new globalThis.WebAssembly.Module(bytes);
+// Only the pinned loader's sentinel is supported. Arbitrary runtime compilation
+// is not a fallback: both runtimes receive precompiled immutable artifacts.
+WebAssembly.compile = async (input) => {
+  const bytes = ArrayBuffer.isView(input)
+    ? new Uint8Array(input.buffer, input.byteOffset, input.byteLength) : new Uint8Array(input);
+  if (bytes.length === sentinelBytes.length && bytes.every((byte, i) => byte === sentinelBytes[i])) return sentinel;
+  throw new globalThis.WebAssembly.CompileError('Python runtime requested an unbundled Wasm module');
+};
 WebAssembly.instantiate = async (input, imports) => {
   if (input instanceof globalThis.WebAssembly.Module) {
-    return new globalThis.WebAssembly.Instance(input, imports);
+    return globalThis.WebAssembly.instantiate(input, imports);
   }
-  const module = new globalThis.WebAssembly.Module(input);
-  return { module, instance: new globalThis.WebAssembly.Instance(module, imports) };
+  const module = await WebAssembly.compile(input);
+  return { module, instance: await globalThis.WebAssembly.instantiate(module, imports) };
 };
 WebAssembly.instantiateStreaming = async (responsePromise, imports) => {
   const response = await responsePromise;
   if (wasmResponse.has(response)) {
-    const instance = new globalThis.WebAssembly.Instance(interpreter, imports);
+    const instance = await globalThis.WebAssembly.instantiate(interpreter, imports);
     return { module: interpreter, instance };
   }
   return WebAssembly.instantiate(await response.arrayBuffer(), imports);

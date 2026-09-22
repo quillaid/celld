@@ -11,7 +11,7 @@ From this directory:
 ```sh
 npm ci --ignore-scripts --no-audit --no-fund
 npm run build
-CELLD_BIN=/absolute/path/to/celld-0.5.1 npm test
+CELLD_BIN=/absolute/path/to/celld-0.5.1 npm run test:smoke
 ```
 
 Without `CELLD_BIN`, the test uses `../../.celld/tools/celld`. The first run's
@@ -26,6 +26,31 @@ allocate isolated local storage, and stop those processes afterward. Runtime
 assets are bundled; startup does not fetch Pyodide or the stdlib from a CDN.
 The explicitly requested outbound fetch in the test goes only to loopback.
 Dependencies are pinned by `package-lock.json`.
+
+The smoke suite also runs the same Python source against workerd
+`1.20260922.1`, using Miniflare `5.20260921.0-alpha` for real local KV bindings.
+This reference may download its Cloudflare Pyodide bundle at startup. It uses
+Cloudflare's Pyodide 0.28.2 / CPython 3.13.2 and compatibility date 2025-06-01;
+the celld fixture uses upstream Pyodide 0.28.3 / CPython 3.13.2. The reference
+adapter uses that historical SDK's `on_fetch`. HTTP JSON values compare exactly;
+error checks compare status and Python type/message, retaining both raw stacks.
+This establishes those operations, not current SDK parity.
+
+`npm run test:wasm` probes native Wasm APIs separately. Precompiled-module
+instantiation passes on both engines. Raw byte compilation currently times out
+on celld and is rejected by workerd. Set `WASM_REQUIRE_BYTE_COMPILATION=1` to
+make the celld timeout a failing regression check.
+
+`npm run test:resources` is currently **red**: the 25 ms CPU limit interrupts a
+Python loop in about 25–30 ms, but the next call into that same interpreter does
+not settle. A fresh replacement interpreter serves correctly. A separate test
+passes 100 allocate/release cycles of 16 MiB with stable Wasm linear memory after
+initial growth. This does not establish process-RSS bounds or freedom from leaks.
+`npm test` runs all qualification suites and therefore retains this red gate.
+The fixture-only `/__diagnostics` route confirms that the interrupted Python
+task remains in asyncio's current-task table even though synchronous Python
+evaluation still works. This is diagnostic evidence, not permission to clear
+that table and assume the runtime is safe. Retained results live in `evidence/`.
 
 `results/smoke.json` records timing samples and node RSS before/after requests.
 RSS includes the whole node and KV work, so its difference is not a clean
@@ -43,9 +68,12 @@ smoke measurement, not a comparative performance benchmark.
   global inside the isolate. This needs cleanup/design review for production.
 - The interpreter is a celld compiled-Wasm import; its mutable memory belongs
   to an instance. The stdlib zip is embedded in JS for this fixture only.
-- Async Wasm compile/instantiate is temporarily implemented with synchronous
-  V8 constructors plus JS promises. The initial native-async attempt stalled;
-  a minimized regression and proper host task-pumping investigation remain.
+- The build extracts Pyodide's pinned sentinel Wasm from the dependency and
+  verifies its exports, then packages it as another compiled-module import.
+  The lexical compile adapter recognizes only those exact sentinel bytes and
+  rejects unbundled modules. Both sentinel and interpreter use native async
+  instantiation of compiled modules. The separate raw-byte compile stall remains
+  a celld issue; it is no longer required by this fixture's startup path.
 - Initialization is lazy and cached per adapter instance, including failure.
 - The callable PyProxy stays alive with the runtime. Returned Python futures
   are destroyed after settlement. Leak resistance still needs a long-run test.
@@ -62,8 +90,8 @@ bundle reproduced under Node. Lexically selecting the worker environment uses
 
 ## Remaining gates
 
-Workerd differential comparison; real Workers SDK entrypoint; execution limits
-and post-termination behavior; memory growth/pressure; proxy leak testing;
+Current Workers SDK entrypoint; safe post-termination behavior; cancellation;
+memory pressure and process-level bounds; proxy leak testing;
 runtime/package security and reproducibility review; native packaging/dev UX;
 Python Durable Object lifecycle and persistence. No production compatibility
 claim follows from this spike.

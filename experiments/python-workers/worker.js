@@ -24,17 +24,27 @@ async function initialize() {
 
 export default {
   async fetch(request, env) {
-    let handler;
+    let handler, python;
     try {
-      ({ handler } = await (ready ??= initialize()));
+      ({ handler, python } = await (ready ??= initialize()));
     } catch (error) {
       return Response.json({ phase: 'initialization', error: String(error), stack: error.stack, startupLog }, { status: 500 });
+    }
+    // Fixture-only introspection: synchronous Python remains callable even
+    // when a hard termination has abandoned an asyncio task.
+    if (new URL(request.url).pathname === '/__diagnostics') {
+      return Response.json({
+        instance: instanceId,
+        currentTasks: python.runPython('repr(__import__("asyncio").tasks._current_tasks)'),
+        startupLog,
+      });
     }
     const result = handler(request, env);
     try {
       const response = await result;
       response.headers.set('x-python-initializations', String(initializationCount));
       response.headers.set('x-python-instance-id', instanceId);
+      response.headers.set('x-python-linear-memory', String(python._module.HEAPU8.byteLength));
       return response;
     } finally {
       result.destroy();
