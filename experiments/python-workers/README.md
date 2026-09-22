@@ -245,5 +245,14 @@ is still held, and both engines must return the same completed body. This proves
 incremental delivery rather than merely comparing a buffered result. The test
 allows network chunk splitting and keeps read demand active while holding the
 producer gate. Workerd's default gzip response buffered this tiny prefix; that
-observation is retained separately. Compression, upload streaming, cancellation,
-and large-stream resource bounds are not qualified by this case.
+observation is retained separately. Compression, cancellation, and large-stream
+resource bounds are not qualified by this case.
+
+Upload coverage uses both engines' HTTP listeners: Python returns an SDK
+Response backed by request.body, and the client must receive the first bytes
+before sending the remaining upload bytes and closing its request. A separate
+small Content-Length request covers buffered bodies. Celld's internal body
+streams now expose the standard ReadableStream constructor, which the unchanged
+SDK checks when accepting a response body. Internal read and tee implementations
+are preserved. Both upload cases pass against the historical reference envelope
+described above; cancellation and sustained upload resource limits remain open.

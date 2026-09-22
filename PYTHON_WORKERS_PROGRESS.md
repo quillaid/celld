@@ -430,3 +430,26 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   date-prefixed) under experiment evidence/. Diff checks pass. The runtime
   binary is unchanged from the native DO checkpoint; unrelated suites were
   not repeated for this fixture-only change. Goal remains active.
+
+## SDK upload streaming checkpoint (2026-09-21)
+
+- A real HTTP upload sends a prefix and keeps the request open. The same Python
+  SDK application echoes request.body; the client must receive that prefix
+  before sending the suffix and closing. Workerd passed while celld returned
+  HTTP 500: the unchanged SDK rejected constructor.name CelldHttpBodyStream.
+  The failing response and successful reference are retained in
+  experiments/python-workers/evidence/2026-09-21-sdk-upload-failure.json.
+- Both internal HTTP and buffered body stream prototypes now expose the
+  standard ReadableStream constructor. Their specialized read/tee behavior and
+  prototype chains remain intact. No SDK patch or body buffering was added.
+- The targeted SDK suite now passes incremental upload echo and small buffered
+  request-body echo on both engines, alongside existing response streaming,
+  request isolation, exception, binary and background-work checks. Reference
+  Python still uses the historical 2025 compatibility envelope.
+- Cancellation, compression flush behavior, sustained stream memory pressure,
+  package support and the other original goal requirements remain open.
+- Rebuilt the native binary and passed all 23 records in the full experiment
+  suite with two file jobs, plus the focused SDK run. Diff checks pass. Retained
+  date-prefixed sdk-upload-passing.json, sdk-upload-test.txt,
+  sdk-upload-full-suite.txt and sdk-upload-build.sha256 under evidence/.
+  No fleet or public changes; the goal remains active.

@@ -2,6 +2,8 @@ from workers import WorkerEntrypoint, Response
 
 class Default(WorkerEntrypoint):
     async def fetch(self, request):
+        if request.headers.get('x-echo-upload') == '1':
+            return Response(request.body, headers={'content-type': 'text/plain'})
         body = await request.text()
         if body == 'sdk-identity':
             import hashlib

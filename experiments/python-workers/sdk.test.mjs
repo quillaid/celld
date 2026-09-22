@@ -166,4 +166,58 @@ test('released Workers SDK HTTP, streaming, and background work match workerd', 
   }
   await checkStream('celld', release => fetch(local.url, { method: 'POST', body: 'stream', headers: { 'x-release-url': release, 'accept-encoding': 'identity' }, signal: AbortSignal.timeout(5000) }));
   await checkStream('workerd', release => reference.dispatchFetch('http://local/', { method: 'POST', body: 'stream', headers: { 'x-release-url': release, 'accept-encoding': 'identity' } }));
+  evidence.uploadStreaming = [];
+  async function checkUpload(engine, url) {
+    const result = { engine, stage: 'request' };
+    evidence.uploadStreaming.push(result);
+    let controller;
+    const body = new ReadableStream({ start(value) { controller = value; value.enqueue(new TextEncoder().encode('first\n')); } });
+    try {
+      const response = await fetch(url, { method: 'POST', body, duplex: 'half', headers: { 'x-echo-upload': '1', 'accept-encoding': 'identity' }, signal: AbortSignal.timeout(5000) });
+      result.stage = 'headers';
+      result.status = response.status;
+      if (response.status !== 200) result.failureBody = await response.text();
+      assert.equal(response.status, 200, result.failureBody);
+      const reader = response.body.getReader();
+      const chunks = [];
+      let length = 0;
+      while (length < 6) {
+        const item = await reader.read();
+        assert.equal(item.done, false);
+        chunks.push(item.value);
+        length += item.value.byteLength;
+      }
+      assert.equal(Buffer.concat(chunks).toString(), 'first\n');
+      result.firstBeforeUploadClose = true;
+      controller.enqueue(new TextEncoder().encode('second\n'));
+      controller.close();
+      while (true) {
+        const item = await reader.read();
+        if (item.done) break;
+        chunks.push(item.value);
+      }
+      result.body = Buffer.concat(chunks).toString();
+      result.stage = 'complete';
+      assert.equal(result.body, 'first\nsecond\n');
+    } catch (error) {
+      result.error = String(error);
+      try { controller.error(error); } catch {}
+      throw error;
+    }
+  }
+  const uploads = await Promise.allSettled([
+    checkUpload('celld', local.url),
+    checkUpload('workerd', await reference.ready),
+  ]);
+  assert.ok(uploads.every(result => result.status === 'fulfilled'), JSON.stringify(evidence.uploadStreaming));
+
+  evidence.bufferedUpload = [];
+  for (const [engine, url] of [['celld', local.url], ['workerd', await reference.ready]]) {
+    const response = await fetch(url, { method: 'POST', body: 'buffered upload', headers: { 'x-echo-upload': '1', 'accept-encoding': 'identity' }, signal: AbortSignal.timeout(5000) });
+    const body = await response.text();
+    evidence.bufferedUpload.push({ engine, status: response.status, body });
+    assert.equal(response.status, 200, body);
+    assert.equal(body, 'buffered upload');
+  }
+
 });
