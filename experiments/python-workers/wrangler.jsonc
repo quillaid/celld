@@ -1,0 +1,7 @@
+{
+  "name": "python-workers-spike",
+  "main": "dist/index.js",
+  "no_bundle": true,
+  "compatibility_date": "2026-09-21",
+  "kv_namespaces": [{ "binding": "CACHE", "id": "python-spike-cache" }]
+}

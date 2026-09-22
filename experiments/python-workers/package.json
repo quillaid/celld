@@ -1,0 +1,8 @@
+{
+  "name": "celld-python-workers-spike",
+  "private": true,
+  "type": "module",
+  "scripts": { "build": "node build.mjs", "test": "node --test smoke.test.mjs" },
+  "dependencies": { "pyodide": "0.28.3" },
+  "devDependencies": { "esbuild": "0.28.2" }
+}
