@@ -96,7 +96,7 @@ await build({
   ...(generatedEntry ? { stdin: { contents: generatedEntry, resolveDir: process.cwd(), sourcefile: 'python-entry.js' } } : { entryPoints: [process.env.PYTHON_FIXTURE_ENTRY || 'worker.js'] }),
   outfile: process.env.PYTHON_FIXTURE_OUTPUT || join(outdir, 'index.js'), bundle: true,
   format: 'esm', platform: 'browser', target: 'es2022',
-  external: ['node:*', './pyodide.asm.wasm', './sentinel.wasm', './python-extension-*.wasm'],
+  external: ['node:*', 'cloudflare:workers', './pyodide.asm.wasm', './sentinel.wasm', './python-extension-*.wasm'],
   loader: { '.zip': 'binary', '.py': 'text', '.whl': 'binary' },
   // These definitions affect only this generated fixture, not host globals.
   define: { process: 'undefined', location: '"https://python-runtime.invalid/"' },

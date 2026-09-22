@@ -3,6 +3,7 @@ import { loadPyodide } from 'pyodide';
 import lockFileContents from 'pyodide/pyodide-lock.json';
 import wheel from './.celld/workers_runtime_sdk-1.9.0-py3-none-any.whl';
 import adapter from './sdk-dispatch.py';
+import { DurableObject as HostDurableObject } from 'cloudflare:workers';
 
 const patched = new WeakSet();
 function patchWaitUntil(ctx) {
@@ -63,12 +64,25 @@ export function createPythonDeployment({ moduleName, files, packages, dynamicLib
       } };
     },
     durableObject(className) {
-      return class {
+      return class extends HostDurableObject {
+        #handler;
+        #ready;
         constructor(ctx, env) {
-          this.handler = runtime().then(({ loadDurable }) => loadDurable(moduleName, className, ctx, env));
+          super(ctx, env);
+          this.#ready = ctx.blockConcurrencyWhile(async () => {
+            const { loadDurable } = await runtime();
+            this.#handler = loadDurable(moduleName, className, ctx, env);
+            const methods = this.#handler.rpc_methods;
+            try {
+              for (const name of methods.toJs()) {
+                if (['fetch', 'alarm', 'constructor', 'then', 'ctx', 'env'].includes(name)) continue;
+                Object.defineProperty(this, name, { value: (...args) => invoke(this.#handler, name, ...args) });
+              }
+            } finally { methods.destroy(); }
+          });
         }
-        async fetch(request) { return invoke(await this.handler, 'fetch', request); }
-        async alarm(info) { return invoke(await this.handler, 'alarm', info); }
+        async fetch(request) { await this.#ready; return invoke(this.#handler, 'fetch', request); }
+        async alarm(info) { await this.#ready; return invoke(this.#handler, 'alarm', info); }
       };
     },
   };

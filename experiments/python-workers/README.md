@@ -233,6 +233,17 @@ restart and retains SQL/alarm state. The reference uses historical on_fetch and
 on_alarm dispatch aliases. This does not qualify remote durability, RPC,
 WebSocket callbacks, or long-run proxy reclamation.
 
+`npm run test:native-rpc` compares Python Durable Object method calls against
+the same pinned workerd envelope and SDK wheel. It covers synchronous/async and
+inherited methods, leading underscores, static/class methods, constructor-installed
+functions, nested values, exceptions, concurrent requests, distinct objects, and
+SQL persistence after a celld process crash. The generated host class extends
+`DurableObject` and installs discovered methods inside its initialization gate.
+Discovery avoids evaluating Python properties. This is a bounded method bridge:
+late-added methods, arbitrary callable descriptors, dunder/host-reserved names,
+RPC properties, returned capabilities, cross-node RPC and proxy reclamation
+remain unqualified. Python underscores are not an access-control boundary.
+
 The default suite runs two test files at a time to bound simultaneous runtime
 startups. Individual concurrency probes and deadlines are unchanged. Earlier
 unbounded-file runs sometimes timed out waiting for the workerd SDK reference

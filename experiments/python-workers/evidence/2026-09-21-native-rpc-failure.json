@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-09-22T04:42:15.063Z",
+  "workerd": "1.20260922.1",
+  "referenceDate": "2025-06-01",
+  "responses": [
+    {
+      "input": {
+        "operation": "increment",
+        "amount": 2
+      },
+      "status": 500,
+      "text": "Worker failed: rejected: PythonError: Traceback (most recent call last):\n  File \"<exec>\", line 18, in dispatch\n  File \"/app/worker.py\", line 11, in fetch\n    result = await stub.increment(data['amount'])\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/sdk/workers/rpc.py\", line 295, in await_and_convert\n    return self._convert_result(await result)\n                                ^^^^^^^^^^^^\npyodide.ffi.JsException: TypeError: The receiving Durable Object does not support RPC, because its class was not declared with `extends DurableObject`. In order to enable RPC, make sure your class extends the special class `DurableObject`, which can be imported from the module \"cloudflare:workers\".\n [File \"<exec>\", line 18, in dispatch <- File \"/app/worker.py\", line 11, in fetch <- result = await stub.increment(data['amount'])]",
+      "reference": {
+        "status": 200,
+        "text": "{\"value\": 2}"
+      }
+    }
+  ]
+}

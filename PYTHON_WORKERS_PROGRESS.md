@@ -649,3 +649,33 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   not current-date, package-resolver or snapshot parity. Multi-library graphs,
   shared-library archives, extension lifecycle/pressure and the other original
   SDK/event/durability/distribution requirements remain open. Goal active.
+
+## Native Python Durable Object method RPC (2026-09-21)
+
+- The initial same-source workerd comparison returned 200 while celld rejected
+  RPC because the generated class did not extend the host DurableObject base.
+  The adapter now extends that base and installs methods within the object's
+  blockConcurrencyWhile initialization gate before RPC lookup can proceed.
+- Python dispatch uses the SDK python_from_rpc/python_to_rpc conversion and
+  retains each object's own instance. Descriptor inspection avoids evaluating
+  properties. Ordinary and inherited functions, static/class methods, and
+  constructor-installed functions are discovered; host-reserved and dunder
+  names remain excluded. Handler proxies remain private host fields.
+- A second red comparison disproved the proposed public-method-only boundary:
+  workerd accepts leading-underscore methods. The adapter now includes them.
+  Both original failures are retained in date-prefixed native-rpc evidence.
+- Focused differential checks pass for sync/async calls, nested values, inherited
+  and underscore methods, static/class methods, constructor-installed functions,
+  Python exceptions and recovery, eight concurrent calls, two independent object
+  identities, and SQL state after a celld process crash. Reference uses workerd
+  1.20260922.1, the unchanged 1.9.0 SDK wheel, and the historical 2025-06-01 Python
+  envelope with Default.on_fetch alias. No current-date parity claim.
+- This is a bounded method bridge, not full RPC parity. Late-added methods,
+  arbitrary callable descriptors, dunder/reserved names, properties, returned
+  capabilities, service entrypoints, cross-node behavior and proxy reclamation
+  still need qualification. The other original goal requirements remain open.
+- Rebuilt fixtures; all 28 full-suite records pass with two test files at a time,
+  including prior SQL/alarm/restart, package/offline/reload, termination, HTTP
+  streaming and cancellation probes. No Rust changes were required. Focused and
+  full-suite logs and passing RPC observations are retained under evidence/.
+  Diff checks pass. Goal remains active; no public or live-fleet changes.

@@ -1,0 +1,308 @@
+{
+  "timestamp": "2026-09-22T04:49:01.586Z",
+  "workerd": "1.20260922.1",
+  "referenceDate": "2025-06-01",
+  "responses": [
+    {
+      "input": {
+        "operation": "increment",
+        "amount": 2
+      },
+      "status": 200,
+      "text": "{\"value\": 2}",
+      "reference": {
+        "status": 200,
+        "text": "{\"value\": 2}"
+      }
+    },
+    {
+      "input": {
+        "operation": "echo",
+        "payload": {
+          "nested": [
+            null,
+            true,
+            3.25,
+            "python"
+          ],
+          "record": {
+            "key": "value"
+          }
+        }
+      },
+      "status": 200,
+      "text": "{\"payload\": {\"nested\": [null, true, 3.25, \"python\"], \"record\": {\"key\": \"value\"}}, \"value\": 2}",
+      "reference": {
+        "status": 200,
+        "text": "{\"payload\": {\"nested\": [null, true, 3.25, \"python\"], \"record\": {\"key\": \"value\"}}, \"value\": 2}"
+      }
+    },
+    {
+      "input": {
+        "operation": "inherited",
+        "value": 42
+      },
+      "status": 200,
+      "text": "{\"inherited\": 42}",
+      "reference": {
+        "status": 200,
+        "text": "{\"inherited\": 42}"
+      }
+    },
+    {
+      "input": {
+        "operation": "echo",
+        "payload": {
+          "index": 4,
+          "nested": [
+            null,
+            "request-4"
+          ]
+        }
+      },
+      "status": 200,
+      "text": "{\"payload\": {\"index\": 4, \"nested\": [null, \"request-4\"]}, \"value\": 2}",
+      "reference": {
+        "status": 200,
+        "text": "{\"payload\": {\"index\": 4, \"nested\": [null, \"request-4\"]}, \"value\": 2}"
+      }
+    },
+    {
+      "input": {
+        "operation": "echo",
+        "payload": {
+          "index": 1,
+          "nested": [
+            null,
+            "request-1"
+          ]
+        }
+      },
+      "status": 200,
+      "text": "{\"payload\": {\"index\": 1, \"nested\": [null, \"request-1\"]}, \"value\": 2}",
+      "reference": {
+        "status": 200,
+        "text": "{\"payload\": {\"index\": 1, \"nested\": [null, \"request-1\"]}, \"value\": 2}"
+      }
+    },
+    {
+      "input": {
+        "operation": "echo",
+        "payload": {
+          "index": 0,
+          "nested": [
+            null,
+            "request-0"
+          ]
+        }
+      },
+      "status": 200,
+      "text": "{\"payload\": {\"index\": 0, \"nested\": [null, \"request-0\"]}, \"value\": 2}",
+      "reference": {
+        "status": 200,
+        "text": "{\"payload\": {\"index\": 0, \"nested\": [null, \"request-0\"]}, \"value\": 2}"
+      }
+    },
+    {
+      "input": {
+        "operation": "echo",
+        "payload": {
+          "index": 7,
+          "nested": [
+            null,
+            "request-7"
+          ]
+        }
+      },
+      "status": 200,
+      "text": "{\"payload\": {\"index\": 7, \"nested\": [null, \"request-7\"]}, \"value\": 2}",
+      "reference": {
+        "status": 200,
+        "text": "{\"payload\": {\"index\": 7, \"nested\": [null, \"request-7\"]}, \"value\": 2}"
+      }
+    },
+    {
+      "input": {
+        "operation": "echo",
+        "payload": {
+          "index": 5,
+          "nested": [
+            null,
+            "request-5"
+          ]
+        }
+      },
+      "status": 200,
+      "text": "{\"payload\": {\"index\": 5, \"nested\": [null, \"request-5\"]}, \"value\": 2}",
+      "reference": {
+        "status": 200,
+        "text": "{\"payload\": {\"index\": 5, \"nested\": [null, \"request-5\"]}, \"value\": 2}"
+      }
+    },
+    {
+      "input": {
+        "operation": "echo",
+        "payload": {
+          "index": 6,
+          "nested": [
+            null,
+            "request-6"
+          ]
+        }
+      },
+      "status": 200,
+      "text": "{\"payload\": {\"index\": 6, \"nested\": [null, \"request-6\"]}, \"value\": 2}",
+      "reference": {
+        "status": 200,
+        "text": "{\"payload\": {\"index\": 6, \"nested\": [null, \"request-6\"]}, \"value\": 2}"
+      }
+    },
+    {
+      "input": {
+        "operation": "echo",
+        "payload": {
+          "index": 2,
+          "nested": [
+            null,
+            "request-2"
+          ]
+        }
+      },
+      "status": 200,
+      "text": "{\"payload\": {\"index\": 2, \"nested\": [null, \"request-2\"]}, \"value\": 2}",
+      "reference": {
+        "status": 200,
+        "text": "{\"payload\": {\"index\": 2, \"nested\": [null, \"request-2\"]}, \"value\": 2}"
+      }
+    },
+    {
+      "input": {
+        "operation": "echo",
+        "payload": {
+          "index": 3,
+          "nested": [
+            null,
+            "request-3"
+          ]
+        }
+      },
+      "status": 200,
+      "text": "{\"payload\": {\"index\": 3, \"nested\": [null, \"request-3\"]}, \"value\": 2}",
+      "reference": {
+        "status": 200,
+        "text": "{\"payload\": {\"index\": 3, \"nested\": [null, \"request-3\"]}, \"value\": 2}"
+      }
+    },
+    {
+      "input": {
+        "operation": "increment",
+        "amount": 7,
+        "name": "second"
+      },
+      "status": 200,
+      "text": "{\"value\": 7}",
+      "reference": {
+        "status": 200,
+        "text": "{\"value\": 7}"
+      }
+    },
+    {
+      "input": {
+        "operation": "read"
+      },
+      "status": 200,
+      "text": "{\"value\": 2}",
+      "reference": {
+        "status": 200,
+        "text": "{\"value\": 2}"
+      }
+    },
+    {
+      "input": {
+        "operation": "fail"
+      },
+      "status": 500,
+      "text": "Worker failed: rejected: PythonError: Traceback (most recent call last):\n  File \"<exec>\", line 19, in dispatch\n  File \"/app/worker.py\", line 17, in fetch\n    result = await stub.fail()\n             ^^^^^^^^^^^^^^^^^\n  File \"/sdk/workers/rpc.py\", line 295, in await_and_convert\n    return self._convert_result(await result)\n                                ^^^^^^^^^^^^\npyodide.ffi.JsException: PythonError: Traceback (most recent call last):\n  File \"<exec>\", line 34, in dispatch\n  File \"/app/worker.py\", line 55, in fail\n    raise ValueError('Python RPC failure')\nValueError: Python RPC failure\n\n [File \"<exec>\", line 19, in dispatch <- File \"/app/worker.py\", line 17, in fetch <- result = await stub.fail()]",
+      "reference": {
+        "status": 500,
+        "text": "Error: PythonError: Traceback (most recent call last):\n  File \"introspection.py\", line 88, in wrapper_func\n    return python_to_rpc(await result)\n                         ^^^^^^^^^^^^\n  File \"/session/metadata/native-rpc-reference.py\", line 19, in fetch\n    result = await stub.fail()\n             ^^^^^^^^^^^^^^^^^\n  File \"/session/metadata/python_modules/workers/rpc.py\", line 295, in await_and_convert\n    return self._convert_result(await result)\n                                ^^^^^^^^^^^^\npyodide.ffi.JsException: Error: PythonError: Traceback (most recent call last):\n  File \"introspection.py\", line 84, in wrapper_func\n    else method(*py_args, **py_kwargs)\n         ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/session/metadata/native-rpc-reference.py\", line 57, in fail\n    raise ValueError('Python RPC failure')\nValueError: Python RPC failure\n\n\n    at async Object.fetch (file:///Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/node_modules/miniflare/dist/src/workers/core/entry.worker.js:5216:22)"
+      }
+    },
+    {
+      "input": {
+        "operation": "private"
+      },
+      "status": 200,
+      "text": "{\"private\": \"visible\"}",
+      "reference": {
+        "status": 200,
+        "text": "{\"private\": \"visible\"}"
+      }
+    },
+    {
+      "input": {
+        "operation": "static",
+        "value": 19
+      },
+      "status": 200,
+      "text": "{\"static\": 19}",
+      "reference": {
+        "status": 200,
+        "text": "{\"static\": 19}"
+      }
+    },
+    {
+      "input": {
+        "operation": "class"
+      },
+      "status": 200,
+      "text": "{\"class\": \"Counter\"}",
+      "reference": {
+        "status": 200,
+        "text": "{\"class\": \"Counter\"}"
+      }
+    },
+    {
+      "input": {
+        "operation": "installed",
+        "value": 23
+      },
+      "status": 200,
+      "text": "{\"installed\": 23}",
+      "reference": {
+        "status": 200,
+        "text": "{\"installed\": 23}"
+      }
+    },
+    {
+      "input": {
+        "operation": "read"
+      },
+      "status": 200,
+      "text": "{\"value\": 2}",
+      "reference": {
+        "status": 200,
+        "text": "{\"value\": 2}"
+      }
+    },
+    {
+      "input": {
+        "operation": "read"
+      },
+      "status": 200,
+      "text": "{\"value\": 2}",
+      "reference": {
+        "status": 200,
+        "text": "{\"value\": 2}"
+      }
+    }
+  ],
+  "restart": {
+    "stoppedPids": [
+      62722,
+      62753
+    ],
+    "pid": 63247,
+    "crash": true
+  }
+}
