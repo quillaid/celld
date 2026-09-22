@@ -1,0 +1,82 @@
+{
+  "timestamp": "2026-09-22T03:10:48.775Z",
+  "responses": [
+    {
+      "name": "a",
+      "op": "inc",
+      "status": 200,
+      "interpreter": "df9b3648-93ec-45a8-8d28-acef650011b3",
+      "text": "{\"value\": 1, \"objectInstance\": \"b8e3a82c-5b63-4947-969c-693e2e3b4597\"}"
+    },
+    {
+      "name": "a",
+      "op": "inc",
+      "status": 200,
+      "interpreter": "df9b3648-93ec-45a8-8d28-acef650011b3",
+      "text": "{\"value\": 2, \"objectInstance\": \"b8e3a82c-5b63-4947-969c-693e2e3b4597\"}"
+    },
+    {
+      "name": "b",
+      "op": "inc",
+      "status": 200,
+      "interpreter": "df9b3648-93ec-45a8-8d28-acef650011b3",
+      "text": "{\"value\": 1, \"objectInstance\": \"b63d8951-89ff-4e50-bd0f-8c9cbe58fc1b\"}"
+    },
+    {
+      "name": "a",
+      "op": "abort",
+      "status": 500,
+      "interpreter": null,
+      "text": "Worker failed: rejected: Error: intentional Python Durable Object abort [at invoke (<anonymous>:5072:15) <- at async Proxy.doFetch (<anonymous>:5115:30)]"
+    },
+    {
+      "name": "a",
+      "op": "read",
+      "status": 200,
+      "interpreter": "2e6bfa6b-3899-4872-8512-4809dc3a7301",
+      "text": "{\"value\": 2, \"objectInstance\": \"0cb72654-adf3-4495-aa57-e841d7393207\"}"
+    },
+    {
+      "name": "b",
+      "op": "read",
+      "status": 200,
+      "interpreter": "2e6bfa6b-3899-4872-8512-4809dc3a7301",
+      "text": "{\"value\": 1, \"objectInstance\": \"1a062e0e-1cb7-42be-995e-1f4ac9e673bc\"}"
+    },
+    {
+      "name": "b",
+      "op": "abort",
+      "status": 500,
+      "interpreter": null,
+      "text": "Worker failed: rejected: Error: intentional Python Durable Object abort [at invoke (<anonymous>:5072:15) <- at async Proxy.doFetch (<anonymous>:5115:30)]"
+    },
+    {
+      "name": "a",
+      "op": "block",
+      "status": 500,
+      "interpreter": null,
+      "text": "Worker failed: rejected: Error: Python runtime invalidated after execution termination; recreate the worker"
+    },
+    {
+      "name": "a",
+      "op": "read",
+      "status": 200,
+      "interpreter": "539607cf-b8b3-45fe-8d00-8256da1ba1d5",
+      "text": "{\"value\": 2, \"objectInstance\": \"1c75ae6b-8d33-421b-bd92-fb150f8c3069\"}"
+    },
+    {
+      "name": "b",
+      "op": "read",
+      "status": 200,
+      "interpreter": "539607cf-b8b3-45fe-8d00-8256da1ba1d5",
+      "text": "{\"value\": 1, \"objectInstance\": \"9a95c210-7c12-4c3a-b40f-dd264352afc9\"}"
+    }
+  ],
+  "blockResult": {
+    "name": "a",
+    "op": "block",
+    "status": 500,
+    "interpreter": null,
+    "text": "Worker failed: rejected: Error: Python runtime invalidated after execution termination; recreate the worker"
+  }
+}

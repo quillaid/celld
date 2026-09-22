@@ -10,9 +10,9 @@ Kyle explicitly requested `/goal`; the durable goal is ACTIVE with no token
 budget. See `GOAL.md` and the goal tool. Continue immediately while there is
 authorized work; do not wait for the heartbeat to make progress.
 
-## Current slice — first HTTP/binding milestone passed
+## Current slice — native interpreter and Durable Object lifecycle
 
-Bootstrap a pinned upstream Pyodide 0.28.3 inside the real celld 0.5.1 HTTP path. Test a stdlib import, async request, and one binding before adding native Python deployment metadata. Assets are local and pinned; fixture-only packaging is allowed for this spike.
+Pinned upstream Pyodide 0.28.3 runs through real celld HTTP, bindings, and a fixture-only Python Durable Object class bridge. Host termination, pool replacement, and focused Durable Object recovery are implemented and tested below. Native Python deployment metadata and the Workers SDK remain future work; do not infer them from the class fixture.
 
 ## Environment
 
@@ -40,13 +40,11 @@ Bootstrap a pinned upstream Pyodide 0.28.3 inside the real celld 0.5.1 HTTP path
 
 ## Next action
 
-1. Verify Durable Object recovery, retained input/output gates, and alarm retry
-   state under invalidation before enabling a production Python deployment path.
-   Stateless pool retirement and prompt suspended-event wakeups now pass real
-   Python probes (see latest checkpoint below). DO input-gate ownership still
-   requires a focused test: `reject_invalidated_entry` calls `abandon`, but a
-   cross-entry claim can keep `keeps_native_ops` / `retired` live. Investigate
-   host claim retirement without running guest callbacks or bypassing durability.
+1. Extend the now-working Python Durable Object fixture to alarms, transactions,
+   restart, and remote durability/failure gates. Focused abort and input-gate
+   recovery now pass, but those results prove only the tested local lifecycle.
+   Add reference fixtures and audit the real Workers SDK before treating the
+   current custom class bridge as a supported programming interface.
    Inspect pool placement/retirement and Dynamic Worker ownership. V8 clears the
    isolate's termination flag, but Python's asyncio/native frames may still be
    abandoned. The fixture's post-termination diagnostic now confirms a stale
@@ -60,8 +58,8 @@ Bootstrap a pinned upstream Pyodide 0.28.3 inside the real celld 0.5.1 HTTP path
    `_current_tasks`: native/Wasm state may also have been interrupted. The host
    needs a terminal-runtime contract before admitting another guest invocation,
    including already-suspended work, rather than guest-controlled health checks.
-2. Measure cancellation, process RSS, proxy cleanup, and eviction, then audit and
-   reuse the current Workers SDK entrypoint bridge before native packaging/DOs.
+2. Measure remote I/O cancellation, process RSS, proxy cleanup, and eviction;
+   integrate the audited Workers SDK entrypoint bridge and native packaging.
 
 ## Goal continuation results (2026-09-21)
 
@@ -156,3 +154,42 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   New evidence uses the `2026-09-21-retirement-*` prefix under `evidence/`.
   Remaining work includes DO recovery and gate retirement, transport cancellation,
   resource bounds, SDK/packaging, and the full compatibility matrix.
+
+## Python Durable Object recovery checkpoint (2026-09-21)
+
+- `durable.py` implements a SQL counter through the actual celld context. Its
+  JS class bridge keeps one Python instance per Durable Object and reuses the
+  interpreter per isolate. Two objects share an interpreter but maintain separate
+  SQL values and Python instance IDs. This is fixture-only, not a Workers SDK.
+- The initial abort test failed: all later requests reached the invalidated heap.
+  `RuntimeInvalidated` now carries the heap identity from the host to the decision
+  core. The core quiesces affected objects and uses its bounded runtime-swap path,
+  preserving ownership epochs and waiting for existing safe-point/output gates.
+  The host reports invalidation even if a generation change already retired the
+  slot. Old heap observations are discarded once no cell/start can reference them.
+- The stronger test failed after a sibling's abort interrupted Python inside
+  `blockConcurrencyWhile`: the request returned an error, but a held input gate
+  kept its event alive and prevented recovery. Terminal-entry cleanup now retires
+  host input-gate and cross-entry claims without calling guest code. It retains
+  the existing `fail_in_turn` path for storage/output-gate accounting.
+- Real HTTP tests pass for independent increments, abort/recreation, a Python
+  callback holding a concurrency block while a sibling aborts, and recovery of
+  both objects with their previously acknowledged SQL values intact. A local
+  HTTP handshake verifies the block has started and remains pending before abort.
+- The decision-core test verifies same-epoch stop/start of both affected objects
+  and leaves an unrelated heap resident, both before a generation announcement
+  and when the invalidated objects already use the current generation.
+- Validation: full integration suite 14 records passed; the extended final DO
+  check passed again; one decision-core test passed. Rust formatting/diff checks
+  pass. Build uses Rust 1.94.1 and the official V8 mirror override recorded above.
+- Debug binary SHA-256:
+  `d556506bdd208c512a5ec8a6df6e02aa9c171c733476ec6f5cec1ba2385a04f2`.
+  Evidence: `2026-09-21-durable-recovery.json`, `durable-build.sha256`,
+  `durable-core-test.txt`, `durable-differential.json`, and `durable-resources.json`
+  (all names have the date prefix, under the experiment's `evidence/`). Both
+  earlier DO failures remain as `durable-recovery-failure.json` and
+  `durable-input-gate-failure.json`, also date-prefixed.
+- Still unqualified: actual Workers SDK, alarms, transactions/rollback,
+  process restart, remote acknowledged-write durability, multi-node ownership,
+  memory/proxy bounds, full event/binding matrix, and native packaging/dev flow.
+  The new local recovery proof does not establish those requirements.

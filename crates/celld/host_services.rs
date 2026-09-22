@@ -27,6 +27,7 @@ enum MetricsBackend {
 
 /// All process-like services owned by one execution domain.
 pub struct HostServices {
+    runtime_invalidation: OnceLock<Arc<dyn Fn(celld_logic::isolate::HeapId) + Send + Sync>>,
     domain: OnceLock<crate::asyncrt::DomainToken>,
     node_load: OnceLock<Arc<LiveLoad>>,
     wake_entry: crate::js::WakeEntryService,
@@ -38,6 +39,7 @@ pub struct HostServices {
 impl HostServices {
     pub(crate) fn production() -> Self {
         Self {
+            runtime_invalidation: OnceLock::new(),
             domain: OnceLock::new(),
             node_load: OnceLock::new(),
             wake_entry: crate::js::WakeEntryService::default(),
@@ -50,6 +52,7 @@ impl HostServices {
     #[cfg(celld_internal_tests)]
     pub fn scripted() -> Self {
         Self {
+            runtime_invalidation: OnceLock::new(),
             domain: OnceLock::new(),
             node_load: OnceLock::new(),
             wake_entry: crate::js::WakeEntryService::default(),
@@ -61,6 +64,19 @@ impl HostServices {
 
     pub fn set_node_load(&self, load: Arc<LiveLoad>) {
         let _ = self.node_load.set(load);
+    }
+
+    pub fn set_runtime_invalidation_observer(
+        &self,
+        observer: Arc<dyn Fn(celld_logic::isolate::HeapId) + Send + Sync>,
+    ) {
+        let _ = self.runtime_invalidation.set(observer);
+    }
+
+    pub(crate) fn runtime_invalidated(&self, heap: celld_logic::isolate::HeapId) {
+        if let Some(observer) = self.runtime_invalidation.get() {
+            observer(heap);
+        }
     }
 
     pub(crate) fn bind_domain(&self, domain: crate::asyncrt::DomainToken) {

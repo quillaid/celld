@@ -2,6 +2,7 @@ import 'pyodide/pyodide.asm.js';
 import { loadPyodide } from 'pyodide';
 import lockFileContents from 'pyodide/pyodide-lock.json';
 import source from './worker.py';
+import durableSource from './durable.py';
 
 let ready;
 let initializationCount = 0;
@@ -17,6 +18,7 @@ async function initialize() {
     stderr: (line) => startupLog.push(String(line)),
   });
   python.runPython(source);
+  python.runPython(durableSource);
   const handler = python.globals.get('handle');
   console.log(JSON.stringify({ event: 'python_ready', elapsedMs: Date.now() - started }));
   return { python, handler };
@@ -24,6 +26,10 @@ async function initialize() {
 
 export default {
   async fetch(request, env) {
+    if (new URL(request.url).pathname.startsWith('/do/')) {
+      const name = new URL(request.url).pathname.split('/')[2];
+      return env.PYTHON_COUNTER.getByName(name).fetch(request);
+    }
     let handler, python;
     try {
       ({ handler, python } = await (ready ??= initialize()));
@@ -52,3 +58,27 @@ export default {
     }
   },
 };
+
+// Fixture-only class bridge. Object state belongs to this host Durable Object;
+// SQL and all ownership/durability behavior remain in celld's existing context.
+export class PythonCounter {
+  constructor(ctx, env) {
+    this.instance = (ready ??= initialize()).then(({ python }) => {
+      const klass = python.globals.get('Counter');
+      try { return klass(ctx, env); }
+      finally { klass.destroy(); }
+    });
+  }
+  async fetch(request) {
+    const instance = await this.instance;
+    const handler = instance.fetch;
+    try {
+      const future = handler(request);
+      try {
+        const response = await future;
+        response.headers.set('x-python-instance-id', instanceId);
+        return response;
+      } finally { future.destroy(); }
+    } finally { handler.destroy(); }
+  }
+}

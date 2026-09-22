@@ -34,6 +34,9 @@ pub mod sqlite;
 pub mod sweep;
 pub mod wake;
 
+#[cfg(test)]
+mod runtime_invalidation_tests;
+
 mod types;
 pub use types::*;
 
@@ -794,6 +797,7 @@ pub struct State {
     /// `Event::GenerationChanged`. Zero before any announcement, when no cell
     /// is stale.
     current_generation: u64,
+    invalidated_isolates: BTreeSet<isolate::HeapId>,
     /// When the current generation was announced, on the monotonic clock.
     /// The maximum age counts from here.
     generation_changed_mono_ms: u64,
@@ -842,6 +846,7 @@ impl State {
             releasing_cells: BTreeSet::new(),
             adopting_cells: BTreeSet::new(),
             current_generation: 0,
+            invalidated_isolates: BTreeSet::new(),
             generation_changed_mono_ms: 0,
             swap_max_age_ms: 0,
             swap_eager_classes: BTreeSet::new(),
@@ -5196,8 +5201,8 @@ impl State {
     }
 
     /// The swap pump, run after every event once a generation change has
-    /// been announced: move every resident cell on an older generation to
-    /// the current one, at most `max_releases` at a time.
+    /// been announced or a heap invalidated: move affected resident cells to
+    /// a usable runtime, at most `max_releases` at a time.
     ///
     /// A nominated cell quiesces first, exactly as a shutdown handoff does:
     /// new requests queue for the restarted runtime instead of routing to the
@@ -5212,7 +5217,21 @@ impl State {
     /// a Cloudflare deployment does to every object unconditionally. The
     /// hibernatable sockets survive either way.
     fn pump_swap(&mut self, effects: &mut Vec<Effect>) {
-        if self.current_generation == 0
+        // A late start result can still name a heap invalidated while that
+        // start was in flight. Retain the observation until all starts have
+        // reported and no cell references it, then forget the retired heap.
+        if !self.invalidated_isolates.is_empty()
+            && !self.cells.values().any(|cell| {
+                matches!(
+                    cell.phase,
+                    Phase::Starting { .. } | Phase::Publishing { .. }
+                )
+            })
+        {
+            self.invalidated_isolates
+                .retain(|heap| self.cells.values().any(|cell| cell.isolate == Some(*heap)));
+        }
+        if (self.current_generation == 0 && self.invalidated_isolates.is_empty())
             || self.draining
             || self.fenced
             || !self.node_authoritative()
@@ -5234,7 +5253,10 @@ impl State {
                     && !cell.swapping
                     && !cell.quiescing
                     && cell.releasing.is_none()
-                    && cell.generation != current
+                    && ((current != 0 && cell.generation != current)
+                        || cell
+                            .isolate
+                            .is_some_and(|heap| self.invalidated_isolates.contains(&heap)))
             })
             .map(|(id, _)| id.clone())
             .collect();
@@ -5260,7 +5282,10 @@ impl State {
                     Some(AlarmState::Firing { op, .. }) => Some(op),
                     _ => None,
                 };
-                if !(forced_by_age || eager) || cell.swap_cancelled {
+                let invalidated = cell
+                    .isolate
+                    .is_some_and(|heap| self.invalidated_isolates.contains(&heap));
+                if !(forced_by_age || eager || invalidated) || cell.swap_cancelled {
                     continue;
                 }
                 let requests = self
@@ -6811,6 +6836,9 @@ pub fn on_event(state: &mut State, event: Event) -> Vec<Effect> {
             eager_classes,
             ..
         } => state.generation_changed(generation, max_age_ms, &eager_classes),
+        Event::RuntimeInvalidated { isolate } => {
+            state.invalidated_isolates.insert(isolate);
+        }
         Event::Published { op, result } => state.published(op, result, &mut effects),
         Event::DurabilityChecked { op, result } => state.durability_checked(
             op,

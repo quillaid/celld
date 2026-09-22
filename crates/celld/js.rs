@@ -4619,6 +4619,11 @@ impl WorkerIsolate {
         let Some(error) = self.invalidation_error() else {
             return false;
         };
+        // No callback in this VM can finish a held block. Retire its host
+        // claims, including cross-entry claims, without executing JS cleanup
+        // in the interrupted interpreter. Output/durability gates stay intact.
+        entry.context.force_retire_cross_entry_gates();
+        let _ = abandon_context_input_gates(&entry.context);
         entry.fail_in_turn(error);
         entry.invalidation_handled = true;
         entry.background = None;

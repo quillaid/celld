@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
-    "test": "node --test smoke.test.mjs async-wasm.test.mjs resources.test.mjs pool-lifecycle.test.mjs",
+    "test": "node --test smoke.test.mjs async-wasm.test.mjs resources.test.mjs pool-lifecycle.test.mjs durable.test.mjs",
+    "test:durable": "node --test durable.test.mjs",
     "test:smoke": "node --test smoke.test.mjs",
     "test:wasm": "node --test async-wasm.test.mjs",
     "test:resources": "node --test resources.test.mjs"

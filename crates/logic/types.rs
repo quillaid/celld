@@ -521,6 +521,11 @@ pub enum WakeHintScope {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Event {
+    /// The host can no longer execute guest code in this heap. Resident
+    /// objects must quiesce and restart without changing their ownership.
+    RuntimeInvalidated {
+        isolate: isolate::HeapId,
+    },
     StartNodeLease {
         now_ms: u64,
         /// The monotonic instant `now_ms` was sampled. The initial lease's

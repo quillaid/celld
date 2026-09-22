@@ -3740,6 +3740,10 @@ async fn async_main(telemetry_config: Option<celld::telemetry::Config>) -> anyho
                 session_token: storage.session_token.clone(),
             });
     let (tx, rx) = mpsc::unbounded_channel();
+    let invalidation_tx = tx.clone();
+    celld::asyncrt::services().set_runtime_invalidation_observer(Arc::new(move |isolate| {
+        let _ = invalidation_tx.send(Message::RuntimeInvalidated { isolate });
+    }));
     let sample_tx = tx.clone();
     let alarm_tx = tx.clone();
     let alarm_observer: celld::runtime::AlarmObserver = Arc::new(move |cell, alarm| {

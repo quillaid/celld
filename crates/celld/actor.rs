@@ -364,6 +364,9 @@ impl Ownership {
 }
 
 pub enum Message {
+    RuntimeInvalidated {
+        isolate: celld_logic::isolate::HeapId,
+    },
     /// A periodic resource sample. The measuring is the shell's job; every
     /// decision that follows belongs to the core.
     SampleLoad,
@@ -2587,6 +2590,9 @@ impl Actor {
                 self.drive(Event::WorkerRequest { request }, out);
             }
             Message::ReleaseAll => self.drive(Event::ReleaseAll, out),
+            Message::RuntimeInvalidated { isolate } => {
+                self.drive(Event::RuntimeInvalidated { isolate }, out)
+            }
             Message::Rebalance { .. } if self.preserving => {}
             Message::Rebalance { cells } => self.drive(Event::Rebalance { cells }, out),
             Message::GenerationChanged {

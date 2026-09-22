@@ -58,8 +58,16 @@ timer. Invalidated pool slots retire through the existing reference counters.
 A separate test caps the stateless pool at one active isolate and verifies five
 distinct Python interpreters across repeated hard terminations. That fixture
 uses Python FFI to the host's global `process.exit` method; the Dynamic Worker
-test exercises CPU limits. Python Durable Object recovery, input-gate cleanup,
-and remote transport cancellation are not yet qualified.
+test exercises CPU limits.
+
+`npm run test:durable` exercises two actual Python objects sharing an interpreter,
+independent SQL counters, abort/recreation, and an interrupted Python
+`blockConcurrencyWhile` callback. The original same-heap recovery and held-gate
+failures are retained. The host now reports unusable heaps to the decision core,
+which reuses celld's bounded runtime-swap path at the same ownership epoch.
+Host input-gate claims retire without invoking guest cleanup. Both counters'
+acknowledged values remain readable after recovery. These local tests do not
+qualify alarms, process restart, remote durability, or transport cancellation.
 
 To run this full suite, build at the repository root with:
 
@@ -83,6 +91,8 @@ smoke measurement, not a comparative performance benchmark.
 
 - `worker.py` uses Pyodide's `js` FFI and a fixture-specific handler. It does not
   yet implement `from workers import WorkerEntrypoint`.
+- `durable.py` and the exported JS `PythonCounter` provide a fixture-only class
+  bridge onto the host's existing context and SQL. This is not the Workers SDK.
 - `runtime-assets.js` gives the generated bundle lexical worker-environment
   shims. Host `process`, `self`, `fetch`, and `WebAssembly` are not replaced.
 - Pyodide's Emscripten factory registers its ordinary `_createPyodideModule`
@@ -114,7 +124,7 @@ bundle reproduced under Node. Lexically selecting the worker environment uses
 Current Workers SDK entrypoint; safe post-termination behavior; cancellation;
 memory pressure and process-level bounds; proxy leak testing;
 runtime/package security and reproducibility review; native packaging/dev UX;
-Python Durable Object lifecycle and persistence. No production compatibility
+the remaining Python Durable Object lifecycle and persistence cases. No production compatibility
 claim follows from this spike.
 
 Pyodide is MPL-2.0. Dependencies and generated artifacts remain external or

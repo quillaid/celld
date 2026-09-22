@@ -1,0 +1,68 @@
+{
+  "timestamp": "2026-09-22T03:06:47.458Z",
+  "responses": [
+    {
+      "name": "a",
+      "op": "inc",
+      "status": 200,
+      "interpreter": "c6e09a09-d8f8-45f7-93a2-052a196a52b8",
+      "text": "{\"value\": 1, \"objectInstance\": \"83d51fd6-55da-4920-b99c-5e0bb87b29b7\"}"
+    },
+    {
+      "name": "a",
+      "op": "inc",
+      "status": 200,
+      "interpreter": "c6e09a09-d8f8-45f7-93a2-052a196a52b8",
+      "text": "{\"value\": 2, \"objectInstance\": \"83d51fd6-55da-4920-b99c-5e0bb87b29b7\"}"
+    },
+    {
+      "name": "b",
+      "op": "inc",
+      "status": 200,
+      "interpreter": "c6e09a09-d8f8-45f7-93a2-052a196a52b8",
+      "text": "{\"value\": 1, \"objectInstance\": \"732cc1e8-a672-41db-ab89-dda813be1f39\"}"
+    },
+    {
+      "name": "a",
+      "op": "abort",
+      "status": 500,
+      "interpreter": null,
+      "text": "Worker failed: rejected: Error: intentional Python Durable Object abort [at invoke (<anonymous>:5072:15) <- at async Proxy.doFetch (<anonymous>:5115:30)]"
+    },
+    {
+      "name": "a",
+      "op": "read",
+      "status": 200,
+      "interpreter": "0fcbb52f-987a-4170-8d07-200cda7a8d1b",
+      "text": "{\"value\": 2, \"objectInstance\": \"fd1d7365-e82f-4f72-9df6-2651f3d8b74a\"}"
+    },
+    {
+      "name": "b",
+      "op": "read",
+      "status": 200,
+      "interpreter": "0fcbb52f-987a-4170-8d07-200cda7a8d1b",
+      "text": "{\"value\": 1, \"objectInstance\": \"26942696-32c1-4ba7-8350-561455c5707c\"}"
+    },
+    {
+      "name": "b",
+      "op": "abort",
+      "status": 500,
+      "interpreter": null,
+      "text": "Worker failed: rejected: Error: intentional Python Durable Object abort [at invoke (<anonymous>:5072:15) <- at async Proxy.doFetch (<anonymous>:5115:30)]"
+    },
+    {
+      "name": "a",
+      "op": "block",
+      "status": 500,
+      "interpreter": null,
+      "text": "Worker failed: rejected: Error: Python runtime invalidated after execution termination; recreate the worker"
+    }
+  ],
+  "blockResult": {
+    "name": "a",
+    "op": "block",
+    "status": 500,
+    "interpreter": null,
+    "text": "Worker failed: rejected: Error: Python runtime invalidated after execution termination; recreate the worker"
+  }
+}

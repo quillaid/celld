@@ -188,6 +188,7 @@ pub struct Slot {
     // toward the collection boundary. Residency drop retires both counts.
     adopted_cells: AtomicUsize,
     retiring: AtomicBool,
+    invalidation_reported: AtomicBool,
     #[cfg(celld_internal_tests)]
     turn_observations: Mutex<Vec<String>>,
 }
@@ -243,9 +244,14 @@ impl Slot {
         // Objects. Stop new placement now; normal drain counters retain its
         // heap until those owners release it. Already-affiliated turns return
         // to the same Worker to fail through its storage and response gates.
-        if worker.is_invalidated() && !self.retiring.swap(true, Ordering::Relaxed) {
-            tracing::info!(isolate = %self.heap_id, slot = self.id, "invalidated isolate retiring");
-            self.freed.notify_waiters();
+        if worker.is_invalidated() {
+            if !self.retiring.swap(true, Ordering::Relaxed) {
+                tracing::info!(isolate = %self.heap_id, slot = self.id, "invalidated isolate retiring");
+                self.freed.notify_waiters();
+            }
+            if !self.invalidation_reported.swap(true, Ordering::Relaxed) {
+                crate::asyncrt::services().runtime_invalidated(self.heap_id);
+            }
         }
         result
     }
@@ -308,6 +314,7 @@ impl Slot {
             cells: AtomicUsize::new(0),
             adopted_cells: AtomicUsize::new(0),
             retiring: AtomicBool::new(false),
+            invalidation_reported: AtomicBool::new(false),
             #[cfg(celld_internal_tests)]
             turn_observations: Mutex::new(Vec::new()),
         })
@@ -332,6 +339,7 @@ impl Slot {
             cells: AtomicUsize::new(0),
             adopted_cells: AtomicUsize::new(0),
             retiring: AtomicBool::new(false),
+            invalidation_reported: AtomicBool::new(false),
             turn_observations: Mutex::new(Vec::new()),
         })
     }
@@ -584,6 +592,7 @@ impl Pool {
             cells: AtomicUsize::new(0),
             adopted_cells: AtomicUsize::new(0),
             retiring: AtomicBool::new(self.retired.load(Ordering::Relaxed)),
+            invalidation_reported: AtomicBool::new(false),
             #[cfg(celld_internal_tests)]
             turn_observations: Mutex::new(Vec::new()),
         });

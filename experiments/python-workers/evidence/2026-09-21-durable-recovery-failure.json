@@ -1,0 +1,40 @@
+{
+  "timestamp": "2026-09-22T03:01:42.067Z",
+  "responses": [
+    {
+      "name": "a",
+      "op": "inc",
+      "status": 200,
+      "interpreter": "983a1c04-96b1-473e-9b49-f542c30007b1",
+      "text": "{\"value\": 1, \"objectInstance\": \"fa655a41-8dac-453f-8a71-9b43aae9e3d8\"}"
+    },
+    {
+      "name": "a",
+      "op": "inc",
+      "status": 200,
+      "interpreter": "983a1c04-96b1-473e-9b49-f542c30007b1",
+      "text": "{\"value\": 2, \"objectInstance\": \"fa655a41-8dac-453f-8a71-9b43aae9e3d8\"}"
+    },
+    {
+      "name": "b",
+      "op": "inc",
+      "status": 200,
+      "interpreter": "983a1c04-96b1-473e-9b49-f542c30007b1",
+      "text": "{\"value\": 1, \"objectInstance\": \"64345454-d791-4280-9add-39de691aa742\"}"
+    },
+    {
+      "name": "a",
+      "op": "abort",
+      "status": 500,
+      "interpreter": null,
+      "text": "Worker failed: rejected: Error: intentional Python Durable Object abort [at invoke (<anonymous>:5072:15) <- at async Proxy.doFetch (<anonymous>:5115:30)]"
+    },
+    {
+      "name": "a",
+      "op": "read",
+      "status": 500,
+      "interpreter": null,
+      "text": "Worker failed: rejected: Error: Python runtime invalidated after execution termination; recreate the worker"
+    }
+  ]
+}
