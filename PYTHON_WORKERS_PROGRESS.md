@@ -405,3 +405,28 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   native-do-full-suite.txt, native-do-identity-test.txt, native-do-build.sha256.
   Timeout run/phase evidence is also retained. All use the 2026-09-21- prefix
   under experiments/python-workers/evidence/. No fleet or public changes.
+
+## SDK response streaming checkpoint (2026-09-21)
+
+- Same Python source now produces a TransformStream-backed SDK Response while
+  ctx.waitUntil retains its producer. The producer writes a prefix, awaits a
+  held loopback HTTP request, then writes the suffix and closes the stream.
+- The client must receive the prefix before releasing the HTTP gate; a pending
+  next read verifies the suffix is unavailable until release. Both engines must
+  then produce identical bytes. Prefix collection allows transport chunk splits.
+- Initial reference runs stalled while celld streamed successfully. Instrumented
+  evidence showed workerd had reached the HTTP gate and returned headers with
+  mf-content-encoding: gzip, but its compressed tiny prefix had not reached the
+  client. Explicit Accept-Encoding: identity makes this a deterministic test of
+  incremental uncompressed delivery. Both engines pass that contract; this does
+  not assert gzip flush parity. Red observations remain in stream-handshake-stall
+  and stream-compression-buffering JSON evidence, both date-prefixed.
+- No production runtime change was needed for this response-stream path. Upload
+  streaming, cancellation, compression behavior and large-stream resource limits
+  remain unqualified, alongside the other outstanding goal requirements.
+- Final targeted SDK suite passed all its HTTP, exception, concurrent request,
+  binary, background KV, SDK identity and streaming assertions. Evidence:
+  2026-09-21-sdk-streaming-passing.json and sdk-streaming-test.txt (both
+  date-prefixed) under experiment evidence/. Diff checks pass. The runtime
+  binary is unchanged from the native DO checkpoint; unrelated suites were
+  not repeated for this fixture-only change. Goal remains active.

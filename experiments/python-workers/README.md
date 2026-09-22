@@ -237,3 +237,13 @@ The default suite runs two test files at a time to bound simultaneous runtime
 startups. Individual concurrency probes and deadlines are unchanged. Earlier
 unbounded-file runs sometimes timed out waiting for the workerd SDK reference
 first response; phase evidence distinguishes this from celld response time.
+
+The SDK comparison now includes an identity-encoded streaming response. Python
+writes a first chunk, awaits a test-controlled loopback HTTP request, then writes
+a second chunk. Each client must receive the first bytes while that HTTP request
+is still held, and both engines must return the same completed body. This proves
+incremental delivery rather than merely comparing a buffered result. The test
+allows network chunk splitting and keeps read demand active while holding the
+producer gate. Workerd's default gzip response buffered this tiny prefix; that
+observation is retained separately. Compression, upload streaming, cancellation,
+and large-stream resource bounds are not qualified by this case.

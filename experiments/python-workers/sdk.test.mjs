@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { createServer } from 'node:http';
+import { once } from 'node:events';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
@@ -9,7 +11,7 @@ import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import workerd from 'workerd';
 import { startCelld } from './local-celld.mjs';
 const root = new URL('.', import.meta.url);
-test('unmodified workers-runtime-sdk wheel serves HTTP, binary, and background KV', { timeout: 30000 }, async (t) => {
+test('released Workers SDK HTTP, streaming, and background work match workerd', { timeout: 30000 }, async (t) => {
   const local = await startCelld({
     'index.js': await readFile(new URL('dist/sdk.js', root)),
     'pyodide.asm.wasm': await readFile(new URL('dist/pyodide.asm.wasm', root)),
@@ -96,4 +98,72 @@ test('unmodified workers-runtime-sdk wheel serves HTTP, binary, and background K
     await new Promise(resolve => setTimeout(resolve, 50));
   } while (Date.now() < deadline);
   assert.equal(value, 'saved');
+  const gates = new Map();
+  const server = createServer((request, response) => {
+    const gate = gates.get(request.url);
+    if (!gate) { response.writeHead(404).end(); return; }
+    gate.response = response;
+    if (gate.result) gate.result.producerWaiting = true;
+    gate.arrived();
+  });
+  server.listen(0, '127.0.0.1');
+  await once(server, 'listening');
+  t.after(() => {
+    for (const gate of gates.values()) if (!gate.response?.writableEnded) gate.response?.end('cleanup');
+    server.closeAllConnections();
+    return new Promise(resolve => server.close(resolve));
+  });
+  evidence.streaming = [];
+  async function checkStream(name, dispatch) {
+    let arrived;
+    const waiting = new Promise(resolve => { arrived = resolve; });
+    const gate = { arrived };
+    gates.set('/' + name, gate);
+    const result = { engine: name, stage: 'request' };
+    evidence.streaming.push(result);
+    gate.result = result;
+    const response = await dispatch('http://127.0.0.1:' + server.address().port + '/' + name);
+    assert.equal(response.status, 200);
+    result.stage = 'headers';
+    result.headers = Object.fromEntries(response.headers);
+    const reader = response.body.getReader();
+    let firstTimer;
+    async function readPrefix() {
+      const chunks = [];
+      let bytes = 0;
+      while (bytes < 6) {
+        const chunk = await reader.read();
+        assert.equal(chunk.done, false, 'stream ended before first prefix');
+        chunks.push(chunk.value);
+        bytes += chunk.value.byteLength;
+      }
+      return { value: Buffer.concat(chunks), done: false };
+    }
+    const first = await Promise.race([readPrefix(), new Promise((_, reject) => { firstTimer = setTimeout(() => reject(new Error(name + ' first chunk timed out')), 5000); })]).finally(() => clearTimeout(firstTimer));
+    assert.equal(new TextDecoder().decode(first.value), 'first\n');
+    assert.equal(first.done, false);
+    result.stage = 'first-chunk';
+    // Keep pulling so backpressure can release the producer's first write.
+    // The HTTP gate, not withholding demand, prevents the second write.
+    let secondSettled = false;
+    const second = reader.read();
+    second.then(() => { secondSettled = true; }, () => { secondSettled = true; });
+    await waiting;
+    assert.equal(secondSettled, false);
+    result.firstBeforeRelease = true;
+    gate.response.end('release');
+    const next = await second;
+    assert.equal(next.done, false);
+    const chunks = [first.value, next.value];
+    while (true) {
+      const item = await reader.read();
+      if (item.done) break;
+      chunks.push(item.value);
+    }
+    result.stage = 'complete';
+    result.body = Buffer.concat(chunks).toString();
+    assert.equal(result.body, 'first\nsecond\n');
+  }
+  await checkStream('celld', release => fetch(local.url, { method: 'POST', body: 'stream', headers: { 'x-release-url': release, 'accept-encoding': 'identity' }, signal: AbortSignal.timeout(5000) }));
+  await checkStream('workerd', release => reference.dispatchFetch('http://local/', { method: 'POST', body: 'stream', headers: { 'x-release-url': release, 'accept-encoding': 'identity' } }));
 });

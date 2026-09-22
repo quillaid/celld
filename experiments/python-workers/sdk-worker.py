@@ -16,6 +16,24 @@ class Default(WorkerEntrypoint):
             self.body = body
             await asyncio.sleep(0.01)
             return Response(self.body)
+        if body == 'stream':
+            from js import TransformStream, TextEncoder
+            from workers import fetch
+            stream = TransformStream.new()
+            writer = stream.writable.getWriter()
+            encoder = TextEncoder.new()
+            release_url = request.headers.get('x-release-url')
+            async def produce():
+                try:
+                    await writer.write(encoder.encode('first\n'))
+                    released = await fetch(release_url)
+                    await released.text()
+                    await writer.write(encoder.encode('second\n'))
+                    await writer.close()
+                finally:
+                    writer.releaseLock()
+            self.ctx.waitUntil(produce())
+            return Response(stream.readable, headers={'content-type': 'text/plain'})
         if body == 'background':
             async def save():
                 await self.env.CACHE.put('sdk-background', 'saved')
