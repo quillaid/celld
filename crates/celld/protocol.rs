@@ -72,6 +72,7 @@ pub const SUPPORTED_DEPLOYMENT_FEATURES: &[&str] = &[
     FEATURE_SQLITE_VEC_V1,
     FEATURE_R2_V1,
     FEATURE_WASM_V1,
+    FEATURE_PYTHON_LIFECYCLE_V1,
     FEATURE_WORKFLOWS_V1,
 ];
 
@@ -96,6 +97,10 @@ pub const FEATURE_CRON_V1: &str = "cron-v1";
 pub const FEATURE_R2_V1: &str = "r2-v1";
 pub const FEATURE_SQLITE_VEC_V1: &str = "sqlite-vec-v1";
 pub const FEATURE_WASM_V1: &str = "wasm-v1";
+/// Python isolates must never re-enter an interpreter after hard termination.
+/// This capability covers host invalidation, suspended-entry cleanup and heap
+/// replacement, not SDK or package compatibility.
+pub const FEATURE_PYTHON_LIFECYCLE_V1: &str = "python-lifecycle-v1";
 /// A deployment with `workflows` bindings. Required because a build without
 /// the reserved workflow cell would load the manifest, build an `env` missing
 /// the binding, and fail only when the application first calls `create()` —

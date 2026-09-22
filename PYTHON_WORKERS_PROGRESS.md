@@ -261,3 +261,24 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   this adapter, plus SDK module-level hooks and Durable Object adapters. Current
   application modules are real Python imports, but packaging remains experimental
   and explicit flat .py modules only. The overall goal remains active.
+
+## Python deployment lifecycle requirement (2026-09-21)
+
+- Build now emits `python-lifecycle-v1` for deployments with the `python_workers`
+  compatibility flag. This gates host invalidation, cleanup of suspended work,
+  and heap replacement. It deliberately does not describe SDK/package support.
+  Previously these bundles required Wasm but could reach a host without safe
+  interpreter retirement.
+- The current feature list recognizes that requirement. A deployment unit test
+  builds both flagged and ordinary JS projects, checks the emitted requirement,
+  verifies current-loader acceptance, and verifies unknown-version rejection.
+- Inspected baseline v0.5.1 source: the new capability is absent from its supported
+  set and its existing manifest gate rejects unknown requirements. This is source
+  evidence of older-node rejection, not an older-binary fleet replay.
+- Rebuilt the binary and ran the full real-runtime integration suite: 18 records
+  pass. Deployment unit test passes, formatting and diff checks pass. Evidence:
+  2026-09-21-python-manifest-test.txt, python-feature-suite.txt, and
+  python-feature-build.sha256 (all date-prefixed) in experiment evidence/.
+- Native `.py` build inputs and runtime/package metadata are still next. The new
+  feature requirement closes an existing deployment gap but does not implement
+  native packaging, dependency resolution, or newer SDK/runtime semantics.

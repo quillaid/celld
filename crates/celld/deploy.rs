@@ -18,8 +18,9 @@ use crate::protocol::{
     asset_blob_key, AssetConfig, AssetEntry, AssetIndex, AssetManifestRef, DeployPointer, Manifest,
     ModuleKind, ModuleRef, QueueConsumerAttachment, QueueConsumerConfig, QueueConsumerDeployment,
     Rollout, RunWorkerFirst, FEATURE_ASSETS_V1, FEATURE_CONTAINERS_V1, FEATURE_CRON_V1,
-    FEATURE_D1_V1, FEATURE_KV_V1, FEATURE_QUEUES_V1, FEATURE_R2_V1, FEATURE_SQLITE_VEC_V1,
-    FEATURE_WASM_V1, FEATURE_WORKFLOWS_V1, QUEUE_CONSUMER_ATTACHMENT_SCHEMA_VERSION,
+    FEATURE_D1_V1, FEATURE_KV_V1, FEATURE_PYTHON_LIFECYCLE_V1, FEATURE_QUEUES_V1, FEATURE_R2_V1,
+    FEATURE_SQLITE_VEC_V1, FEATURE_WASM_V1, FEATURE_WORKFLOWS_V1,
+    QUEUE_CONSUMER_ATTACHMENT_SCHEMA_VERSION,
 };
 use anyhow::{anyhow, bail, Context};
 use flate2::write::GzEncoder;
@@ -704,6 +705,18 @@ pub fn build(options: &Options) -> anyhow::Result<Built> {
             }
             if sqlite_vec {
                 features.push(FEATURE_SQLITE_VEC_V1.to_string());
+            }
+            if project
+                .metadata
+                .get("compatibility_flags")
+                .and_then(Value::as_array)
+                .is_some_and(|flags| {
+                    flags
+                        .iter()
+                        .any(|flag| flag.as_str() == Some("python_workers"))
+                })
+            {
+                features.push(FEATURE_PYTHON_LIFECYCLE_V1.to_string());
             }
             if !wasm_names.is_empty() {
                 features.push(FEATURE_WASM_V1.to_string());
@@ -2979,4 +2992,54 @@ fn strip_jsonc(source: &str) -> String {
 #[cfg(all(test, celld_internal_tests))]
 mod deploy_contract {
     include!(env!("CELLD_INTERNAL_DEPLOY_TESTS"));
+}
+
+#[cfg(test)]
+mod python_deployment_tests {
+    use super::*;
+
+    #[test]
+    fn python_manifest_requires_host_lifecycle_support() -> anyhow::Result<()> {
+        let directory = tempfile::tempdir()?;
+        let config = directory.path().join("wrangler.json");
+        std::fs::write(
+            directory.path().join("index.js"),
+            "export default {fetch(){return new Response('ok')}}",
+        )?;
+        let options = Options {
+            config: Some(config.clone()),
+            bucket: None,
+            endpoint: None,
+            region: None,
+            dry_run: true,
+            json: true,
+            vars: BTreeMap::new(),
+            local_images: true,
+        };
+        for python in [false, true] {
+            std::fs::write(
+                &config,
+                serde_json::to_vec(&json!({
+                    "name": "python-manifest-test", "main": "index.js", "no_bundle": true,
+                    "compatibility_flags": if python { vec!["python_workers"] } else { vec![] },
+                }))?,
+            )?;
+            let built = build(&options)?;
+            assert_eq!(
+                built
+                    .manifest
+                    .required_features
+                    .iter()
+                    .any(|f| f == FEATURE_PYTHON_LIFECYCLE_V1),
+                python
+            );
+            crate::protocol::validate_required_features(&built.manifest.required_features)?;
+            // A future protocol must remain a hard error, not silently load.
+            assert!(crate::protocol::validate_required_features(&[
+                "python-lifecycle-unknown".to_string()
+            ])
+            .is_err());
+        }
+        Ok(())
+    }
 }

@@ -153,3 +153,8 @@ Pyodide is MPL-2.0. Dependencies and generated artifacts remain external or
 ignored; this directory contains the original adapter, build scripts, and
 fixtures. Preserve the upstream source/license obligations when designing
 runtime redistribution.
+
+Deployments built with `python_workers` now require `python-lifecycle-v1` in
+addition to any Wasm capability. This identifies the host termination/retirement
+contract, not SDK parity. Nodes whose feature list predates that contract reject
+the manifest through the existing required-feature gate.
