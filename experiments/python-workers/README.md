@@ -158,3 +158,52 @@ Deployments built with `python_workers` now require `python-lifecycle-v1` in
 addition to any Wasm capability. This identifies the host termination/retirement
 contract, not SDK parity. Nodes whose feature list predates that contract reject
 the manifest through the existing required-feature gate.
+
+## Experimental native Python projects
+
+The branch's `celld dev` and `celld deploy --dry-run` now recognize a `.py` main
+entry and invoke a build-time helper. Prepare this directory with `npm ci` and
+`npm run build`, then point the branch binary at the helper:
+
+```sh
+export CELLD_PYTHON_BUILD="/absolute/path/to/celld/experiments/python-workers/build-project.mjs"
+/absolute/path/to/celld/target/debug/celld dev /path/to/python-project
+```
+
+The project can contain `worker.py`, local Python modules/packages below the
+entry's directory, and this `wrangler.json`:
+
+```json
+{
+  "name": "python-example",
+  "main": "worker.py",
+  "compatibility_flags": ["python_workers"]
+}
+```
+
+```python
+from workers import WorkerEntrypoint, Response
+
+class Default(WorkerEntrypoint):
+    async def fetch(self, request):
+        return Response("Hello from Python")
+```
+
+The helper is currently repository-local, not a published package. It bundles
+pinned Pyodide and the released SDK, checks runtime/SDK hashes, records source
+hashes, and emits runtime metadata that participates in deployment identity.
+Celld validates the builder descriptor and Wasm digests before accepting the
+output. Build-time SDK download is permitted when the verified cache is absent;
+request-time runtime downloads are not used.
+
+`npm run test:native` verifies real dev HTTP with a local module, matching
+versions for identical projects in different directories, a changed version for
+changed source, and rejection of dependency manifests and `no_bundle`.
+
+This is an initial native path. Python dependency manifests are rejected pending
+the resolver, even if they declare no dependencies. Native Durable Object and
+Workflow configuration, `define`, `rules`, and `no_bundle` are rejected. Named
+exports, missing-import build checks, source/data selection, watched reload,
+package startup hooks, release distribution, and the full compatibility matrix
+still need implementation or qualification. Existing fixture DO results do not
+prove native Python DO deployment.

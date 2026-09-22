@@ -282,3 +282,34 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
 - Native `.py` build inputs and runtime/package metadata are still next. The new
   feature requirement closes an existing deployment gap but does not implement
   native packaging, dependency resolution, or newer SDK/runtime semantics.
+
+## Native Python build path (2026-09-21)
+
+- `.py` main files now take a dedicated branch in celld's existing build flow.
+  The builder executable defaults to `celld-python-build`; the current local
+  implementation is experiments/python-workers/build-project.mjs, selected by
+  CELLD_PYTHON_BUILD. It is experimental and not published/installed globally.
+- The helper collects importable source modules below the entry directory,
+  generates the SDK entry wrapper, and emits JS/Wasm plus a schema-1 runtime
+  descriptor. Celld validates the descriptor and Wasm hashes, retains runtime
+  metadata before hashing deployment identity, and uses existing dev/publication
+  paths. The python_workers flag is required, retaining the lifecycle feature
+  requirement. No fleet publication was performed.
+- Runtime bytes are verified against committed runtime-lock.json; SDK wheel
+  verification remains pinned by sdk-lock.json. SDK download can occur during
+  build if its cache is absent. Runtime startup uses only bundled local assets.
+- Actual `celld dev` serves an SDK response from a two-module Python project.
+  Dry-run builds of identical source in different temporary directories yield
+  identical versions; changing source changes the version.
+- Unsupported dependency manifests are rejected in the project root and source
+  tree. Native DO/Workflow configuration and JS-specific no_bundle/define/rules
+  are explicitly rejected while those paths remain unimplemented. This is an
+  incomplete native packaging implementation, not a narrowing of the goal.
+- Next: package resolution and lock semantics, source/import validation, generic
+  class exports for SDK Durable Objects, and watched reload/rollback tests. The
+  repository-local helper must also become a distributable tool. See README's
+  native section for current invocation and exact limitations.
+- Checkpoint validation: full integration suite 20 records passed, deployment
+  unit test passed, Rust formatting/diff checks passed. Evidence uses prefix
+  2026-09-21-native-: python.json, identity.json, full-suite.txt,
+  manifest-test.txt, and build.sha256 under experiments/python-workers/evidence/.

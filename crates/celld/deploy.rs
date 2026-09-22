@@ -601,7 +601,11 @@ pub fn build(options: &Options) -> anyhow::Result<Built> {
         .entry
         .as_deref()
         .map(|entry| {
-            if project.no_bundle {
+            if entry.ends_with(".py") {
+                let (output, descriptor) = run_python_builder(&root, entry)?;
+                project.metadata["python_runtime"] = descriptor;
+                Ok(output)
+            } else if project.no_bundle {
                 // Already bundled by the caller's toolchain. Read it as it is;
                 // running esbuild over a Vite build is what corrupts it.
                 let path = root.join(entry);
@@ -1327,6 +1331,32 @@ fn read_project(
     };
     if no_bundle && main.is_none() {
         bail!("config sets `no_bundle` without `main`");
+    }
+    if main.as_deref().is_some_and(|entry| entry.ends_with(".py")) {
+        for entry in std::fs::read_dir(root)? {
+            let name = entry?.file_name();
+            let name = name.to_string_lossy();
+            if name == "pyproject.toml" || name.starts_with("requirements") {
+                bail!("Python dependency manifests need the pending package resolver: {name}");
+            }
+        }
+        if no_bundle || object.contains_key("define") || object.contains_key("rules") {
+            bail!("Python entries do not support no_bundle, define, or rules");
+        }
+        if !object
+            .get("compatibility_flags")
+            .and_then(Value::as_array)
+            .is_some_and(|flags| {
+                flags
+                    .iter()
+                    .any(|flag| flag.as_str() == Some("python_workers"))
+            })
+        {
+            bail!("Python entries require the python_workers compatibility flag");
+        }
+        if object.contains_key("durable_objects") || object.contains_key("workflows") {
+            bail!("Native Python class export generation is not implemented for Durable Objects or Workflows");
+        }
     }
     let bundle = read_bundle_config(object)?;
     // `define` and `rules` describe the esbuild run, and `no_bundle` is the
@@ -2820,6 +2850,57 @@ fn collect_unbundled_wasm(
         }
     }
     Ok(())
+}
+
+// Like esbuild, the Python packager runs only on the build host. Its output
+// enters the same content-addressed deployment and local-dev path as JS.
+fn run_python_builder(root: &Path, entry: &str) -> anyhow::Result<(BundleOutput, Value)> {
+    let binary =
+        std::env::var("CELLD_PYTHON_BUILD").unwrap_or_else(|_| "celld-python-build".to_string());
+    let outdir = tempfile::tempdir().context("create Python build directory")?;
+    let source = root
+        .join(entry)
+        .canonicalize()
+        .context("resolve Python entry")?;
+    let output = Command::new(&binary).arg(source).arg(outdir.path()).output()
+        .with_context(|| format!("run Python builder {binary:?}; install celld-python-build or set CELLD_PYTHON_BUILD"))?;
+    if !output.status.success() {
+        bail!(
+            "Python build failed: {}{}",
+            String::from_utf8_lossy(&output.stdout),
+            String::from_utf8_lossy(&output.stderr)
+        );
+    }
+    let descriptor: Value =
+        serde_json::from_slice(&std::fs::read(outdir.path().join("runtime-manifest.json"))?)
+            .context("read Python runtime descriptor")?;
+    if descriptor.get("schema").and_then(Value::as_u64) != Some(1)
+        || descriptor.get("packaging").and_then(Value::as_str)
+            != Some("experimental-native-python-v1")
+        || descriptor
+            .get("sources")
+            .and_then(Value::as_object)
+            .is_none()
+        || descriptor
+            .get("sdk")
+            .and_then(|sdk| sdk.get("sha256"))
+            .and_then(Value::as_str)
+            .is_none()
+    {
+        bail!("Python builder returned an unsupported runtime descriptor");
+    }
+    let bundle =
+        std::fs::read(outdir.path().join("index.js")).context("read Python entry bundle")?;
+    let mut wasm = Vec::new();
+    for name in ["pyodide.asm.wasm", "sentinel.wasm"] {
+        let bytes = std::fs::read(outdir.path().join(name))?;
+        let digest = format!("{:x}", Sha256::digest(&bytes));
+        if descriptor["assets"][name]["sha256"].as_str() != Some(digest.as_str()) {
+            bail!("Python builder asset digest mismatch for {name}");
+        }
+        wasm.push((name.to_string(), bytes));
+    }
+    Ok((BundleOutput { bundle, wasm }, descriptor))
 }
 
 fn run_esbuild(root: &Path, entry: &str, config: &BundleConfig) -> anyhow::Result<BundleOutput> {

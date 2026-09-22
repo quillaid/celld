@@ -33,7 +33,8 @@ async function initialize({ moduleName, className, files }) {
   });
   python.FS.mkdirTree('/app');
   for (const [name, contents] of Object.entries(files)) {
-    if (!/^[a-zA-Z_][a-zA-Z_0-9]*\.py$/.test(name)) throw new Error('Invalid Python module filename: ' + name);
+    if (!/^(?:[a-zA-Z_][a-zA-Z_0-9]*\/)*[a-zA-Z_][a-zA-Z_0-9]*\.py$/.test(name)) throw new Error('Invalid Python module filename: ' + name);
+    python.FS.mkdirTree('/app/' + name.split('/').slice(0, -1).join('/'));
     python.FS.writeFile('/app/' + name, contents);
   }
   python.runPython("sys.path.insert(0, '/app')");
