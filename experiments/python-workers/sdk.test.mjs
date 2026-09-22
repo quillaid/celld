@@ -44,14 +44,15 @@ test('unmodified workers-runtime-sdk wheel serves HTTP, binary, and background K
   });
   async function call(body, compare = true) {
     const response = await fetch(local.url, { method: 'POST', body, signal: AbortSignal.timeout(10000) });
-    const expected = await reference.dispatchFetch('http://local/', { method: 'POST', body });
+    // Consume celld's body within its deadline, before reference cold startup.
     const actualBytes = [...new Uint8Array(await response.clone().arrayBuffer())];
+    const expected = await reference.dispatchFetch('http://local/', { method: 'POST', body });
     const expectedBytes = [...new Uint8Array(await expected.arrayBuffer())];
     evidence.responses.push({ input: body, celld: { status: response.status, bytes: actualBytes }, workerd: { status: expected.status, bytes: expectedBytes } });
     assert.equal(response.status, expected.status, JSON.stringify(evidence.responses.at(-1)));
     if (compare) assert.deepEqual(actualBytes, expectedBytes);
     assert.equal(response.headers.get('x-sdk'), expected.headers.get('x-sdk'));
-    return response;
+    return new Response(new Uint8Array(actualBytes), { status: response.status, headers: response.headers });
   }
   const identity = await call('sdk-identity');
   assert.equal(identity.status, 200);
@@ -60,6 +61,22 @@ test('unmodified workers-runtime-sdk wheel serves HTTP, binary, and background K
   assert.equal(json.status, 201, await json.clone().text());
   assert.equal(json.headers.get('x-sdk'), '1.9.0');
   assert.deepEqual(await json.json(), { body: 'hello', method: 'POST' });
+  await Promise.all(Array.from({ length: 8 }, async (_, index) => {
+    const body = 'concurrent:' + index;
+    const response = await call(body);
+    assert.equal(response.status, 200);
+    assert.equal(await response.text(), body);
+  }));
+  const failure = await call('raise', false);
+  assert.equal(failure.status, 500);
+  const failureText = await failure.text();
+  assert.match(failureText, /ValueError: SDK application exception/);
+  assert.match(failureText, /\/app\/worker\.py/);
+  const expectedFailure = new TextDecoder().decode(new Uint8Array(evidence.responses.at(-1).workerd.bytes));
+  assert.match(expectedFailure, /ValueError: SDK application exception/);
+  const recovered = await call('after-error');
+  assert.equal(recovered.status, 201);
+  assert.deepEqual(await recovered.json(), { body: 'after-error', method: 'POST' });
   const binary = await call('binary');
   assert.equal(binary.status, 200);
   assert.deepEqual([...new Uint8Array(await binary.arrayBuffer())], [0, 1, 127, 255]);

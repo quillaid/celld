@@ -237,3 +237,27 @@ Keep tests meaningful and local. Retain exact failing evidence and next actions 
   native Python deployment packaging. Module-level env/import hooks, package
   startup patches, SDK DO bridge, and modern reference dates still need work.
   Goal remains active; no native packaging or broad SDK parity claim.
+
+## Reusable SDK dispatch checkpoint (2026-09-21)
+
+- Removed the celld-specific dispatch function from application Python source.
+  `sdk-runtime.js` loads normal modules under `/app`; `sdk-dispatch.py` validates
+  a selected WorkerEntrypoint subclass, creates a per-request instance, awaits
+  async results when needed, and uses the SDK's RPC argument/result converters.
+  Loader and invocation proxies have explicit release paths; long-run proxy
+  bounds are still unqualified.
+- Same-source workerd comparison now includes eight concurrent requests with
+  instance-local state, an intentional Python exception, successful recovery,
+  and a celld traceback naming `/app/worker.py`, alongside earlier SDK checks.
+- The first expanded full run exposed a harness timing issue: it awaited
+  reference startup before consuming celld's transport response, allowing the
+  existing 10-second transport deadline to expire. Consume/buffer the response
+  before reference dispatch; no deadline or runtime assertion was loosened.
+  The failed run is retained as sdk-dispatch-harness-failure.txt.
+- Full integration suite passes all 18 records. Passing SDK results and TAP are
+  retained as sdk-dispatch-passing.json and sdk-dispatch-full-suite.txt. All three
+  evidence names carry prefix 2026-09-21- in experiments/python-workers/evidence/.
+- Next: native Python build/dev/deploy packaging and generated exports around
+  this adapter, plus SDK module-level hooks and Durable Object adapters. Current
+  application modules are real Python imports, but packaging remains experimental
+  and explicit flat .py modules only. The overall goal remains active.

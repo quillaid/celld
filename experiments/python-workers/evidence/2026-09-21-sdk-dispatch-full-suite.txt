@@ -1,0 +1,128 @@
+
+> test
+> node --test smoke.test.mjs async-wasm.test.mjs resources.test.mjs pool-lifecycle.test.mjs durable.test.mjs persistence.test.mjs transaction-contract.test.mjs workflow-regression.test.mjs sdk.test.mjs
+
+TAP version 13
+# Subtest: compiled-module Wasm promises match workerd; byte compilation is probed separately
+ok 1 - compiled-module Wasm promises match workerd; byte compilation is probed separately
+  ---
+  duration_ms: 4935.880959
+  type: 'test'
+  ...
+# [{"operation":"sync","celld":{"outcome":"resolved","instance":true},"workerd":{"outcome":"resolved","instance":true}},{"operation":"instantiate-module","celld":{"outcome":"resolved"},"workerd":{"outcome":"resolved"}},{"operation":"compile","celld":{"outcome":"timeout"},"workerd":{"outcome":"rejected","error":"CompileError: WebAssembly.compile(): Wasm code generation disallowed by embedder"}},{"operation":"instantiate-bytes","celld":{"outcome":"timeout"},"workerd":{"outcome":"rejected","error":"CompileError: WebAssembly.instantiate(): Wasm code generation disallowed by embedder"}}]
+# Subtest: Python Durable Object SQL and recovery after abort
+ok 2 - Python Durable Object SQL and recovery after abort
+  ---
+  duration_ms: 10119.796667
+  type: 'test'
+  ...
+# Subtest: Python SQL rollback, alarms, and acknowledged state survive process crash
+ok 3 - Python SQL rollback, alarms, and acknowledged state survive process crash
+  ---
+  duration_ms: 15202.460541
+  type: 'test'
+  ...
+# Subtest: pooled Python interpreters are replaced after hard termination
+ok 4 - pooled Python interpreters are replaced after hard termination
+  ---
+  duration_ms: 11413.928042
+  type: 'test'
+  ...
+# Subtest: Python interpreter resource lifecycle inside a real Dynamic Worker
+    # Subtest: bounded allocations reuse one interpreter and plateau in linear memory
+    ok 1 - bounded allocations reuse one interpreter and plateau in linear memory
+      ---
+      duration_ms: 1347.882041
+      type: 'test'
+      ...
+    # Subtest: CPU limit interrupts Python
+    ok 2 - CPU limit interrupts Python
+      ---
+      duration_ms: 887.573166
+      type: 'test'
+      ...
+    # Subtest: an interrupted interpreter has a defined lifecycle and a replacement serves
+    ok 3 - an interrupted interpreter has a defined lifecycle and a replacement serves
+      ---
+      duration_ms: 1748.947
+      type: 'test'
+      ...
+    1..3
+ok 5 - Python interpreter resource lifecycle inside a real Dynamic Worker
+  ---
+  duration_ms: 11508.219542
+  type: 'test'
+  ...
+# {"timestamp":"2026-09-22T03:29:42.458Z","memory":{"samples":[{"status":200,"instance":"20364bdf-333d-4fbf-a83d-4b55509fb617","linearMemory":20971520,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"warm\\", \\"binding\\": null, \\"outbound\\": null}"},{"status":200,"instance":"20364bdf-333d-4fbf-a83d-4b55509fb617","linearMemory":35323904,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"allocate\\", \\"binding\\": null, \\"outbound\\": null}"},{"status":200,"instance":"20364bdf-333d-4fbf-a83d-4b55509fb617","linearMemory":35323904,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"allocate\\", \\"binding\\": null, \\"outbound\\": null}"},{"status":200,"instance":"20364bdf-333d-4fbf-a83d-4b55509fb617","linearMemory":35323904,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"allocate\\", \\"binding\\": null, \\"outbound\\": null}"},{"status":200,"instance":"20364bdf-333d-4fbf-a83d-4b55509fb617","linearMemory":35323904,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"allocate\\", \\"binding\\": null, \\"outbound\\": null}"},{"status":200,"instance":"20364bdf-333d-4fbf-a83d-4b55509fb617","linearMemory":35323904,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"allocate\\", \\"binding\\": null, \\"outbound\\": null}"},{"status":200,"instance":"20364bdf-333d-4fbf-a83d-4b55509fb617","linearMemory":35323904,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"allocate\\", \\"binding\\": null, \\"outbound\\": null}"},{"status":200,"instance":"20364bdf-333d-4fbf-a83d-4b55509fb617","linearMemory":35323904,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"allocate\\", \\"binding\\": null, \\"outbound\\": null}"},{"status":200,"instance":"20364bdf-333d-4fbf-a83d-4b55509fb617","linearMemory":35323904,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"allocate\\", \\"binding\\": null, \\"outbound\\": null}"},{"status":200,"instance":"20364bdf-333d-4fbf-a83d-4b55509fb617","linearMemory":35323904,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"allocate\\", \\"binding\\": null, \\"outbound\\": null}"},{"status":200,"instance":"20364bdf-333d-4fbf-a83d-4b55509fb617","linearMemory":35323904,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"allocate\\", \\"binding\\": null, \\"outbound\\": null}"}]},"terminationOnly":{"warm":{"status":200,"instance":"64403a87-d08d-4bcf-b71c-498a9bcc8271","linearMemory":20971520,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"warm\\", \\"binding\\": null, \\"outbound\\": null}"},"termination":{"error":"Error: Worker exceeded CPU limit of 25 ms"},"terminationElapsedMs":27,"pendingStarted":true,"pendingElapsedMs":27,"pending":{"error":"Error: Python runtime invalidated after execution termination; recreate the worker"}},"termination":{"warm":{"status":200,"instance":"5f506b48-feca-4e42-9e29-ef64f9286669","linearMemory":20971520,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"warm\\", \\"binding\\": null, \\"outbound\\": null}"},"termination":{"error":"Error: Worker exceeded CPU limit of 25 ms"},"terminationElapsedMs":31,"diagnostics":{"error":"Error: Python runtime invalidated after execution termination; recreate the worker"},"after":{"error":"Error: Python runtime invalidated after execution termination; recreate the worker"},"secondAfter":{"error":"Error: Python runtime invalidated after execution termination; recreate the worker"},"pendingStarted":true,"pendingElapsedMs":31,"pending":{"error":"Error: Python runtime invalidated after execution termination; recreate the worker"},"replacement":{"status":200,"instance":"8569e94d-a15e-4530-83da-7155bcd58e65","linearMemory":20971520,"body":"{\\"language\\": \\"python\\", \\"version\\": \\"3.13.2\\", \\"body\\": \\"replacement\\", \\"binding\\": null, \\"outbound\\": null}"}}}
+# Subtest: unmodified workers-runtime-sdk wheel serves HTTP, binary, and background KV
+ok 6 - unmodified workers-runtime-sdk wheel serves HTTP, binary, and background KV
+  ---
+  duration_ms: 16150.524792
+  type: 'test'
+  ...
+# <jemalloc>: option background_thread currently supports pthread only
+# Subtest: Pyodide through the real celld HTTP, KV, and fetch paths
+    # Subtest: concurrent first requests boot Python and import json/sys
+    ok 1 - concurrent first requests boot Python and import json/sys
+      ---
+      duration_ms: 1114.091292
+      type: 'test'
+      ...
+    # Subtest: Python awaits a real KV write and read
+    ok 2 - Python awaits a real KV write and read
+      ---
+      duration_ms: 79.399584
+      type: 'test'
+      ...
+    # Subtest: Python awaits outbound fetch and body consumption
+    ok 3 - Python awaits outbound fetch and body consumption
+      ---
+      duration_ms: 131.349
+      type: 'test'
+      ...
+    # Subtest: Python traceback is preserved and a later request works
+    ok 4 - Python traceback is preserved and a later request works
+      ---
+      duration_ms: 9.351125
+      type: 'test'
+      ...
+    # Subtest: repeated warm requests preserve their own input
+    ok 5 - repeated warm requests preserve their own input
+      ---
+      duration_ms: 53.487833
+      type: 'test'
+      ...
+    # Subtest: same Python source matches pinned workerd HTTP, KV, fetch, and errors
+    ok 6 - same Python source matches pinned workerd HTTP, KV, fetch, and errors
+      ---
+      duration_ms: 8715.988167
+      type: 'test'
+      ...
+    1..6
+ok 7 - Pyodide through the real celld HTTP, KV, and fetch paths
+  ---
+  duration_ms: 17502.462917
+  type: 'test'
+  ...
+# {"celld":"2026-09-22T03:29:42.546108Z  WARN celld::memory: the allocator will not run a background thread, so freed pages return only when a thread allocates again error=`name` or `mib` specifies an unknown/invalid value.","pyodide":"0.28.3","timestamp":"2026-09-22T03:29:42.550Z","platform":"darwin","architecture":"arm64","nodeBeforePython":[{"pid":9630,"rssKiB":132272}],"warmMs":[4.413542000000234,3.2502910000002885,2.774666999999681,2.8161659999987023,2.5588339999994787,2.6509580000001733,2.40612499999952,1.5732500000012806,2.524916000000303,1.2439999999987776,2.758041000000958,2.7783330000002024,2.711542000000918,2.7736669999994774,2.5678330000009737,2.5036249999993743,2.6881670000002487,2.9569160000010015,2.8078330000007554,2.553874999999607],"concurrentColdBatchMs":1112.4943750000002,"coldInterpreterInstances":["436ad40c-abe0-4e55-b8fc-689f0427f5a9","adf50b2d-daf7-41cd-bb80-a30bceee5d8c","534de97c-1f70-48b4-997e-a14e6ae8e7cf"],"python":"3.13.2","nodeAfterRequests":[{"pid":9630,"rssKiB":487280}],"reference":{"workerd":"1.20260922.1","miniflare":"5.20260921.0-alpha","compatibilityDate":"2025-06-01","pyodide":"0.28.2 (Cloudflare bundle)","sourceSha256":"d5516c103f669cdfcc8a7d4f17c2478e5672ddffdd3187aa88837d2558323a21","adapter":"historical WorkerEntrypoint.on_fetch delegates unchanged source","normalization":"parse JSON for success; compare status and Python type/message for errors","outputs":[{"input":"hello","status":200,"celld":{"language":"python","version":"3.13.2","body":"hello","binding":null,"outbound":null},"workerd":{"language":"python","version":"3.13.2","body":"hello","binding":null,"outbound":null}},{"input":"binding","status":200,"celld":{"language":"python","version":"3.13.2","body":"binding","binding":"written from Python","outbound":null},"workerd":{"language":"python","version":"3.13.2","body":"binding","binding":"written from Python","outbound":null}},{"input":"fetch","status":200,"celld":{"language":"python","version":"3.13.2","body":"fetch","binding":null,"outbound":"local outbound fetch succeeded"},"workerd":{"language":"python","version":"3.13.2","body":"fetch","binding":null,"outbound":"local outbound fetch succeeded"}}],"errors":["Worker failed: rejected: PythonError: Traceback (most recent call last):\\n  File \\"<exec>\\", line 12, in handle\\nValueError: intentional Python traceback\\n [File \\"<exec>\\", line 12, in handle <- ValueError: intentional Python traceback <- ]","Error: PythonError: Traceback (most recent call last):\\n  File \\"introspection.py\\", line 88, in wrapper_func\\n    return python_to_rpc(await result)\\n                         ^^^^^^^^^^^^\\n  File \\"/session/metadata/reference-entry.py\\", line 9, in on_fetch\\n    return await handle(request, self.env)\\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\"/session/metadata/worker.py\\", line 12, in handle\\n    raise ValueError(\\"intentional Python traceback\\")\\nValueError: intentional Python traceback\\n\\n    at async Object.fetch (file:///Users/kylekelley/.codex/worktrees/celld-python-workers/celld/experiments/python-workers/node_modules/miniflare/dist/src/workers/core/entry.worker.js:5216:22)"]}}
+# Subtest: transactionSync callback and nested rollback match pinned workerd
+ok 8 - transactionSync callback and nested rollback match pinned workerd
+  ---
+  duration_ms: 4716.649291
+  type: 'test'
+  ...
+# Subtest: Workflow event consumption and persisted steps survive transaction API correction
+ok 9 - Workflow event consumption and persisted steps survive transaction API correction
+  ---
+  duration_ms: 4646.860916
+  type: 'test'
+  ...
+1..9
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 17780.519459

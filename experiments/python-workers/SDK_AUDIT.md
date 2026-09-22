@@ -20,7 +20,7 @@ remain in ignored `.celld/` and `dist/` directories.
 
 | Seam | Current experiment | Remaining work |
 | --- | --- | --- |
-| `WorkerEntrypoint(ctx, env)` | Real SDK class; environment wrapper handles actual KV | Generic class discovery and native deployment adapter |
+| `WorkerEntrypoint(ctx, env)` | Real SDK class; environment wrapper handles actual KV | Native class discovery/export generation and deployment adapter |
 | SDK Request / Response | Real conversions; JSON/status/headers and binary body verified | Streaming, forms, cloning and larger body matrix |
 | `patchWaitUntil` helper | Retains borrowed Python awaitable synchronously; destroys owned proxy after settlement; delegates to celld context | Cancellation, rejection, DO contexts and leak accounting |
 | `_cloudflare_compat_flags` | Explicit historical fixture setting for Workflow dependencies; missing flags remain absent | Validate/map supported dates and flags |
@@ -30,9 +30,11 @@ remain in ignored `.celld/` and `dist/` directories.
 | Package `.pth` hooks | Not run by unpacking wheel into `/sdk` | Audit/install entropy and package patches before framework support |
 | SDK DurableObject / WorkflowEntrypoint | Present in wheel, unqualified by this fixture | Adapt and compare lifecycle/event/RPC behavior |
 
-`dispatch_sdk` is still a fixture seam: it wraps the request with the real SDK,
-constructs `Default`, calls `fetch`, and returns the SDK response's JS object.
-It is not a replacement SDK and not native `.py` deployment support.
+`sdk-runtime.js` now loads ordinary application modules under `/app`. Its
+`sdk-dispatch.py` adapter validates the selected WorkerEntrypoint class, creates
+a request-scoped instance, and uses the SDK's argument/result conversions.
+Application source needs no celld-specific dispatch function. This remains an
+experimental adapter, not native `.py` deployment support.
 
 ## Reference envelope and proof
 
@@ -50,3 +52,8 @@ final value, because completion times need not be identical.
 
 Native build/dev/deploy inputs, dependency resolution/locks, older-node feature
 fencing, reload, and the larger compatibility matrix remain unimplemented here.
+
+The dispatch comparison additionally checks eight concurrent requests with
+instance-local state, application exceptions, successful calls after an error,
+and application filenames in celld tracebacks. It consumes each transport body
+within its request deadline before waiting for the other engine to cold-start.
