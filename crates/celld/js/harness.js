@@ -10740,7 +10740,7 @@ if (!globalThis.navigator) globalThis.navigator = {
   language: "en", languages: ["en"],
 };
 if (!globalThis.queueMicrotask)
-  globalThis.queueMicrotask = (f) => Promise.resolve().then(f);
+  globalThis.queueMicrotask = (f) => Promise.resolve().then(() => f());
 if (!globalThis.scheduler)
   globalThis.scheduler = {
     wait: (ms) => new Promise((resolve) => setTimeout(resolve, Number(ms) || 0)),
