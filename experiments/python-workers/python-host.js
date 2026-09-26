@@ -33,12 +33,20 @@ export async function verifyArtifact(bytes, sha256) {
 // target execution id (0 = the execution that runs now). A shared buffer is
 // only useful when another thread really writes it. Nothing here assumes that
 // SharedArrayBuffer or cross-thread writers exist.
-export function createPythonHost({ loadRuntime, packages = [], dynamicLibraries = [], signals = null, onEvent = () => {}, detectTermination = true }) {
+// `onRunning(session, executionId)` reports the execution that a cross-thread
+// writer should target for a session (0 when the session is idle).
+export function createPythonHost({ loadRuntime, packages = [], dynamicLibraries = [], signals = null, onRunning = () => {}, onEvent = () => {}, detectTermination = true }) {
   let generation = 0;
   let current = null; // { generation, pyodide, host, idleStack, pending:Set, dead }
   let starting = null;
   const invalidations = [];
   const bindings = new Map(); // session -> { values: Map<name, value>, generation }
+  const running = new Map(); // session -> execution ids, in start order
+
+  function publish(session) {
+    const ids = running.get(session);
+    onRunning(session, ids?.length ? ids[ids.length - 1] : 0);
+  }
 
   function applyBindings(rt, session) {
     const entry = bindings.get(session);
@@ -178,6 +186,9 @@ export function createPythonHost({ loadRuntime, packages = [], dynamicLibraries 
       let id, task;
       try { [id, task] = started.toJs({ depth: 1 }); }
       finally { started.destroy(); }
+      if (!running.has(session)) running.set(session, []);
+      running.get(session).push(id);
+      publish(session);
       const run = (async () => {
         try {
           const result = await task;
@@ -185,7 +196,14 @@ export function createPythonHost({ loadRuntime, packages = [], dynamicLibraries 
           finally { result.destroy(); }
         } finally { task.destroy(); }
       })();
-      const result = await withHealthPoll(rt, run);
+      let result;
+      try { result = await withHealthPoll(rt, run); }
+      finally {
+        const ids = running.get(session);
+        ids.splice(ids.indexOf(id), 1);
+        if (!ids.length) running.delete(session);
+        publish(session);
+      }
       return { generation: rt.generation, ...result, execution: result.execution ?? id };
     },
     async interrupt(session) {

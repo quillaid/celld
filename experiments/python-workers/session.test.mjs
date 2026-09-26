@@ -127,6 +127,51 @@ test('python-host sessions in celld Durable Objects', { timeout: 180000 }, async
     }
   });
 
+  await t.test('synchronous Python: cross-thread KeyboardInterrupt when the host provides it', async () => {
+    const info = await call('/s/a/info');
+    const capability = info.json.capabilities.interrupt.running;
+    evidence.syncInterrupt = { capability, crossThread: info.json.crossThread };
+    const address = local.logs().match(/celld internal listening on (127\.0\.0\.1:\d+)/)?.[1];
+    const scope = `PythonSession:${info.json.session.split(':')[0]}`;
+    const signal = async () => {
+      const response = await fetch(`http://${address}/python/interrupt/${scope}`, { method: 'POST', signal: AbortSignal.timeout(5000) });
+      return { status: response.status, body: await response.text() };
+    };
+    if (!info.json.crossThread) {
+      // Stock v0.6.0 has no writer. The adapter must say so, not pretend.
+      assert.equal(capability, 'unavailable-without-cross-thread-writer');
+      evidence.syncInterrupt.internalRoute = await signal();
+      return;
+    }
+    assert.equal(capability, 'signal-buffer');
+    assert.deepEqual(await signal().then((r) => [r.status, JSON.parse(r.body)]), [200, { outcome: 'idle' }]);
+    assert.equal((await exec('a', 'spin_marker = "kept"\nspin_marker')).json.value, "'kept'");
+    const spinning = exec('a', 'n = 0\nwhile True:\n    n += 1', { timeout: 30000 });
+    await sleep(500);
+    // The isolate thread is busy: an in-isolate interrupt request cannot run.
+    const blocked = await call('/s/a/interrupt', '', { timeout: 1000 }).then(() => 'answered', (error) => error.name);
+    evidence.syncInterrupt.inIsolateRequestWhileSpinning = blocked;
+    const signalledAt = Date.now();
+    const signalled = await signal();
+    evidence.syncInterrupt.signal = signalled;
+    assert.equal(signalled.status, 200, signalled.body);
+    assert.equal(JSON.parse(signalled.body).outcome, 'signalled');
+    const result = await spinning;
+    evidence.syncInterrupt.result = result.json;
+    evidence.syncInterrupt.signalToResultMs = Date.now() - signalledAt;
+    assert.equal(result.json.status, 'interrupted', JSON.stringify(result.json));
+    assert.equal(result.json.error.type, 'KeyboardInterrupt');
+    assert.match(result.json.error.traceback, /#\d+>", line [23], in <module>/);
+    assert.doesNotMatch(result.json.error.traceback, /python_host\.py/);
+    assert.equal(result.json.execution, JSON.parse(signalled.body).execution);
+    const after = await exec('a', '(spin_marker, n > 0)');
+    assert.equal(after.json.value, "('kept', True)", JSON.stringify(after.json));
+    assert.equal(after.json.generation, 1, 'cooperative interrupt keeps the interpreter');
+    assert.deepEqual(JSON.parse((await signal()).body), { outcome: 'idle' });
+    const unknown = await fetch(`http://${address}/python/interrupt/PythonSession:missing`, { method: 'POST', signal: AbortSignal.timeout(5000) });
+    assert.equal(unknown.status, 404);
+  });
+
   await t.test('awaited async entries and the Emscripten stack under this host', async () => {
     const result = await call('/probe/async-entries?n=2000');
     evidence.asyncEntries = result.json;

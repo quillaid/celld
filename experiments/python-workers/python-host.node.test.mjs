@@ -142,6 +142,7 @@ test('a cross-thread writer raises KeyboardInterrupt in synchronous Python', { t
     assert.equal(result.interrupted.status, 'interrupted');
     assert.equal(result.interrupted.error.type, 'KeyboardInterrupt');
     assert.match(result.interrupted.error.traceback, /<session spin #2>/);
+    assert.doesNotMatch(result.interrupted.error.traceback, /python_host\.py/);
     assert.equal(result.after.value, "('kept', True)");
     assert.equal(result.capabilities.interrupt.running, 'signal-buffer');
   } finally { await worker.terminate(); }

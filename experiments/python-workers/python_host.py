@@ -88,7 +88,9 @@ def _format_error(error, filename):
     # Drop adapter and Pyodide frames before the first frame of executed code.
     frames = list(report.stack)
     first = next((i for i, frame in enumerate(frames) if frame.filename == filename), len(frames))
-    report.stack = traceback.StackSummary.from_list(frames[first:])
+    # The SIGINT handler's own frame is adapter code as well.
+    frames = [frame for frame in frames[first:] if frame.filename != __file__]
+    report.stack = traceback.StackSummary.from_list(frames)
     return {
         "type": type(error).__name__,
         "message": str(error),

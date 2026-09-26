@@ -18,13 +18,34 @@ import { createPythonHost } from './python-host.js';
 import { packages, dynamicLibraries } from 'celld-python-packages';
 
 const isolate = crypto.randomUUID();
+// Cross-thread interrupts need a host that writes shared memory from another
+// thread. celld exposes that only through the experimental, feature-detected
+// ctx._celldPythonSignals. Other hosts, including workerd, get task-cancel
+// interrupts only.
+let crossThread = null; // { interpreter: SharedArrayBuffer, sessions: Map<session, Int32Array> }
 let host;
 function pythonHost() {
   return host ??= createPythonHost({
     loadRuntime: () => loadPyodide({ indexURL: 'https://python-runtime.invalid/', lockFileContents }),
     packages, dynamicLibraries,
+    signals: crossThread ? new Int32Array(crossThread.interpreter) : null,
+    onRunning: (session, execution) => {
+      const view = crossThread?.sessions.get(session);
+      if (view) Atomics.store(view, 0, execution);
+    },
     onEvent: (event) => console.log(JSON.stringify({ isolate, ...event })),
   });
+}
+function attachSignals(ctx, session) {
+  if (typeof ctx._celldPythonSignals !== 'function' || typeof SharedArrayBuffer !== 'function') return false;
+  if (!crossThread) {
+    if (host) return false; // the adapter already started without a writer
+    crossThread = { interpreter: new SharedArrayBuffer(8), sessions: new Map() };
+  }
+  const view = new Int32Array(new SharedArrayBuffer(4));
+  crossThread.sessions.set(session, view);
+  ctx._celldPythonSignals(crossThread.interpreter, view.buffer);
+  return true;
 }
 
 // Object id -> the session of its live instance in this isolate.
@@ -46,6 +67,8 @@ export class PythonSession extends DurableObject {
     this.session = `${objectId}:${this.instance}`;
     const previous = liveSessions.get(objectId);
     liveSessions.set(objectId, this.session);
+    this.crossThread = attachSignals(ctx, this.session);
+    if (previous) crossThread?.sessions.delete(previous);
     const python = pythonHost();
     // A previous instance in this isolate left its namespace behind; its
     // lifetime ended with that instance.
@@ -58,7 +81,7 @@ export class PythonSession extends DurableObject {
     const python = pythonHost();
     const op = new URL(request.url).pathname.split('/').pop();
     const cleanup = await this.cleanup;
-    const meta = { isolate, objectInstance: this.instance, session: this.session, previousSession: cleanup };
+    const meta = { isolate, objectInstance: this.instance, session: this.session, previousSession: cleanup, crossThread: this.crossThread };
     if (op === 'execute') return respond(meta, python.execute(this.session, await request.text()));
     if (op === 'interrupt') return respond(meta, python.interrupt(this.session));
     if (op === 'info') {

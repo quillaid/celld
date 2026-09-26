@@ -102,11 +102,123 @@ the pinned Pyodide; evidence `2026-09-26-node-interrupt-mechanism.json`):
    (one sample).
 6. A second `loadPyodide()` works in the same JS realm.
 
-## 4. Slice plan (in progress)
+## 4. The host adapter slice
 
-A host adapter (`python-host.js`) sits between Pyodide and the host code.
-The host code can be a celld or workerd Worker, a Durable Object, or Node. The
-adapter owns initialization, bundled package installation, per-session
-namespaces, structured results, cooperative interrupts, and detection of
-destructive termination. The later sections record the implementation and
-test results.
+`python-host.js` (JS) and `python_host.py` (Python) form one interface
+between an embedding host and the pinned interpreter. The host supplies
+`loadRuntime()`, which returns a Pyodide instance from bundled assets. The
+adapter never downloads anything.
+
+| Operation | Contract |
+| --- | --- |
+| `ready()` | Starts one shared initialization, which concurrent callers share. A corrupt package fails the initialization before any Python code runs. |
+| `execute(session, code)` | Supports top-level await. Returns `{status: ok\|error\|interrupted\|invalidated, value (repr), stdout, stderr, error {type, message, traceback}, count, execution, generation}`. A Python error is a result, not a host failure. Tracebacks omit adapter frames. |
+| `bind(session, name, value)` | Exposes a host object to the session explicitly, for example a Durable Object's `ctx` or `env`. A new interpreter receives the bindings again. |
+| `interrupt(session)` | Cancels the session's suspended executions and reports KeyboardInterrupt. The namespace and the interpreter survive. |
+| `signals` / `onRunning` | Only for hosts that have a cross-thread writer: a real KeyboardInterrupt in synchronous code. The SIGINT handler routes each signal to its target execution, and an untargeted signal is cancelled at the next await. |
+| `session()` / `dispose()` | Inspect or free one namespace. |
+| `capabilities()` | Reports only what this host provides: `interrupt.running` is `signal-buffer` or `unavailable-without-cross-thread-writer`, plus host JSPI and interpreter stack switching. |
+| destructive termination | Detected through an entry marker. The adapter fails pending executions as `invalidated`, starts a new interpreter (generation + 1), and reports that every namespace was lost. |
+
+Packages: `lock-packages.mjs` (ported) resolves a lock in the target
+interpreter. `build.mjs` now bundles a lock for fixture entries through
+`celld-python-packages`, and the adapter checks each artifact's SHA-256 before
+it unpacks it. The fixture lock is humanize 4.12.3 (pure) and MarkupSafe 3.0.2
+(cp313 pyodide_2025_0). The compiled `.so` loads through a precompiled Wasm
+module, because raw-byte compilation still hangs in celld.
+
+**Confirmed, Node** (`python-host.node.test.mjs`, 13/13; evidence
+`2026-09-26-node-python-host.txt`): concurrent callers share one
+initialization; values, output, counters, separate namespaces, structured
+errors and syntax errors behave as specified; both packages load, and the
+compiled module is the `.so`; a suspended execution is interrupted while a
+neighbor session keeps running; `finally` runs; bindings and dispose work; a
+corrupt wheel is rejected. **The raw-signal failure from section 3 no longer
+happens**: a signal written while Python is suspended is routed, nothing
+escapes to the event loop, and the loop keeps working. A real Node worker
+thread interrupts `while True` through a SharedArrayBuffer that targets one
+execution id, and the namespace survives.
+
+## 5. celld Durable Object results
+
+`session-worker.js` gives each Durable Object instance one session. Every
+object in the isolate shares one interpreter. `session.test.mjs` (12 records)
+passes on **both** the stock v0.6.0 release binary and the patched debug
+build. Evidence: `2026-09-26-v060-{release,patched}-session.{txt,json}`.
+
+**Confirmed on stock v0.6.0:**
+
+- Two concurrent first requests to different objects start one interpreter in
+  one isolate.
+- Namespaces are per object and persist across requests. Output capture,
+  structured errors, and locked pure and compiled packages work, as does a
+  stateless Worker session.
+- Durable vs ephemeral: SQL written through the bound `ctx` survives forced
+  eviction, and the namespace does not. **Finding:** eviction left the
+  interpreter and the old namespace alive in the same isolate. Without
+  explicit disposal, a new object instance could have seen the Python state of
+  its predecessor, depending on isolate placement. The fixture ties the
+  namespace to the object instance and disposes the old one.
+- Interrupting a suspended execution returns KeyboardInterrupt within about
+  10 ms of the interrupt request. `finally` runs, and the namespace stays
+  usable.
+- `ctx.abort()` called from Python terminates execution. **Confirmed:**
+  neither JS `catch` nor `finally` runs under that termination
+  (`probes/termination-skips-finally.mjs`, evidence
+  `2026-09-26-v060-release-termination-skips-finally.txt`). The entry
+  marker is 1 afterwards. A suspended execution in a *sibling* object settles
+  as `invalidated` within one 100 ms poll. The next call starts generation 2
+  in 1.35 s, packages still load, and the sibling's old variable reports
+  NameError. On the historical fixture, the same situation hung.
+- **JSPI finding.** celld v0.6.0 exposes `WebAssembly.Suspending`, and Pyodide
+  0.28.3 then uses stack switching. Each awaited async Python entry leaks
+  48 bytes of the 5 MiB Emscripten stack: 96,128 bytes after 2,000 calls,
+  and 4.8 MB after 100,000. The next request that crosses the limit **hangs
+  without an error**, and the pool routes later traffic to a new isolate
+  (`2026-09-26-v060-release-jspi-stack-exhaustion.txt`). The same leak
+  reproduces in Node 22 with `--experimental-wasm-jspi`. Pyodide 314.0.7 stays
+  flat in the same Node test (`2026-09-26-node-jspi-stack-drift.txt`).
+  **Mitigation in this slice:** the bundle's lexical `WebAssembly` omits the
+  JSPI members, and the depth then stays at 32 bytes across 115k entries in
+  celld (`...-jspi-hidden-no-exhaustion.txt`). `pyodide.ffi.run_sync` is
+  unavailable as a result. **Hypothesis:** 314.x also fixes the leak under
+  celld's newer JSPI API. That is not tested in celld.
+- The stack pointer therefore cannot detect termination: it drifts under JSPI.
+  The adapter uses the entry marker instead.
+
+**Confirmed on the patched build only** (commit "Interrupt synchronous
+Python ..."): a Durable Object spinning in `while True` blocks its isolate. A
+normal `/interrupt` request times out, which is expected. `POST
+/python/interrupt/<scope>` on the internal listener writes SIGINT from the
+node's thread. It targets the execution id that the session published, and
+KeyboardInterrupt arrives within 7 ms. The namespace, the partial loop
+counter and the interpreter (still generation 1) all survive. An idle scope
+returns `idle`, and an unknown scope returns 404. On the stock binary, the
+adapter reports `unavailable-without-cross-thread-writer`, and the route
+does not exist.
+
+## 6. Interrupt vs termination, by host
+
+| Host | Suspended Python | Synchronous Python | Destructive termination |
+| --- | --- | --- | --- |
+| celld v0.6.0 stock | task cancel (**confirmed**) | none. The isolate thread is blocked, and top-level Workers and Durable Objects have no CPU limit (**source**) | `ctx.abort()`, a Dynamic Worker `cpuMs` limit, `process.exit`: the interpreter is unusable afterwards (**confirmed**). The adapter detects this and replaces the interpreter (**confirmed** for `ctx.abort()`) |
+| celld patched (this branch) | task cancel | node-thread SIGINT via `python_signal.rs` (**confirmed**, local owner only) | same as stock |
+| workerd OSS | task cancel (**hypothesis**: same adapter code, not run in workerd) | no user API. The CPU-limit near-exceeded callback raises `CpuLimitExceeded`, and no caller exists in OSS (**source**) | **hypothesis:** the isolate is condemned; not verified |
+| Browser Web Worker | task cancel | SharedArrayBuffer from the page, only when cross-origin isolated (**source**: Pyodide docs) | `worker.terminate()` ends the whole worker |
+| Node worker thread | task cancel (**confirmed**) | SharedArrayBuffer (**confirmed**) | n/a |
+
+## 7. Deliberately deferred
+
+- Prepared snapshots and the ASGI upload overlay (not required here).
+- The historical Rust invalidation, pool retirement and Durable Object recovery
+  path (`b344887`..`072df4b`). The adapter's in-realm replacement covers the
+  tested `ctx.abort()` case without host changes. Residual risk
+  (**hypothesis**): callbacks of the dead interpreter, such as JS promise
+  continuations or timers, can still enter its Module. The marker also misses
+  a termination inside such a small unmarked entry. Host retirement of the
+  isolate remains the robust answer.
+- Workers SDK (`WorkerEntrypoint`) dispatch. It should sit on this adapter,
+  not beside it.
+- workerd execution of this adapter bundle.
+- A Pyodide 314.x upgrade (ABI `pyodide_2026`?, new locks). Needed to regain
+  JSPI and `run_sync` safely.
