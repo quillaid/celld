@@ -32,7 +32,19 @@ export async function fetch(input, init) {
 
 // celld provides a compiled-module import, so use its shared code cache.
 // The object is lexical to the generated bundle; global WebAssembly is untouched.
-export const WebAssembly = Object.create(globalThis.WebAssembly);
+//
+// JSPI members are deliberately omitted. Pyodide 0.28.3 detects stack
+// switching with `"Suspending" in WebAssembly`, and under JSPI each awaited
+// async entry leaks 48 bytes of its 5 MiB C stack. celld v0.6.0 exposes JSPI,
+// and there the interpreter hangs after about 109k entries (see
+// PROGRESS-v0.6.0.md, section 5). Without these members, Pyodide uses its
+// non-switching path, and `pyodide.ffi.run_sync` is unavailable. Revisit this
+// when the pinned runtime changes.
+const JSPI_MEMBERS = new Set(['Suspending', 'promising', 'Suspender']);
+export const WebAssembly = {};
+for (const name of Object.getOwnPropertyNames(globalThis.WebAssembly)) {
+  if (!JSPI_MEMBERS.has(name)) WebAssembly[name] = globalThis.WebAssembly[name];
+}
 // The async compiler bridge only accepts the pinned sentinel and emitted wheel
 // libraries. Every match returns an immutable compiled-module import.
 WebAssembly.compile = async (input) => {
