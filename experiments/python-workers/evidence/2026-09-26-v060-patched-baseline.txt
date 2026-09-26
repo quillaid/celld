@@ -1,0 +1,60 @@
+TAP version 13
+# Subtest: Pyodide through the real celld HTTP, KV, and fetch paths
+    # Subtest: concurrent first requests boot Python and import json/sys
+    ok 1 - concurrent first requests boot Python and import json/sys
+      ---
+      duration_ms: 1603.74916
+      type: 'test'
+      ...
+    # Subtest: Python awaits a real KV write and read
+    ok 2 - Python awaits a real KV write and read
+      ---
+      duration_ms: 142.217078
+      type: 'test'
+      ...
+    # Subtest: Python awaits outbound fetch and body consumption
+    ok 3 - Python awaits outbound fetch and body consumption
+      ---
+      duration_ms: 38.781337
+      type: 'test'
+      ...
+    # Subtest: Python traceback is preserved and a later request works
+    ok 4 - Python traceback is preserved and a later request works
+      ---
+      duration_ms: 13.118474
+      type: 'test'
+      ...
+    # Subtest: repeated warm requests preserve their own input
+    ok 5 - repeated warm requests preserve their own input
+      ---
+      duration_ms: 57.775905
+      type: 'test'
+      ...
+    # Subtest: same Python source matches pinned workerd HTTP, KV, fetch, and errors
+    ok 6 - same Python source matches pinned workerd HTTP, KV, fetch, and errors
+      ---
+      duration_ms: 2466.427566
+      type: 'test'
+      ...
+    1..6
+ok 1 - Pyodide through the real celld HTTP, KV, and fetch paths
+  ---
+  duration_ms: 10838.472236
+  type: 'test'
+  ...
+# {"celld":"celld 0.6.0 (debug)","pyodide":"0.28.3","timestamp":"2026-09-26T16:15:31.099Z","platform":"linux","architecture":"x64","nodeBeforePython":[{"pid":29194,"rssKiB":139848}],"warmMs":[4.615452000000005,3.489947000000029,3.093514000000141,3.1791050000010728,2.95853999999963,2.8571219999994355,2.5389800000011746,2.6361699999997654,2.3536609999991924,2.700510000000577,2.7219500000010157,3.5262579999998707,2.7689470000004803,2.8275379999995494,2.35160900000119,2.4024979999994684,2.5366439999997965,2.498922999999195,2.6075920000002952,2.855435999999827],"concurrentColdBatchMs":1600.6343669999997,"coldInterpreterInstances":["071bd673-69e6-4a6e-b063-d55250e173b9","c6febebe-f5aa-4d59-ae21-6c1bba05b4c2"],"python":"3.13.2","nodeAfterRequests":[{"pid":29194,"rssKiB":371472}],"reference":{"workerd":"1.20260922.1","miniflare":"5.20260921.0-alpha","compatibilityDate":"2025-06-01","pyodide":"0.28.2 (Cloudflare bundle)","sourceSha256":"d5516c103f669cdfcc8a7d4f17c2478e5672ddffdd3187aa88837d2558323a21","adapter":"historical WorkerEntrypoint.on_fetch delegates unchanged source","normalization":"parse JSON for success; compare status and Python type/message for errors","outputs":[{"input":"hello","status":200,"celld":{"language":"python","version":"3.13.2","body":"hello","binding":null,"outbound":null},"workerd":{"language":"python","version":"3.13.2","body":"hello","binding":null,"outbound":null}},{"input":"binding","status":200,"celld":{"language":"python","version":"3.13.2","body":"binding","binding":"written from Python","outbound":null},"workerd":{"language":"python","version":"3.13.2","body":"binding","binding":"written from Python","outbound":null}},{"input":"fetch","status":200,"celld":{"language":"python","version":"3.13.2","body":"fetch","binding":null,"outbound":"local outbound fetch succeeded"},"workerd":{"language":"python","version":"3.13.2","body":"fetch","binding":null,"outbound":"local outbound fetch succeeded"}}],"errors":["Worker failed: rejected: PythonError: Traceback (most recent call last):\\n  File \\"<exec>\\", line 12, in handle\\nValueError: intentional Python traceback\\n [File \\"<exec>\\", line 12, in handle <- ValueError: intentional Python traceback <- ]","Error: PythonError: Traceback (most recent call last):\\n  File \\"introspection.py\\", line 88, in wrapper_func\\n    return python_to_rpc(await result)\\n                         ^^^^^^^^^^^^\\n  File \\"/session/metadata/reference-entry.py\\", line 9, in on_fetch\\n    return await handle(request, self.env)\\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\"/session/metadata/worker.py\\", line 12, in handle\\n    raise ValueError(\\"intentional Python traceback\\")\\nValueError: intentional Python traceback\\n\\n    at async Object.fetch (file:///home/ubuntu/projects/celld-python-v060/experiments/python-workers/node_modules/miniflare/dist/src/workers/core/entry.worker.js:5216:22)"]}}
+# Subtest: transactionSync callback and nested rollback match pinned workerd
+ok 2 - transactionSync callback and nested rollback match pinned workerd
+  ---
+  duration_ms: 7992.476754
+  type: 'test'
+  ...
+1..2
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11312.898822

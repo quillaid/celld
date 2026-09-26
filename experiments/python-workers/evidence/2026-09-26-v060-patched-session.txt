@@ -3,73 +3,73 @@ TAP version 13
     # Subtest: concurrent first executions share one interpreter initialization
     ok 1 - concurrent first executions share one interpreter initialization
       ---
-      duration_ms: 1796.21069
+      duration_ms: 1747.342033
       type: 'test'
       ...
     # Subtest: each Durable Object keeps its own namespace across requests
     ok 2 - each Durable Object keeps its own namespace across requests
       ---
-      duration_ms: 18.208779
+      duration_ms: 17.291033
       type: 'test'
       ...
     # Subtest: a Python error is a structured result and the namespace stays usable
     ok 3 - a Python error is a structured result and the namespace stays usable
       ---
-      duration_ms: 20.187504
+      duration_ms: 23.604247
       type: 'test'
       ...
     # Subtest: locked pure and compiled packages import from bundled bytes
     ok 4 - locked pure and compiled packages import from bundled bytes
       ---
-      duration_ms: 52.035735
+      duration_ms: 47.517225
       type: 'test'
       ...
     # Subtest: a stateless Worker session runs in the same adapter
     ok 5 - a stateless Worker session runs in the same adapter
       ---
-      duration_ms: 1400.698661
+      duration_ms: 1393.417474
       type: 'test'
       ...
     # Subtest: storage bindings are durable, namespaces are not
     ok 6 - storage bindings are durable, namespaces are not
       ---
-      duration_ms: 23.918548
+      duration_ms: 23.539692
       type: 'test'
       ...
     # Subtest: interrupting a suspended execution reports KeyboardInterrupt and keeps the namespace
     ok 7 - interrupting a suspended execution reports KeyboardInterrupt and keeps the namespace
       ---
-      duration_ms: 317.188215
+      duration_ms: 319.171688
       type: 'test'
       ...
     # Subtest: forced eviction ends the namespace; storage survives
     ok 8 - forced eviction ends the namespace; storage survives
       ---
-      duration_ms: 74.51323
+      duration_ms: 80.174398
       type: 'test'
       ...
     # Subtest: synchronous Python: cross-thread KeyboardInterrupt when the host provides it
     ok 9 - synchronous Python: cross-thread KeyboardInterrupt when the host provides it
       ---
-      duration_ms: 1532.267928
+      duration_ms: 1534.070182
       type: 'test'
       ...
     # Subtest: awaited async entries and the Emscripten stack under this host
     ok 10 - awaited async entries and the Emscripten stack under this host
       ---
-      duration_ms: 173.023325
+      duration_ms: 175.3376
       type: 'test'
       ...
     # Subtest: destructive termination from Python invalidates the interpreter; later calls get a new one
     ok 11 - destructive termination from Python invalidates the interpreter; later calls get a new one
       ---
-      duration_ms: 1719.710614
+      duration_ms: 1741.872799
       type: 'test'
       ...
     1..11
 ok 1 - python-host sessions in celld Durable Objects
   ---
-  duration_ms: 14105.665088
+  duration_ms: 15133.520008
   type: 'test'
   ...
 1..1
@@ -80,4 +80,4 @@ ok 1 - python-host sessions in celld Durable Objects
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 14159.597671
+# duration_ms 15189.364059
