@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "pyodide": "0.28.3",
+  "python": "3.13.2",
+  "resolver": {
+    "name": "micropip",
+    "version": "0.10.1"
+  },
+  "manifest": {
+    "name": "requirements.txt",
+    "sha256": "b6f35b428230042fc874693d2e541fd51cab495d7edb97ef1da7459008d22a7f"
+  },
+  "requirements": [
+    "humanize==4.12.3",
+    "markupsafe==3.0.2"
+  ],
+  "roots": [
+    "humanize",
+    "markupsafe"
+  ],
+  "abi": {
+    "abi_version": "2025_0",
+    "arch": "wasm32",
+    "platform": "emscripten_4_0_9",
+    "python": "3.13.2",
+    "version": "0.28.0.dev0"
+  },
+  "packages": [
+    {
+      "name": "humanize",
+      "version": "4.12.3",
+      "filename": "humanize-4.12.3-py3-none-any.whl",
+      "url": "https://files.pythonhosted.org/packages/a0/1e/62a2ec3104394a2975a2629eec89276ede9dbe717092f6966fcf963e1bf0/humanize-4.12.3-py3-none-any.whl",
+      "sha256": "2cbf6370af06568fa6d2da77c86edb7886f3160ecd19ee1ffef07979efc597f6",
+      "depends": []
+    },
+    {
+      "name": "markupsafe",
+      "version": "3.0.2",
+      "filename": "markupsafe-3.0.2-cp313-cp313-pyodide_2025_0_wasm32.whl",
+      "url": "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/markupsafe-3.0.2-cp313-cp313-pyodide_2025_0_wasm32.whl",
+      "sha256": "31a48bf0c5914d64d442175520d803c6488681882ff152c3a07838736b1f3b60",
+      "depends": []
+    }
+  ]
+}

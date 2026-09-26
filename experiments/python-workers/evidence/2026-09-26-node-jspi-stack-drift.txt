@@ -1,0 +1,4 @@
+flag=none dir=pinned: {"pyodide":"0.28.3","stackSwitching":false,"stackSize":5242880,"depthBelowBase":[[0,112],[5000,112],[10000,112],[15000,112],[20000,112]]}
+flag=none dir=.scratch/p314/node_modules/pyodide: {"pyodide":"314.0.7","stackSwitching":false,"stackSize":10485760,"depthBelowBase":[[0,112],[5000,112],[10000,112],[15000,112],[20000,112]]}
+flag=--experimental-wasm-jspi dir=pinned: {"pyodide":"0.28.3","stackSwitching":true,"stackSize":5242880,"depthBelowBase":[[0,208],[5000,240208],[10000,480208],[15000,720208],[20000,960208]]}
+flag=--experimental-wasm-jspi dir=.scratch/p314/node_modules/pyodide: {"pyodide":"314.0.7","stackSwitching":true,"stackSize":10485760,"depthBelowBase":[[0,112],[5000,112],[10000,112],[15000,112],[20000,112]]}

@@ -2558,6 +2558,13 @@ class DurableObjectState {
   // Workerd's DurableObjectState.exports (actor-state.h): the same
   // loopback surface as ctx.exports on stateless entrypoints.
   get exports() { return __ctxExports(); }
+  // Experimental and celld-only: register the SharedArrayBuffers through
+  // which the node interrupts synchronous Python in this object, from a
+  // thread other than the isolate thread (crates/celld/python_signal.rs).
+  // Absent in workerd, so a host adapter must feature-detect it.
+  _celldPythonSignals(interpreter, session) {
+    __python_signal_attach(this._scope, interpreter, session);
+  }
   blockConcurrencyWhile(f) {
     // The native context binds the gate and its operations to one driver.
     // Its async continuations keep that driver even inside a foreign turn.
@@ -10733,7 +10740,7 @@ if (!globalThis.navigator) globalThis.navigator = {
   language: "en", languages: ["en"],
 };
 if (!globalThis.queueMicrotask)
-  globalThis.queueMicrotask = (f) => Promise.resolve().then(f);
+  globalThis.queueMicrotask = (f) => Promise.resolve().then(() => f());
 if (!globalThis.scheduler)
   globalThis.scheduler = {
     wait: (ms) => new Promise((resolve) => setTimeout(resolve, Number(ms) || 0)),

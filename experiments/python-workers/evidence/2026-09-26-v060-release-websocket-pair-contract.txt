@@ -1,0 +1,57 @@
+TAP version 13
+# Subtest: WebSocketPair enumeration matches workerd
+not ok 1 - WebSocketPair enumeration matches workerd
+  ---
+  duration_ms: 4449.10063
+  type: 'test'
+  location: '/home/ubuntu/projects/celld-python-v060/experiments/python-workers/websocket-pair-contract.test.mjs:8:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      {
+    +   count: 3,
+    -   count: 2,
+        distinct: true,
+        keys: [
+          '0',
+          '1',
+    +     'length'
+        ],
+    +   length: 'number'
+    -   length: 'undefined'
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    keys:
+      0: '0'
+      1: '1'
+    count: 2
+    length: 'undefined'
+    distinct: true
+  actual:
+    keys:
+      0: '0'
+      1: '1'
+      2: 'length'
+    count: 3
+    length: 'number'
+    distinct: true
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/projects/celld-python-v060/experiments/python-workers/websocket-pair-contract.test.mjs:22:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4901.598403

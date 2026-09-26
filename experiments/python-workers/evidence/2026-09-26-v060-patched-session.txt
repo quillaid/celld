@@ -1,0 +1,83 @@
+TAP version 13
+# Subtest: python-host sessions in celld Durable Objects
+    # Subtest: concurrent first executions share one interpreter initialization
+    ok 1 - concurrent first executions share one interpreter initialization
+      ---
+      duration_ms: 1802.533462
+      type: 'test'
+      ...
+    # Subtest: each Durable Object keeps its own namespace across requests
+    ok 2 - each Durable Object keeps its own namespace across requests
+      ---
+      duration_ms: 16.153099
+      type: 'test'
+      ...
+    # Subtest: a Python error is a structured result and the namespace stays usable
+    ok 3 - a Python error is a structured result and the namespace stays usable
+      ---
+      duration_ms: 20.729175
+      type: 'test'
+      ...
+    # Subtest: locked pure and compiled packages import from bundled bytes
+    ok 4 - locked pure and compiled packages import from bundled bytes
+      ---
+      duration_ms: 42.758542
+      type: 'test'
+      ...
+    # Subtest: a stateless Worker session runs in the same adapter
+    ok 5 - a stateless Worker session runs in the same adapter
+      ---
+      duration_ms: 1350.467116
+      type: 'test'
+      ...
+    # Subtest: storage bindings are durable, namespaces are not
+    ok 6 - storage bindings are durable, namespaces are not
+      ---
+      duration_ms: 35.302777
+      type: 'test'
+      ...
+    # Subtest: interrupting a suspended execution reports KeyboardInterrupt and keeps the namespace
+    ok 7 - interrupting a suspended execution reports KeyboardInterrupt and keeps the namespace
+      ---
+      duration_ms: 317.230292
+      type: 'test'
+      ...
+    # Subtest: forced eviction ends the namespace; storage survives
+    ok 8 - forced eviction ends the namespace; storage survives
+      ---
+      duration_ms: 96.633421
+      type: 'test'
+      ...
+    # Subtest: synchronous Python: cross-thread KeyboardInterrupt when the host provides it
+    ok 9 - synchronous Python: cross-thread KeyboardInterrupt when the host provides it
+      ---
+      duration_ms: 1529.948122
+      type: 'test'
+      ...
+    # Subtest: awaited async entries and the Emscripten stack under this host
+    ok 10 - awaited async entries and the Emscripten stack under this host
+      ---
+      duration_ms: 179.993266
+      type: 'test'
+      ...
+    # Subtest: destructive termination from Python invalidates the interpreter; later calls get a new one
+    ok 11 - destructive termination from Python invalidates the interpreter; later calls get a new one
+      ---
+      duration_ms: 1737.191203
+      type: 'test'
+      ...
+    1..11
+ok 1 - python-host sessions in celld Durable Objects
+  ---
+  duration_ms: 11228.07722
+  type: 'test'
+  ...
+1..1
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11281.389661

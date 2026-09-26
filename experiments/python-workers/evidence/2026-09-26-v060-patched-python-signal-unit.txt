@@ -1,0 +1,5 @@
+running 2 tests
+test python_signal::tests::rejects_unshared_and_short_buffers ... ok
+test python_signal::tests::signals_only_the_running_execution_of_a_registered_scope ... ok
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+EXIT=0

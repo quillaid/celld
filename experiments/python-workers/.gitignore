@@ -1,0 +1,4 @@
+dist/
+.scratch/
+results/
+!package-lock.json

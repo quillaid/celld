@@ -1,0 +1,2 @@
+abort 500 Worker failed: rejected: Error: x [at invoke (<anonymous>:5127:15) <- at async Proxy.doFetch (<anonymous>:5170:30)]
+log ["try"]

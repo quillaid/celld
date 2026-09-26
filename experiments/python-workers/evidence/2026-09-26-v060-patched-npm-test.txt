@@ -1,0 +1,172 @@
+
+> test
+> node --test --test-concurrency=2 python-host.node.test.mjs session.test.mjs microtask-contract.test.mjs
+
+TAP version 13
+# Subtest: queueMicrotask invokes callbacks with no arguments, matching workerd
+ok 1 - queueMicrotask invokes callbacks with no arguments, matching workerd
+  ---
+  duration_ms: 1538.678452
+  type: 'test'
+  ...
+# Subtest: python host adapter in one Node thread
+    # Subtest: concurrent first calls share one initialization
+    ok 1 - concurrent first calls share one initialization
+      ---
+      duration_ms: 0.696066
+      type: 'test'
+      ...
+    # Subtest: execution returns the last expression, output, and a counter
+    ok 2 - execution returns the last expression, output, and a counter
+      ---
+      duration_ms: 6.127955
+      type: 'test'
+      ...
+    # Subtest: sessions have separate namespaces
+    ok 3 - sessions have separate namespaces
+      ---
+      duration_ms: 3.975503
+      type: 'test'
+      ...
+    # Subtest: Python errors are structured and keep the namespace
+    ok 4 - Python errors are structured and keep the namespace
+      ---
+      duration_ms: 4.717899
+      type: 'test'
+      ...
+    # Subtest: locked pure and compiled packages load from verified bytes
+    ok 5 - locked pure and compiled packages load from verified bytes
+      ---
+      duration_ms: 32.643859
+      type: 'test'
+      ...
+    # Subtest: interrupting a suspended execution keeps its namespace and its neighbors
+    ok 6 - interrupting a suspended execution keeps its namespace and its neighbors
+      ---
+      duration_ms: 304.885755
+      type: 'test'
+      ...
+    # Subtest: bindings are explicit host objects
+    ok 7 - bindings are explicit host objects
+      ---
+      duration_ms: 2.445648
+      type: 'test'
+      ...
+    # Subtest: dispose frees a session namespace
+    ok 8 - dispose frees a session namespace
+      ---
+      duration_ms: 7.676885
+      type: 'test'
+      ...
+    # Subtest: capabilities do not claim a cross-thread writer
+    ok 9 - capabilities do not claim a cross-thread writer
+      ---
+      duration_ms: 0.498197
+      type: 'test'
+      ...
+    1..9
+ok 2 - python host adapter in one Node thread
+  ---
+  duration_ms: 1937.957811
+  type: 'test'
+  ...
+# Subtest: a corrupt package fails initialization before Python code runs
+ok 3 - a corrupt package fails initialization before Python code runs
+  ---
+  duration_ms: 1217.758434
+  type: 'test'
+  ...
+# Subtest: a signal written while Python is suspended is routed, not raised into the event loop
+ok 4 - a signal written while Python is suspended is routed, not raised into the event loop
+  ---
+  duration_ms: 1296.746998
+  type: 'test'
+  ...
+# Subtest: a cross-thread writer raises KeyboardInterrupt in synchronous Python
+ok 5 - a cross-thread writer raises KeyboardInterrupt in synchronous Python
+  ---
+  duration_ms: 1610.178701
+  type: 'test'
+  ...
+# Subtest: python-host sessions in celld Durable Objects
+    # Subtest: concurrent first executions share one interpreter initialization
+    ok 1 - concurrent first executions share one interpreter initialization
+      ---
+      duration_ms: 1812.926075
+      type: 'test'
+      ...
+    # Subtest: each Durable Object keeps its own namespace across requests
+    ok 2 - each Durable Object keeps its own namespace across requests
+      ---
+      duration_ms: 16.583994
+      type: 'test'
+      ...
+    # Subtest: a Python error is a structured result and the namespace stays usable
+    ok 3 - a Python error is a structured result and the namespace stays usable
+      ---
+      duration_ms: 19.539525
+      type: 'test'
+      ...
+    # Subtest: locked pure and compiled packages import from bundled bytes
+    ok 4 - locked pure and compiled packages import from bundled bytes
+      ---
+      duration_ms: 43.244144
+      type: 'test'
+      ...
+    # Subtest: a stateless Worker session runs in the same adapter
+    ok 5 - a stateless Worker session runs in the same adapter
+      ---
+      duration_ms: 1403.268367
+      type: 'test'
+      ...
+    # Subtest: storage bindings are durable, namespaces are not
+    ok 6 - storage bindings are durable, namespaces are not
+      ---
+      duration_ms: 27.887551
+      type: 'test'
+      ...
+    # Subtest: interrupting a suspended execution reports KeyboardInterrupt and keeps the namespace
+    ok 7 - interrupting a suspended execution reports KeyboardInterrupt and keeps the namespace
+      ---
+      duration_ms: 318.30663
+      type: 'test'
+      ...
+    # Subtest: forced eviction ends the namespace; storage survives
+    ok 8 - forced eviction ends the namespace; storage survives
+      ---
+      duration_ms: 80.7059
+      type: 'test'
+      ...
+    # Subtest: synchronous Python: cross-thread KeyboardInterrupt when the host provides it
+    ok 9 - synchronous Python: cross-thread KeyboardInterrupt when the host provides it
+      ---
+      duration_ms: 1529.553557
+      type: 'test'
+      ...
+    # Subtest: awaited async entries and the Emscripten stack under this host
+    ok 10 - awaited async entries and the Emscripten stack under this host
+      ---
+      duration_ms: 184.681186
+      type: 'test'
+      ...
+    # Subtest: destructive termination from Python invalidates the interpreter; later calls get a new one
+    ok 11 - destructive termination from Python invalidates the interpreter; later calls get a new one
+      ---
+      duration_ms: 1717.565094
+      type: 'test'
+      ...
+    1..11
+ok 6 - python-host sessions in celld Durable Objects
+  ---
+  duration_ms: 14287.037828
+  type: 'test'
+  ...
+1..6
+# tests 26
+# suites 0
+# pass 26
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 61724.633748

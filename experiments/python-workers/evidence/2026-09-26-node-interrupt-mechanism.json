@@ -1,0 +1,38 @@
+{
+  "exports": {
+    "signalHandlingFlag": "number",
+    "signalClock": "undefined",
+    "stackGetCurrent": "function",
+    "jspi": "undefined"
+  },
+  "idleStack": [
+    8808992,
+    8808992
+  ],
+  "plainAsync": "still-pending-after-1s",
+  "plainAsyncUncaught": [
+    {
+      "type": "KeyboardInterrupt",
+      "where": "webloop"
+    }
+  ],
+  "plainAsyncNamespace": true,
+  "longAwait": "never-settled-within-4s",
+  "longAwaitMs": 4001,
+  "longAwaitUncaught": [
+    {
+      "type": "KeyboardInterrupt",
+      "where": "webloop"
+    }
+  ],
+  "cancelled": true,
+  "loopOffMs": 232.0794619999997,
+  "loopOnMs": 236.11567699999978,
+  "secondInstance": {
+    "second": "second"
+  },
+  "crossThread": {
+    "outcome": "KeyboardInterrupt",
+    "after": "kept:True"
+  }
+}

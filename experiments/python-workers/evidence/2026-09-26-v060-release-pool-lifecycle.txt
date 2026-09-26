@@ -1,0 +1,26 @@
+TAP version 13
+# Subtest: pooled Python interpreters are replaced after hard termination
+not ok 1 - pooled Python interpreters are replaced after hard termination
+  ---
+  duration_ms: 13697.915711
+  type: 'test'
+  location: '/home/ubuntu/projects/celld-python-v060/experiments/python-workers/pool-lifecycle.test.mjs:9:1'
+  failureType: 'testCodeFailure'
+  error: ''
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    node:internal/deps/undici/undici:15270:13
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async TestContext.<anonymous> (file:///home/ubuntu/projects/celld-python-v060/experiments/python-workers/pool-lifecycle.test.mjs:24:22)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 13755.13268

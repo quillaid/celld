@@ -368,6 +368,7 @@ pub mod peer_auth;
 pub mod peer_probe;
 pub mod pool;
 pub mod protocol;
+pub mod python_signal;
 pub(crate) mod queue_batching;
 pub mod queue_cli;
 pub mod queue_policy;
