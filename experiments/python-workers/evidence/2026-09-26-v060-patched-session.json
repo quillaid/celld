@@ -1,43 +1,43 @@
 {
-  "timestamp": "2026-09-26T16:15:15.284Z",
+  "timestamp": "2026-09-26T16:21:09.587Z",
   "celld": "/home/ubuntu/projects/celld-python-v060/experiments/python-workers/../../target/debug/celld",
   "calls": [
     {
-      "path": "/s/b/execute",
-      "body": "x = 2\nx",
+      "path": "/s/a/execute",
+      "body": "x = 1\nx",
       "httpStatus": 200,
-      "elapsedMs": 1726,
+      "elapsedMs": 1800,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "fdaf9f11-0f7d-4877-a94e-38db82f5bd1a",
-        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:fdaf9f11-0f7d-4877-a94e-38db82f5bd1a",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "effec425-f405-4487-9e48-06eaa62350d8",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8",
         "previousSession": null,
         "crossThread": true,
         "generation": 1,
         "status": "ok",
         "execution": 1,
         "count": 1,
-        "value": "2",
+        "value": "1",
         "stdout": "",
         "stderr": ""
       }
     },
     {
-      "path": "/s/a/execute",
-      "body": "x = 1\nx",
+      "path": "/s/b/execute",
+      "body": "x = 2\nx",
       "httpStatus": 200,
-      "elapsedMs": 1747,
+      "elapsedMs": 1781,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "c3dd71e8-80c5-4369-a4d3-18921653c710",
-        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "07a3ce55-6d04-4441-b810-906074657f5f",
+        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:07a3ce55-6d04-4441-b810-906074657f5f",
         "previousSession": null,
         "crossThread": true,
         "generation": 1,
         "status": "ok",
         "execution": 2,
         "count": 1,
-        "value": "1",
+        "value": "2",
         "stdout": "",
         "stderr": ""
       }
@@ -48,9 +48,9 @@
       "httpStatus": 200,
       "elapsedMs": 10,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "c3dd71e8-80c5-4369-a4d3-18921653c710",
-        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "effec425-f405-4487-9e48-06eaa62350d8",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8",
         "previousSession": null,
         "crossThread": true,
         "generation": 1,
@@ -66,11 +66,11 @@
       "path": "/s/b/execute",
       "body": "x",
       "httpStatus": 200,
-      "elapsedMs": 7,
+      "elapsedMs": 6,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "fdaf9f11-0f7d-4877-a94e-38db82f5bd1a",
-        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:fdaf9f11-0f7d-4877-a94e-38db82f5bd1a",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "07a3ce55-6d04-4441-b810-906074657f5f",
+        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:07a3ce55-6d04-4441-b810-906074657f5f",
         "previousSession": null,
         "crossThread": true,
         "generation": 1,
@@ -86,11 +86,11 @@
       "path": "/s/a/execute",
       "body": "import json\njson.loads(\"{bad\")",
       "httpStatus": 200,
-      "elapsedMs": 16,
+      "elapsedMs": 13,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "c3dd71e8-80c5-4369-a4d3-18921653c710",
-        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "effec425-f405-4487-9e48-06eaa62350d8",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8",
         "previousSession": null,
         "crossThread": true,
         "generation": 1,
@@ -100,7 +100,7 @@
         "error": {
           "type": "JSONDecodeError",
           "message": "Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
-          "traceback": "Traceback (most recent call last):\n  File \"<session 9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710 #3>\", line 2, in <module>\n  File \"/lib/python313.zip/json/__init__.py\", line 346, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"/lib/python313.zip/json/decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/lib/python313.zip/json/decoder.py\", line 361, in raw_decode\n    obj, end = self.scan_once(s, idx)\n               ~~~~~~~~~~~~~~^^^^^^^^\njson.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\n"
+          "traceback": "Traceback (most recent call last):\n  File \"<session 9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8 #3>\", line 2, in <module>\n  File \"/lib/python313.zip/json/__init__.py\", line 346, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"/lib/python313.zip/json/decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/lib/python313.zip/json/decoder.py\", line 361, in raw_decode\n    obj, end = self.scan_once(s, idx)\n               ~~~~~~~~~~~~~~^^^^^^^^\njson.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\n"
         },
         "stdout": "",
         "stderr": ""
@@ -110,11 +110,11 @@
       "path": "/s/a/execute",
       "body": "x",
       "httpStatus": 200,
-      "elapsedMs": 8,
+      "elapsedMs": 7,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "c3dd71e8-80c5-4369-a4d3-18921653c710",
-        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "effec425-f405-4487-9e48-06eaa62350d8",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8",
         "previousSession": null,
         "crossThread": true,
         "generation": 1,
@@ -130,11 +130,11 @@
       "path": "/s/a/execute",
       "body": "import humanize, markupsafe._speedups as s\n(humanize.naturalsize(123456789), s.__file__.endswith(\".so\"), str(s._escape_inner(\"<&>\")))",
       "httpStatus": 200,
-      "elapsedMs": 47,
+      "elapsedMs": 42,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "c3dd71e8-80c5-4369-a4d3-18921653c710",
-        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "effec425-f405-4487-9e48-06eaa62350d8",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8",
         "previousSession": null,
         "crossThread": true,
         "generation": 1,
@@ -150,9 +150,9 @@
       "path": "/w/execute",
       "body": "import sys\nsys.platform",
       "httpStatus": 200,
-      "elapsedMs": 1393,
+      "elapsedMs": 1350,
       "json": {
-        "isolate": "e84fcd44-7706-41cd-8f12-a4c13e760817",
+        "isolate": "28477d60-c650-474e-9d2d-9c65ed49e631",
         "generation": 1,
         "status": "ok",
         "execution": 1,
@@ -167,11 +167,11 @@
       "path": "/s/a/execute",
       "body": "ctx.storage.sql.exec(\"CREATE TABLE IF NOT EXISTS t (v INTEGER)\")\nctx.storage.sql.exec(\"INSERT INTO t VALUES (7)\")\nkept = \"in memory only\"\nctx.storage.sql.exec(\"SELECT count(*) AS n FROM t\").one().n",
       "httpStatus": 200,
-      "elapsedMs": 23,
+      "elapsedMs": 35,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "c3dd71e8-80c5-4369-a4d3-18921653c710",
-        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "effec425-f405-4487-9e48-06eaa62350d8",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8",
         "previousSession": null,
         "crossThread": true,
         "generation": 1,
@@ -184,14 +184,38 @@
       }
     },
     {
+      "path": "/s/a/execute",
+      "body": "import asyncio\nstep = \"started\"\nawait asyncio.sleep(60)\nstep = \"finished\"",
+      "httpStatus": 200,
+      "elapsedMs": 310,
+      "json": {
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "effec425-f405-4487-9e48-06eaa62350d8",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8",
+        "previousSession": null,
+        "crossThread": true,
+        "generation": 1,
+        "status": "interrupted",
+        "execution": 9,
+        "count": 7,
+        "error": {
+          "type": "KeyboardInterrupt",
+          "message": "",
+          "traceback": "Traceback (most recent call last):\n  File \"<session 9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8 #7>\", line 3, in <module>\n  File \"/lib/python313.zip/asyncio/tasks.py\", line 718, in sleep\n    return await future\n           ^^^^^^^^^^^^\nKeyboardInterrupt\n"
+        },
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
       "path": "/s/a/interrupt",
       "body": "",
       "httpStatus": 200,
-      "elapsedMs": 10,
+      "elapsedMs": 11,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "c3dd71e8-80c5-4369-a4d3-18921653c710",
-        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "effec425-f405-4487-9e48-06eaa62350d8",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8",
         "previousSession": null,
         "crossThread": true,
         "interrupted": [
@@ -203,37 +227,13 @@
     },
     {
       "path": "/s/a/execute",
-      "body": "import asyncio\nstep = \"started\"\nawait asyncio.sleep(60)\nstep = \"finished\"",
-      "httpStatus": 200,
-      "elapsedMs": 312,
-      "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "c3dd71e8-80c5-4369-a4d3-18921653c710",
-        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710",
-        "previousSession": null,
-        "crossThread": true,
-        "generation": 1,
-        "status": "interrupted",
-        "execution": 9,
-        "count": 7,
-        "error": {
-          "type": "KeyboardInterrupt",
-          "message": "",
-          "traceback": "Traceback (most recent call last):\n  File \"<session 9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710 #7>\", line 3, in <module>\n  File \"/lib/python313.zip/asyncio/tasks.py\", line 718, in sleep\n    return await future\n           ^^^^^^^^^^^^\nKeyboardInterrupt\n"
-        },
-        "stdout": "",
-        "stderr": ""
-      }
-    },
-    {
-      "path": "/s/a/execute",
       "body": "(x, step, kept)",
       "httpStatus": 200,
-      "elapsedMs": 7,
+      "elapsedMs": 6,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "c3dd71e8-80c5-4369-a4d3-18921653c710",
-        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "effec425-f405-4487-9e48-06eaa62350d8",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8",
         "previousSession": null,
         "crossThread": true,
         "generation": 1,
@@ -248,11 +248,11 @@
     {
       "path": "/s/a/info",
       "httpStatus": 200,
-      "elapsedMs": 5,
+      "elapsedMs": 6,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "c3dd71e8-80c5-4369-a4d3-18921653c710",
-        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "effec425-f405-4487-9e48-06eaa62350d8",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8",
         "previousSession": null,
         "crossThread": true,
         "generation": 1,
@@ -318,13 +318,13 @@
       "path": "/s/a/execute",
       "body": "ctx.storage.sql.exec(\"SELECT v FROM t\").one().v",
       "httpStatus": 200,
-      "elapsedMs": 30,
+      "elapsedMs": 41,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02",
-        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "13548d9c-f129-40d7-aaa2-16624f32f03b",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:13548d9c-f129-40d7-aaa2-16624f32f03b",
         "previousSession": {
-          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710",
+          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8",
           "existed": true
         },
         "crossThread": true,
@@ -343,11 +343,11 @@
       "httpStatus": 200,
       "elapsedMs": 8,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02",
-        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "13548d9c-f129-40d7-aaa2-16624f32f03b",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:13548d9c-f129-40d7-aaa2-16624f32f03b",
         "previousSession": {
-          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710",
+          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8",
           "existed": true
         },
         "crossThread": true,
@@ -358,7 +358,7 @@
         "error": {
           "type": "NameError",
           "message": "name 'x' is not defined",
-          "traceback": "Traceback (most recent call last):\n  File \"<session 9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02 #2>\", line 1, in <module>\nNameError: name 'x' is not defined\n"
+          "traceback": "Traceback (most recent call last):\n  File \"<session 9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:13548d9c-f129-40d7-aaa2-16624f32f03b #2>\", line 1, in <module>\nNameError: name 'x' is not defined\n"
         },
         "stdout": "",
         "stderr": ""
@@ -367,13 +367,13 @@
     {
       "path": "/s/a/info",
       "httpStatus": 200,
-      "elapsedMs": 5,
+      "elapsedMs": 4,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02",
-        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "13548d9c-f129-40d7-aaa2-16624f32f03b",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:13548d9c-f129-40d7-aaa2-16624f32f03b",
         "previousSession": {
-          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710",
+          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8",
           "existed": true
         },
         "crossThread": true,
@@ -436,13 +436,13 @@
     {
       "path": "/s/a/info",
       "httpStatus": 200,
-      "elapsedMs": 6,
+      "elapsedMs": 5,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02",
-        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "13548d9c-f129-40d7-aaa2-16624f32f03b",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:13548d9c-f129-40d7-aaa2-16624f32f03b",
         "previousSession": {
-          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710",
+          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8",
           "existed": true
         },
         "crossThread": true,
@@ -506,13 +506,13 @@
       "path": "/s/a/execute",
       "body": "spin_marker = \"kept\"\nspin_marker",
       "httpStatus": 200,
-      "elapsedMs": 6,
+      "elapsedMs": 7,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02",
-        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "13548d9c-f129-40d7-aaa2-16624f32f03b",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:13548d9c-f129-40d7-aaa2-16624f32f03b",
         "previousSession": {
-          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710",
+          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8",
           "existed": true
         },
         "crossThread": true,
@@ -529,13 +529,13 @@
       "path": "/s/a/execute",
       "body": "n = 0\nwhile True:\n    n += 1",
       "httpStatus": 200,
-      "elapsedMs": 1512,
+      "elapsedMs": 1509,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02",
-        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "13548d9c-f129-40d7-aaa2-16624f32f03b",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:13548d9c-f129-40d7-aaa2-16624f32f03b",
         "previousSession": {
-          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710",
+          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8",
           "existed": true
         },
         "crossThread": true,
@@ -546,7 +546,7 @@
         "error": {
           "type": "KeyboardInterrupt",
           "message": "",
-          "traceback": "Traceback (most recent call last):\n  File \"<session 9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02 #4>\", line 2, in <module>\nKeyboardInterrupt\n"
+          "traceback": "Traceback (most recent call last):\n  File \"<session 9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:13548d9c-f129-40d7-aaa2-16624f32f03b #4>\", line 2, in <module>\nKeyboardInterrupt\n"
         },
         "stdout": "",
         "stderr": ""
@@ -558,11 +558,11 @@
       "httpStatus": 200,
       "elapsedMs": 5,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02",
-        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "13548d9c-f129-40d7-aaa2-16624f32f03b",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:13548d9c-f129-40d7-aaa2-16624f32f03b",
         "previousSession": {
-          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710",
+          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8",
           "existed": true
         },
         "crossThread": true,
@@ -578,9 +578,9 @@
     {
       "path": "/probe/async-entries?n=2000",
       "httpStatus": 200,
-      "elapsedMs": 169,
+      "elapsedMs": 175,
       "json": {
-        "isolate": "e84fcd44-7706-41cd-8f12-a4c13e760817",
+        "isolate": "28477d60-c650-474e-9d2d-9c65ed49e631",
         "hostJspi": true,
         "stackSwitching": false,
         "stackSize": 5242880,
@@ -611,13 +611,13 @@
     {
       "path": "/s/a/info",
       "httpStatus": 200,
-      "elapsedMs": 6,
+      "elapsedMs": 5,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02",
-        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "13548d9c-f129-40d7-aaa2-16624f32f03b",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:13548d9c-f129-40d7-aaa2-16624f32f03b",
         "previousSession": {
-          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710",
+          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8",
           "existed": true
         },
         "crossThread": true,
@@ -683,11 +683,11 @@
       "path": "/s/b/execute",
       "body": "bvar = 3\nbvar",
       "httpStatus": 200,
-      "elapsedMs": 7,
+      "elapsedMs": 6,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "fdaf9f11-0f7d-4877-a94e-38db82f5bd1a",
-        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:fdaf9f11-0f7d-4877-a94e-38db82f5bd1a",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "07a3ce55-6d04-4441-b810-906074657f5f",
+        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:07a3ce55-6d04-4441-b810-906074657f5f",
         "previousSession": null,
         "crossThread": true,
         "generation": 1,
@@ -713,9 +713,9 @@
       "httpStatus": 200,
       "elapsedMs": 311,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "fdaf9f11-0f7d-4877-a94e-38db82f5bd1a",
-        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:fdaf9f11-0f7d-4877-a94e-38db82f5bd1a",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "07a3ce55-6d04-4441-b810-906074657f5f",
+        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:07a3ce55-6d04-4441-b810-906074657f5f",
         "previousSession": null,
         "crossThread": true,
         "generation": 1,
@@ -728,13 +728,13 @@
       "path": "/s/a/execute",
       "body": "1 + 1",
       "httpStatus": 200,
-      "elapsedMs": 1377,
+      "elapsedMs": 1372,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "d93a5039-81c1-4b40-8bd7-877db58002a2",
-        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:d93a5039-81c1-4b40-8bd7-877db58002a2",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "48197e59-557e-4786-9359-e3be52ce40cb",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:48197e59-557e-4786-9359-e3be52ce40cb",
         "previousSession": {
-          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02",
+          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:13548d9c-f129-40d7-aaa2-16624f32f03b",
           "existed": false
         },
         "crossThread": true,
@@ -751,11 +751,11 @@
       "path": "/s/b/execute",
       "body": "bvar",
       "httpStatus": 200,
-      "elapsedMs": 7,
+      "elapsedMs": 8,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "fdaf9f11-0f7d-4877-a94e-38db82f5bd1a",
-        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:fdaf9f11-0f7d-4877-a94e-38db82f5bd1a",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "07a3ce55-6d04-4441-b810-906074657f5f",
+        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:07a3ce55-6d04-4441-b810-906074657f5f",
         "previousSession": null,
         "crossThread": true,
         "generation": 2,
@@ -765,7 +765,7 @@
         "error": {
           "type": "NameError",
           "message": "name 'bvar' is not defined",
-          "traceback": "Traceback (most recent call last):\n  File \"<session 245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:fdaf9f11-0f7d-4877-a94e-38db82f5bd1a #1>\", line 1, in <module>\nNameError: name 'bvar' is not defined\n"
+          "traceback": "Traceback (most recent call last):\n  File \"<session 245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:07a3ce55-6d04-4441-b810-906074657f5f #1>\", line 1, in <module>\nNameError: name 'bvar' is not defined\n"
         },
         "stdout": "",
         "stderr": ""
@@ -777,9 +777,9 @@
       "httpStatus": 200,
       "elapsedMs": 34,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "fdaf9f11-0f7d-4877-a94e-38db82f5bd1a",
-        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:fdaf9f11-0f7d-4877-a94e-38db82f5bd1a",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "07a3ce55-6d04-4441-b810-906074657f5f",
+        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:07a3ce55-6d04-4441-b810-906074657f5f",
         "previousSession": null,
         "crossThread": true,
         "generation": 2,
@@ -796,9 +796,9 @@
       "httpStatus": 200,
       "elapsedMs": 6,
       "json": {
-        "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-        "objectInstance": "fdaf9f11-0f7d-4877-a94e-38db82f5bd1a",
-        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:fdaf9f11-0f7d-4877-a94e-38db82f5bd1a",
+        "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+        "objectInstance": "07a3ce55-6d04-4441-b810-906074657f5f",
+        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:07a3ce55-6d04-4441-b810-906074657f5f",
         "previousSession": null,
         "crossThread": true,
         "generation": 2,
@@ -817,7 +817,7 @@
             {
               "generation": 1,
               "reason": "Python entry did not return (marker 1); the host terminated execution inside Python",
-              "at": "2026-09-26T16:15:20.963Z"
+              "at": "2026-09-26T16:21:15.296Z"
             }
           ],
           "entries": 0,
@@ -858,7 +858,7 @@
   "afterEviction": {
     "sameIsolate": true,
     "previousSession": {
-      "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710",
+      "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8",
       "existed": true
     },
     "previousInfo": null
@@ -872,11 +872,11 @@
       "body": "{\"outcome\":\"signalled\",\"execution\":14}"
     },
     "result": {
-      "isolate": "059bef18-f2bc-400d-9f05-ad71f6499e2f",
-      "objectInstance": "be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02",
-      "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02",
+      "isolate": "139ef45f-ba1e-4cde-bf79-1511d9f1b916",
+      "objectInstance": "13548d9c-f129-40d7-aaa2-16624f32f03b",
+      "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:13548d9c-f129-40d7-aaa2-16624f32f03b",
       "previousSession": {
-        "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:c3dd71e8-80c5-4369-a4d3-18921653c710",
+        "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:effec425-f405-4487-9e48-06eaa62350d8",
         "existed": true
       },
       "crossThread": true,
@@ -887,15 +887,15 @@
       "error": {
         "type": "KeyboardInterrupt",
         "message": "",
-        "traceback": "Traceback (most recent call last):\n  File \"<session 9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:be03e33e-4d4c-4b5c-b3a3-171a1f9b2f02 #4>\", line 2, in <module>\nKeyboardInterrupt\n"
+        "traceback": "Traceback (most recent call last):\n  File \"<session 9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:13548d9c-f129-40d7-aaa2-16624f32f03b #4>\", line 2, in <module>\nKeyboardInterrupt\n"
       },
       "stdout": "",
       "stderr": ""
     },
-    "signalToResultMs": 6
+    "signalToResultMs": 5
   },
   "asyncEntries": {
-    "isolate": "e84fcd44-7706-41cd-8f12-a4c13e760817",
+    "isolate": "28477d60-c650-474e-9d2d-9c65ed49e631",
     "hostJspi": true,
     "stackSwitching": false,
     "stackSize": 5242880,
@@ -938,7 +938,7 @@
       {
         "generation": 1,
         "reason": "Python entry did not return (marker 1); the host terminated execution inside Python",
-        "at": "2026-09-26T16:15:20.963Z"
+        "at": "2026-09-26T16:21:15.296Z"
       }
     ],
     "entries": 0,

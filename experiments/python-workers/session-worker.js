@@ -17,7 +17,9 @@ import { DurableObject } from 'cloudflare:workers';
 import { createPythonHost } from './python-host.js';
 import { packages, dynamicLibraries } from 'celld-python-packages';
 
-const isolate = crypto.randomUUID();
+// workerd forbids random values at global scope; celld v0.6.0 allows them.
+let isolateId;
+const isolate = () => isolateId ??= crypto.randomUUID();
 // Cross-thread interrupts need a host that writes shared memory from another
 // thread. celld exposes that only through the experimental, feature-detected
 // ctx._celldPythonSignals. Other hosts, including workerd, get task-cancel
@@ -33,7 +35,7 @@ function pythonHost() {
       const view = crossThread?.sessions.get(session);
       if (view) Atomics.store(view, 0, execution);
     },
-    onEvent: (event) => console.log(JSON.stringify({ isolate, ...event })),
+    onEvent: (event) => console.log(JSON.stringify({ isolate: isolate(), ...event })),
   });
 }
 function attachSignals(ctx, session) {
@@ -81,7 +83,7 @@ export class PythonSession extends DurableObject {
     const python = pythonHost();
     const op = new URL(request.url).pathname.split('/').pop();
     const cleanup = await this.cleanup;
-    const meta = { isolate, objectInstance: this.instance, session: this.session, previousSession: cleanup, crossThread: this.crossThread };
+    const meta = { isolate: isolate(), objectInstance: this.instance, session: this.session, previousSession: cleanup, crossThread: this.crossThread };
     if (op === 'execute') return respond(meta, python.execute(this.session, await request.text()));
     if (op === 'interrupt') return respond(meta, python.interrupt(this.session));
     if (op === 'info') {
@@ -115,10 +117,10 @@ export default {
           if (i % Math.max(1, Math.floor(n / 4)) === 0) samples.push([i, base - module._emscripten_stack_get_current()]);
         }
       } finally { call.destroy(); }
-      return Response.json({ isolate, hostJspi: typeof globalThis.WebAssembly.Suspending === 'function', stackSwitching: !!module.jspiSupported, stackSize: base - module._emscripten_stack_get_end(), depthBelowBase: samples });
+      return Response.json({ isolate: isolate(), hostJspi: typeof globalThis.WebAssembly.Suspending === 'function', stackSwitching: !!module.jspiSupported, stackSize: base - module._emscripten_stack_get_end(), depthBelowBase: samples });
     }
     if (url.pathname === '/w/execute') {
-      return respond({ isolate }, pythonHost().execute('worker', await request.text()));
+      return respond({ isolate: isolate() }, pythonHost().execute('worker', await request.text()));
     }
     return new Response('not found', { status: 404 });
   },

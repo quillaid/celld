@@ -1,0 +1,13 @@
+{
+  "probe": "probes/workerd-session.mjs",
+  "workerd": "1.20260922.1 (Miniflare 5.20260921.0-alpha)",
+  "bundle": "dist/session.js (unchanged celld fixture, upstream Pyodide 0.28.3)",
+  "findings": [
+    "First attempt: workerd rejected crypto.randomUUID() at global scope (celld v0.6.0 allows it); fixture now creates its isolate id lazily.",
+    "Second attempt: interpreter instantiation fails with 'CompileError: WebAssembly.Module(): Wasm code generation disallowed by embedder'; the probe's first request never settles (probe killed by timeout 180 s, exit 124)."
+  ],
+  "stderr": [
+    "wasm instantiation failed!",
+    "CompileError: WebAssembly.Module(): Wasm code generation disallowed by embedder"
+  ]
+}

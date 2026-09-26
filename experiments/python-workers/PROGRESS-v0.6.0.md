@@ -203,9 +203,28 @@ does not exist.
 | --- | --- | --- | --- |
 | celld v0.6.0 stock | task cancel (**confirmed**) | none. The isolate thread is blocked, and top-level Workers and Durable Objects have no CPU limit (**source**) | `ctx.abort()`, a Dynamic Worker `cpuMs` limit, `process.exit`: the interpreter is unusable afterwards (**confirmed**). The adapter detects this and replaces the interpreter (**confirmed** for `ctx.abort()`) |
 | celld patched (this branch) | task cancel | node-thread SIGINT via `python_signal.rs` (**confirmed**, local owner only) | same as stock |
-| workerd OSS | task cancel (**hypothesis**: same adapter code, not run in workerd) | no user API. The CPU-limit near-exceeded callback raises `CpuLimitExceeded`, and no caller exists in OSS (**source**) | **hypothesis:** the isolate is condemned; not verified |
+| workerd OSS | not reached. **Confirmed:** the upstream Pyodide bundle cannot initialize there (see below) | no user API. The CPU-limit near-exceeded callback raises `CpuLimitExceeded`, and no caller exists in OSS (**source**) | **hypothesis:** the isolate is condemned; not verified |
 | Browser Web Worker | task cancel | SharedArrayBuffer from the page, only when cross-origin isolated (**source**: Pyodide docs) | `worker.terminate()` ends the whole worker |
 | Node worker thread | task cancel (**confirmed**) | SharedArrayBuffer (**confirmed**) | n/a |
+
+**Confirmed, workerd probe** (`probes/workerd-session.mjs`, workerd
+1.20260922.1; evidence `2026-09-26-workerd-session-probe.json`). The
+unchanged session bundle, run as an ordinary Worker with a Durable Object:
+
+1. It failed at startup because the fixture called `crypto.randomUUID()` at
+   global scope. celld v0.6.0 allows that call, and workerd does not. The
+   fixture is now lazy.
+2. Interpreter instantiation then fails with `Wasm code generation disallowed
+   by embedder`, from a synchronous `new WebAssembly.Module()`, and the
+   initialization **never settles**. **Source/hypothesis:** the likely trigger
+   is Emscripten's `convertJsFunctionToWasm` (`addFunction`) path, which
+   compiles tiny modules at run time when `WebAssembly.Function` is absent.
+   Cloudflare runs its own Pyodide build and loader, not upstream Pyodide.
+   Therefore **the shareable layer is the adapter contract**
+   (`python_host.py`, the result schema, the capability report), with one
+   runtime loader per host. A single shared bundle is not the shareable
+   layer. The adapter also needs an initialization deadline, because a
+   loader that fails inside Emscripten does not reject.
 
 ## 7. Deliberately deferred
 
@@ -222,3 +241,39 @@ does not exist.
 - workerd execution of this adapter bundle.
 - A Pyodide 314.x upgrade (ABI `pyodide_2026`?, new locks). Needed to regain
   JSPI and `run_sync` safely.
+
+
+## 8. Next decisions for Kyle
+
+1. **Runtime line.** Stay on Pyodide 0.28.3 with JSPI hidden (tested
+   here), or move to 314.x (CPython 3.14, new wheel ABI and locks), which
+   stays flat under JSPI in Node. Moving to 314.x brings back `run_sync`.
+2. **Interrupt route.** The prototype writes signals only for a Durable
+   Object owned by the local node, through the unauthenticated internal
+   listener. A product route needs an application-facing call that a busy
+   isolate does not have to serve. One option is a stub method handled by
+   the host before dispatch; another is a binding. Owner forwarding and
+   authentication are also needed.
+3. **Termination recovery.** Choose between in-realm replacement (this slice:
+   no host change, with residual risk from old callbacks) and host retirement
+   of the isolate (the historical `b344887`..`072df4b` approach, a larger
+   Rust change).
+4. **workerd.** Target Cloudflare's Python runtime through the same
+   `python_host.py` and result contract, with a workerd-specific loader.
+   Upstream Pyodide cannot initialize there.
+
+## Reproduce
+
+```sh
+cd experiments/python-workers
+npm ci --ignore-scripts --no-audit --no-fund && npm run build
+# stock release binary (downloaded to ../../.celld/tools/celld) or this branch's build:
+CELLD_BIN=/abs/path/celld npm test          # adapter (Node), celld sessions, microtask contract
+npm run test:baseline                       # historical smoke + workerd comparison
+node --experimental-wasm-jspi probes/jspi-stack-drift.mjs
+```
+
+The Rust build uses `RUSTY_V8_MIRROR=https://github.com/denoland/rusty_v8/releases/download
+cargo +1.94.1 build -p celld`. The patched binary's SHA-256 is in
+`evidence/2026-09-26-v060-patched-build.sha256`. The unit test is
+`cargo +1.94.1 test -p celld --lib python_signal`.
