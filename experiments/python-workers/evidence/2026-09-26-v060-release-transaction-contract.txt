@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: transactionSync callback and nested rollback match pinned workerd
+ok 1 - transactionSync callback and nested rollback match pinned workerd
+  ---
+  duration_ms: 4464.41152
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4916.77085

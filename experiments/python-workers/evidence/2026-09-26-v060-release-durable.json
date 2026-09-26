@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-09-26T15:27:47.280Z",
+  "responses": [
+    {
+      "name": "a",
+      "op": "inc",
+      "status": 200,
+      "interpreter": "3781117a-50a9-44e5-bebd-fb45bee77571",
+      "text": "{\"value\": 1, \"objectInstance\": \"f65c80c7-6efe-4845-a1c5-36844482e365\", \"fires\": 0, \"alarmAt\": null}"
+    },
+    {
+      "name": "a",
+      "op": "inc",
+      "status": 200,
+      "interpreter": "3781117a-50a9-44e5-bebd-fb45bee77571",
+      "text": "{\"value\": 2, \"objectInstance\": \"f65c80c7-6efe-4845-a1c5-36844482e365\", \"fires\": 0, \"alarmAt\": null}"
+    },
+    {
+      "name": "b",
+      "op": "inc",
+      "status": 200,
+      "interpreter": "3781117a-50a9-44e5-bebd-fb45bee77571",
+      "text": "{\"value\": 1, \"objectInstance\": \"c7069f15-7f6c-4cc6-af15-a465b4871aeb\", \"fires\": 0, \"alarmAt\": null}"
+    },
+    {
+      "name": "a",
+      "op": "abort",
+      "status": 500,
+      "interpreter": null,
+      "text": "Worker failed: rejected: Error: intentional Python Durable Object abort [at invoke (<anonymous>:5127:15) <- at async Proxy.doFetch (<anonymous>:5170:30)]"
+    }
+  ]
+}

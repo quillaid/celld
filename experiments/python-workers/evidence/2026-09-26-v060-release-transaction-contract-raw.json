@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-09-26T15:26:48.423Z",
+  "workerd": "1.20260922.1",
+  "celld": {
+    "status": 200,
+    "text": "{\"argumentsSeen\":0,\"value\":42,\"rows\":[{\"value\":1}]}"
+  },
+  "reference": {
+    "status": 200,
+    "text": "{\"argumentsSeen\":0,\"value\":42,\"rows\":[{\"value\":1}]}"
+  }
+}

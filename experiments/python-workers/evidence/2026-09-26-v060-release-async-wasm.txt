@@ -1,0 +1,17 @@
+TAP version 13
+# Subtest: compiled-module Wasm promises match workerd; byte compilation is probed separately
+ok 1 - compiled-module Wasm promises match workerd; byte compilation is probed separately
+  ---
+  duration_ms: 4696.684588
+  type: 'test'
+  ...
+# [{"operation":"sync","celld":{"outcome":"resolved","instance":true},"workerd":{"outcome":"resolved","instance":true}},{"operation":"instantiate-module","celld":{"outcome":"resolved"},"workerd":{"outcome":"resolved"}},{"operation":"compile","celld":{"outcome":"timeout"},"workerd":{"outcome":"rejected","error":"CompileError: WebAssembly.compile(): Wasm code generation disallowed by embedder"}},{"operation":"instantiate-bytes","celld":{"outcome":"timeout"},"workerd":{"outcome":"rejected","error":"CompileError: WebAssembly.instantiate(): Wasm code generation disallowed by embedder"}}]
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5133.771367
