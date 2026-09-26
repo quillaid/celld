@@ -269,6 +269,7 @@ cd experiments/python-workers
 npm ci --ignore-scripts --no-audit --no-fund && npm run build
 # stock release binary (downloaded to ../../.celld/tools/celld) or this branch's build:
 CELLD_BIN=/abs/path/celld npm test          # adapter (Node), celld sessions, microtask contract
+                                            # patched: 26/26; stock v0.6.0: the microtask contract fails (known gap)
 npm run test:baseline                       # historical smoke + workerd comparison
 node --experimental-wasm-jspi probes/jspi-stack-drift.mjs
 ```
