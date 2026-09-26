@@ -6706,6 +6706,7 @@ ops! { OP_NAMES, install_op_functions,
         "__storage_sync" => storage_ops::op_storage_sync,
         "__storage_cancel_pending_puts" => storage_ops::op_storage_cancel_pending_puts,
         "__actor_abort" => op_actor_abort,
+        "__python_signal_attach" => op_python_signal_attach,
         "__cron_plan" => op_cron_plan,
         "__kv_blob" => op_kv_blob,
         "__process_exit" => op_process_exit,
@@ -9530,6 +9531,33 @@ fn op_actor_abort(
         context_id: context.continuation_id(),
     });
     scope.terminate_execution();
+}
+
+/// `__python_signal_attach(scope, interpreter, session)`: register the
+/// SharedArrayBuffers that a thread other than the isolate thread writes to
+/// interrupt Python (see `python_signal`).
+fn op_python_signal_attach(
+    scope: &mut v8::PinScope,
+    args: v8::FunctionCallbackArguments,
+    _rv: v8::ReturnValue<v8::Value>,
+) {
+    let key = args.get(0).to_rust_string_lossy(scope);
+    let store = |index| {
+        v8::Local::<v8::SharedArrayBuffer>::try_from(args.get(index))
+            .ok()
+            .map(|buffer| buffer.get_backing_store())
+    };
+    let result = match (store(1), store(2)) {
+        (Some(interpreter), Some(session)) => {
+            crate::python_signal::attach(key, interpreter, session)
+        }
+        _ => Err("Python signal buffers must be SharedArrayBuffers"),
+    };
+    if let Err(error) = result {
+        let message = v8::String::new(scope, error).unwrap();
+        let exception = v8::Exception::type_error(scope, message);
+        scope.throw_exception(exception);
+    }
 }
 
 fn op_process_exit(

@@ -2937,6 +2937,22 @@ async fn handle_internal(
         "/peer/handoff" => internal_handoff(request, app).await,
         _ if path.starts_with("/peer/log/") => internal_log(request, app, path.clone()).await,
         "/state" => response(StatusCode::OK, app.snapshot().await),
+        // Experimental: cooperative KeyboardInterrupt for a local Python
+        // Durable Object, written from this thread while its isolate may be
+        // busy. It does not forward to another owner node.
+        _ if path.starts_with("/python/interrupt/") && request.method() != hyper::Method::POST => {
+            response(StatusCode::METHOD_NOT_ALLOWED, "method not allowed")
+        }
+        _ if path.starts_with("/python/interrupt/") => {
+            let scope = &path["/python/interrupt/".len()..];
+            let outcome = celld::python_signal::interrupt(scope);
+            let status = if outcome == celld::python_signal::Outcome::Unknown {
+                StatusCode::NOT_FOUND
+            } else {
+                StatusCode::OK
+            };
+            response(status, celld::python_signal::outcome_json(&outcome))
+        }
         "/reload" if request.method() != hyper::Method::POST => {
             response(StatusCode::METHOD_NOT_ALLOWED, "method not allowed")
         }
