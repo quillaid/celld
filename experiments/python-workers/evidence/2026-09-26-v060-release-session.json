@@ -1,0 +1,758 @@
+{
+  "timestamp": "2026-09-26T16:03:42.187Z",
+  "celld": "/home/ubuntu/projects/celld-python-v060/experiments/python-workers/../../.celld/tools/celld",
+  "calls": [
+    {
+      "path": "/s/a/execute",
+      "body": "x = 1\nx",
+      "httpStatus": 200,
+      "elapsedMs": 1732,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "0df62f11-63d7-4e94-a061-87d2750707e0",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:0df62f11-63d7-4e94-a061-87d2750707e0",
+        "previousSession": null,
+        "generation": 1,
+        "status": "ok",
+        "execution": 1,
+        "count": 1,
+        "value": "1",
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "/s/b/execute",
+      "body": "x = 2\nx",
+      "httpStatus": 200,
+      "elapsedMs": 1713,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "d4b7c574-5a84-4646-a034-03d4fa7005cf",
+        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:d4b7c574-5a84-4646-a034-03d4fa7005cf",
+        "previousSession": null,
+        "generation": 1,
+        "status": "ok",
+        "execution": 2,
+        "count": 1,
+        "value": "2",
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "/s/a/execute",
+      "body": "x += 10\nprint(\"a says\", x)\nx",
+      "httpStatus": 200,
+      "elapsedMs": 8,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "0df62f11-63d7-4e94-a061-87d2750707e0",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:0df62f11-63d7-4e94-a061-87d2750707e0",
+        "previousSession": null,
+        "generation": 1,
+        "status": "ok",
+        "execution": 3,
+        "count": 2,
+        "value": "11",
+        "stdout": "a says 11\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "/s/b/execute",
+      "body": "x",
+      "httpStatus": 200,
+      "elapsedMs": 5,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "d4b7c574-5a84-4646-a034-03d4fa7005cf",
+        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:d4b7c574-5a84-4646-a034-03d4fa7005cf",
+        "previousSession": null,
+        "generation": 1,
+        "status": "ok",
+        "execution": 4,
+        "count": 2,
+        "value": "2",
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "/s/a/execute",
+      "body": "import json\njson.loads(\"{bad\")",
+      "httpStatus": 200,
+      "elapsedMs": 11,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "0df62f11-63d7-4e94-a061-87d2750707e0",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:0df62f11-63d7-4e94-a061-87d2750707e0",
+        "previousSession": null,
+        "generation": 1,
+        "status": "error",
+        "execution": 5,
+        "count": 3,
+        "error": {
+          "type": "JSONDecodeError",
+          "message": "Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+          "traceback": "Traceback (most recent call last):\n  File \"<session 9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:0df62f11-63d7-4e94-a061-87d2750707e0 #3>\", line 2, in <module>\n  File \"/lib/python313.zip/json/__init__.py\", line 346, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"/lib/python313.zip/json/decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/lib/python313.zip/json/decoder.py\", line 361, in raw_decode\n    obj, end = self.scan_once(s, idx)\n               ~~~~~~~~~~~~~~^^^^^^^^\njson.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\n"
+        },
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "/s/a/execute",
+      "body": "x",
+      "httpStatus": 200,
+      "elapsedMs": 4,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "0df62f11-63d7-4e94-a061-87d2750707e0",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:0df62f11-63d7-4e94-a061-87d2750707e0",
+        "previousSession": null,
+        "generation": 1,
+        "status": "ok",
+        "execution": 6,
+        "count": 4,
+        "value": "11",
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "/s/a/execute",
+      "body": "import humanize, markupsafe._speedups as s\n(humanize.naturalsize(123456789), s.__file__.endswith(\".so\"), str(s._escape_inner(\"<&>\")))",
+      "httpStatus": 200,
+      "elapsedMs": 40,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "0df62f11-63d7-4e94-a061-87d2750707e0",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:0df62f11-63d7-4e94-a061-87d2750707e0",
+        "previousSession": null,
+        "generation": 1,
+        "status": "ok",
+        "execution": 7,
+        "count": 5,
+        "value": "('123.5 MB', True, '&lt;&amp;&gt;')",
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "/w/execute",
+      "body": "import sys\nsys.platform",
+      "httpStatus": 200,
+      "elapsedMs": 1371,
+      "json": {
+        "isolate": "f3ddb72b-7d89-42a8-81e5-a922964b0fd6",
+        "generation": 1,
+        "status": "ok",
+        "execution": 1,
+        "session": "worker",
+        "count": 1,
+        "value": "'emscripten'",
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "/s/a/execute",
+      "body": "ctx.storage.sql.exec(\"CREATE TABLE IF NOT EXISTS t (v INTEGER)\")\nctx.storage.sql.exec(\"INSERT INTO t VALUES (7)\")\nkept = \"in memory only\"\nctx.storage.sql.exec(\"SELECT count(*) AS n FROM t\").one().n",
+      "httpStatus": 200,
+      "elapsedMs": 19,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "0df62f11-63d7-4e94-a061-87d2750707e0",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:0df62f11-63d7-4e94-a061-87d2750707e0",
+        "previousSession": null,
+        "generation": 1,
+        "status": "ok",
+        "execution": 8,
+        "count": 6,
+        "value": "1",
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "/s/a/interrupt",
+      "body": "",
+      "httpStatus": 200,
+      "elapsedMs": 7,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "0df62f11-63d7-4e94-a061-87d2750707e0",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:0df62f11-63d7-4e94-a061-87d2750707e0",
+        "previousSession": null,
+        "interrupted": [
+          9
+        ],
+        "generation": 1,
+        "mode": "task-cancel"
+      }
+    },
+    {
+      "path": "/s/a/execute",
+      "body": "import asyncio\nstep = \"started\"\nawait asyncio.sleep(60)\nstep = \"finished\"",
+      "httpStatus": 200,
+      "elapsedMs": 309,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "0df62f11-63d7-4e94-a061-87d2750707e0",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:0df62f11-63d7-4e94-a061-87d2750707e0",
+        "previousSession": null,
+        "generation": 1,
+        "status": "interrupted",
+        "execution": 9,
+        "count": 7,
+        "error": {
+          "type": "KeyboardInterrupt",
+          "message": "",
+          "traceback": "Traceback (most recent call last):\n  File \"<session 9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:0df62f11-63d7-4e94-a061-87d2750707e0 #7>\", line 3, in <module>\n  File \"/lib/python313.zip/asyncio/tasks.py\", line 718, in sleep\n    return await future\n           ^^^^^^^^^^^^\nKeyboardInterrupt\n"
+        },
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "/s/a/execute",
+      "body": "(x, step, kept)",
+      "httpStatus": 200,
+      "elapsedMs": 4,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "0df62f11-63d7-4e94-a061-87d2750707e0",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:0df62f11-63d7-4e94-a061-87d2750707e0",
+        "previousSession": null,
+        "generation": 1,
+        "status": "ok",
+        "execution": 10,
+        "count": 8,
+        "value": "(11, 'started', 'in memory only')",
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "/s/a/info",
+      "httpStatus": 200,
+      "elapsedMs": 3,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "0df62f11-63d7-4e94-a061-87d2750707e0",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:0df62f11-63d7-4e94-a061-87d2750707e0",
+        "previousSession": null,
+        "generation": 1,
+        "info": {
+          "count": 8,
+          "names": [
+            "asyncio",
+            "ctx",
+            "env",
+            "humanize",
+            "json",
+            "kept",
+            "s",
+            "step",
+            "x"
+          ]
+        },
+        "status": {
+          "generation": 1,
+          "alive": true,
+          "invalidations": [],
+          "entries": 0,
+          "stack": {
+            "idle": 8809088,
+            "base": 8809120,
+            "samples": [
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088
+            ]
+          }
+        },
+        "capabilities": {
+          "interrupt": {
+            "suspended": "task-cancel",
+            "running": "unavailable-without-cross-thread-writer"
+          },
+          "termination": {
+            "detection": "python-entry-marker",
+            "recovery": "new-interpreter",
+            "namespacesPreserved": false
+          },
+          "host": {
+            "sharedArrayBuffer": true,
+            "crossOriginIsolated": null,
+            "jspi": true
+          },
+          "stackSwitching": false
+        }
+      }
+    },
+    {
+      "path": "/s/a/execute",
+      "body": "ctx.storage.sql.exec(\"SELECT v FROM t\").one().v",
+      "httpStatus": 200,
+      "elapsedMs": 23,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "25f2973f-ea32-4d5a-a8a3-e5dfe58d5b01",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:25f2973f-ea32-4d5a-a8a3-e5dfe58d5b01",
+        "previousSession": {
+          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:0df62f11-63d7-4e94-a061-87d2750707e0",
+          "existed": true
+        },
+        "generation": 1,
+        "status": "ok",
+        "execution": 11,
+        "count": 1,
+        "value": "7",
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "/s/a/execute",
+      "body": "x",
+      "httpStatus": 200,
+      "elapsedMs": 4,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "25f2973f-ea32-4d5a-a8a3-e5dfe58d5b01",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:25f2973f-ea32-4d5a-a8a3-e5dfe58d5b01",
+        "previousSession": {
+          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:0df62f11-63d7-4e94-a061-87d2750707e0",
+          "existed": true
+        },
+        "generation": 1,
+        "status": "error",
+        "execution": 12,
+        "count": 2,
+        "error": {
+          "type": "NameError",
+          "message": "name 'x' is not defined",
+          "traceback": "Traceback (most recent call last):\n  File \"<session 9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:25f2973f-ea32-4d5a-a8a3-e5dfe58d5b01 #2>\", line 1, in <module>\nNameError: name 'x' is not defined\n"
+        },
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "/s/a/info",
+      "httpStatus": 200,
+      "elapsedMs": 3,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "25f2973f-ea32-4d5a-a8a3-e5dfe58d5b01",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:25f2973f-ea32-4d5a-a8a3-e5dfe58d5b01",
+        "previousSession": {
+          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:0df62f11-63d7-4e94-a061-87d2750707e0",
+          "existed": true
+        },
+        "generation": 1,
+        "info": {
+          "count": 2,
+          "names": [
+            "ctx",
+            "env"
+          ]
+        },
+        "status": {
+          "generation": 1,
+          "alive": true,
+          "invalidations": [],
+          "entries": 0,
+          "stack": {
+            "idle": 8809088,
+            "base": 8809120,
+            "samples": [
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088
+            ]
+          }
+        },
+        "capabilities": {
+          "interrupt": {
+            "suspended": "task-cancel",
+            "running": "unavailable-without-cross-thread-writer"
+          },
+          "termination": {
+            "detection": "python-entry-marker",
+            "recovery": "new-interpreter",
+            "namespacesPreserved": false
+          },
+          "host": {
+            "sharedArrayBuffer": true,
+            "crossOriginIsolated": null,
+            "jspi": true
+          },
+          "stackSwitching": false
+        },
+        "previousInfo": null
+      }
+    },
+    {
+      "path": "/probe/async-entries?n=2000",
+      "httpStatus": 200,
+      "elapsedMs": 147,
+      "json": {
+        "isolate": "f3ddb72b-7d89-42a8-81e5-a922964b0fd6",
+        "hostJspi": true,
+        "stackSwitching": false,
+        "stackSize": 5242880,
+        "depthBelowBase": [
+          [
+            0,
+            32
+          ],
+          [
+            500,
+            32
+          ],
+          [
+            1000,
+            32
+          ],
+          [
+            1500,
+            32
+          ],
+          [
+            2000,
+            32
+          ]
+        ]
+      }
+    },
+    {
+      "path": "/s/a/info",
+      "httpStatus": 200,
+      "elapsedMs": 3,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "25f2973f-ea32-4d5a-a8a3-e5dfe58d5b01",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:25f2973f-ea32-4d5a-a8a3-e5dfe58d5b01",
+        "previousSession": {
+          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:0df62f11-63d7-4e94-a061-87d2750707e0",
+          "existed": true
+        },
+        "generation": 1,
+        "info": {
+          "count": 2,
+          "names": [
+            "ctx",
+            "env"
+          ]
+        },
+        "status": {
+          "generation": 1,
+          "alive": true,
+          "invalidations": [],
+          "entries": 0,
+          "stack": {
+            "idle": 8809088,
+            "base": 8809120,
+            "samples": [
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088,
+              8809088
+            ]
+          }
+        },
+        "capabilities": {
+          "interrupt": {
+            "suspended": "task-cancel",
+            "running": "unavailable-without-cross-thread-writer"
+          },
+          "termination": {
+            "detection": "python-entry-marker",
+            "recovery": "new-interpreter",
+            "namespacesPreserved": false
+          },
+          "host": {
+            "sharedArrayBuffer": true,
+            "crossOriginIsolated": null,
+            "jspi": true
+          },
+          "stackSwitching": false
+        },
+        "previousInfo": null
+      }
+    },
+    {
+      "path": "/s/b/execute",
+      "body": "bvar = 3\nbvar",
+      "httpStatus": 200,
+      "elapsedMs": 5,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "d4b7c574-5a84-4646-a034-03d4fa7005cf",
+        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:d4b7c574-5a84-4646-a034-03d4fa7005cf",
+        "previousSession": null,
+        "generation": 1,
+        "status": "ok",
+        "execution": 13,
+        "count": 3,
+        "value": "3",
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "/s/a/execute",
+      "body": "ctx.abort(\"python-host test: destructive termination\")\n\"unreachable\"",
+      "httpStatus": 500,
+      "elapsedMs": 8,
+      "json": null,
+      "text": "Worker failed: rejected: Error: python-host test: destructive termination [at invoke (<anonymous>:5127:15) <- at async Proxy.doFetch (<anonymous>:5170:30)]"
+    },
+    {
+      "path": "/s/b/execute",
+      "body": "import asyncio\nawait asyncio.sleep(60)",
+      "httpStatus": 200,
+      "elapsedMs": 309,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "d4b7c574-5a84-4646-a034-03d4fa7005cf",
+        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:d4b7c574-5a84-4646-a034-03d4fa7005cf",
+        "previousSession": null,
+        "generation": 1,
+        "status": "invalidated",
+        "reason": "Python entry did not return (marker 1); the host terminated execution inside Python",
+        "execution": 14
+      }
+    },
+    {
+      "path": "/s/a/execute",
+      "body": "1 + 1",
+      "httpStatus": 200,
+      "elapsedMs": 1361,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "98ee13f5-16bf-494d-b9e0-ce197b6e8d5c",
+        "session": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:98ee13f5-16bf-494d-b9e0-ce197b6e8d5c",
+        "previousSession": {
+          "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:25f2973f-ea32-4d5a-a8a3-e5dfe58d5b01",
+          "existed": false
+        },
+        "generation": 2,
+        "status": "ok",
+        "execution": 1,
+        "count": 1,
+        "value": "2",
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "/s/b/execute",
+      "body": "bvar",
+      "httpStatus": 200,
+      "elapsedMs": 6,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "d4b7c574-5a84-4646-a034-03d4fa7005cf",
+        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:d4b7c574-5a84-4646-a034-03d4fa7005cf",
+        "previousSession": null,
+        "generation": 2,
+        "status": "error",
+        "execution": 2,
+        "count": 1,
+        "error": {
+          "type": "NameError",
+          "message": "name 'bvar' is not defined",
+          "traceback": "Traceback (most recent call last):\n  File \"<session 245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:d4b7c574-5a84-4646-a034-03d4fa7005cf #1>\", line 1, in <module>\nNameError: name 'bvar' is not defined\n"
+        },
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "/s/b/execute",
+      "body": "import humanize\nhumanize.intcomma(1000)",
+      "httpStatus": 200,
+      "elapsedMs": 32,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "d4b7c574-5a84-4646-a034-03d4fa7005cf",
+        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:d4b7c574-5a84-4646-a034-03d4fa7005cf",
+        "previousSession": null,
+        "generation": 2,
+        "status": "ok",
+        "execution": 3,
+        "count": 2,
+        "value": "'1,000'",
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "/s/b/info",
+      "httpStatus": 200,
+      "elapsedMs": 3,
+      "json": {
+        "isolate": "d2741958-13e8-47a3-ba81-d169cf833fc2",
+        "objectInstance": "d4b7c574-5a84-4646-a034-03d4fa7005cf",
+        "session": "245e0877e6f970bd3705c41bc6257eed76a501c63ef9886457b964e95416b338:d4b7c574-5a84-4646-a034-03d4fa7005cf",
+        "previousSession": null,
+        "generation": 2,
+        "info": {
+          "count": 2,
+          "names": [
+            "ctx",
+            "env",
+            "humanize"
+          ]
+        },
+        "status": {
+          "generation": 2,
+          "alive": true,
+          "invalidations": [
+            {
+              "generation": 1,
+              "reason": "Python entry did not return (marker 1); the host terminated execution inside Python",
+              "at": "2026-09-26T16:03:46.217Z"
+            }
+          ],
+          "entries": 0,
+          "stack": {
+            "idle": 8809088,
+            "base": 8809120,
+            "samples": [
+              8809088,
+              8809088,
+              8809088
+            ]
+          }
+        },
+        "capabilities": {
+          "interrupt": {
+            "suspended": "task-cancel",
+            "running": "unavailable-without-cross-thread-writer"
+          },
+          "termination": {
+            "detection": "python-entry-marker",
+            "recovery": "new-interpreter",
+            "namespacesPreserved": false
+          },
+          "host": {
+            "sharedArrayBuffer": true,
+            "crossOriginIsolated": null,
+            "jspi": true
+          },
+          "stackSwitching": false
+        }
+      }
+    }
+  ],
+  "eviction": {
+    "status": 200,
+    "body": "{\"ok\":true}"
+  },
+  "afterEviction": {
+    "sameIsolate": true,
+    "previousSession": {
+      "previous": "9d787dea05a03c0778fbc195493dccb26b19f084924e887fc40366e53c4e4096:0df62f11-63d7-4e94-a061-87d2750707e0",
+      "existed": true
+    },
+    "previousInfo": null
+  },
+  "asyncEntries": {
+    "isolate": "f3ddb72b-7d89-42a8-81e5-a922964b0fd6",
+    "hostJspi": true,
+    "stackSwitching": false,
+    "stackSize": 5242880,
+    "depthBelowBase": [
+      [
+        0,
+        32
+      ],
+      [
+        500,
+        32
+      ],
+      [
+        1000,
+        32
+      ],
+      [
+        1500,
+        32
+      ],
+      [
+        2000,
+        32
+      ]
+    ]
+  },
+  "hostJspi": true,
+  "abort": {
+    "path": "/s/a/execute",
+    "body": "ctx.abort(\"python-host test: destructive termination\")\n\"unreachable\"",
+    "httpStatus": 500,
+    "elapsedMs": 8,
+    "json": null,
+    "text": "Worker failed: rejected: Error: python-host test: destructive termination [at invoke (<anonymous>:5127:15) <- at async Proxy.doFetch (<anonymous>:5170:30)]"
+  },
+  "status": {
+    "generation": 2,
+    "alive": true,
+    "invalidations": [
+      {
+        "generation": 1,
+        "reason": "Python entry did not return (marker 1); the host terminated execution inside Python",
+        "at": "2026-09-26T16:03:46.217Z"
+      }
+    ],
+    "entries": 0,
+    "stack": {
+      "idle": 8809088,
+      "base": 8809120,
+      "samples": [
+        8809088,
+        8809088,
+        8809088
+      ]
+    }
+  }
+}

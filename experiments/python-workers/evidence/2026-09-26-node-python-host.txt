@@ -1,0 +1,89 @@
+TAP version 13
+# Subtest: python host adapter in one Node thread
+    # Subtest: concurrent first calls share one initialization
+    ok 1 - concurrent first calls share one initialization
+      ---
+      duration_ms: 0.685567
+      type: 'test'
+      ...
+    # Subtest: execution returns the last expression, output, and a counter
+    ok 2 - execution returns the last expression, output, and a counter
+      ---
+      duration_ms: 6.101662
+      type: 'test'
+      ...
+    # Subtest: sessions have separate namespaces
+    ok 3 - sessions have separate namespaces
+      ---
+      duration_ms: 4.177416
+      type: 'test'
+      ...
+    # Subtest: Python errors are structured and keep the namespace
+    ok 4 - Python errors are structured and keep the namespace
+      ---
+      duration_ms: 4.700566
+      type: 'test'
+      ...
+    # Subtest: locked pure and compiled packages load from verified bytes
+    ok 5 - locked pure and compiled packages load from verified bytes
+      ---
+      duration_ms: 32.08256
+      type: 'test'
+      ...
+    # Subtest: interrupting a suspended execution keeps its namespace and its neighbors
+    ok 6 - interrupting a suspended execution keeps its namespace and its neighbors
+      ---
+      duration_ms: 304.731326
+      type: 'test'
+      ...
+    # Subtest: bindings are explicit host objects
+    ok 7 - bindings are explicit host objects
+      ---
+      duration_ms: 4.431453
+      type: 'test'
+      ...
+    # Subtest: dispose frees a session namespace
+    ok 8 - dispose frees a session namespace
+      ---
+      duration_ms: 7.501598
+      type: 'test'
+      ...
+    # Subtest: capabilities do not claim a cross-thread writer
+    ok 9 - capabilities do not claim a cross-thread writer
+      ---
+      duration_ms: 0.490349
+      type: 'test'
+      ...
+    1..9
+ok 1 - python host adapter in one Node thread
+  ---
+  duration_ms: 1848.295297
+  type: 'test'
+  ...
+# Subtest: a corrupt package fails initialization before Python code runs
+ok 2 - a corrupt package fails initialization before Python code runs
+  ---
+  duration_ms: 1208.403822
+  type: 'test'
+  ...
+# Subtest: a signal written while Python is suspended is routed, not raised into the event loop
+ok 3 - a signal written while Python is suspended is routed, not raised into the event loop
+  ---
+  duration_ms: 1269.363391
+  type: 'test'
+  ...
+# Subtest: a cross-thread writer raises KeyboardInterrupt in synchronous Python
+ok 4 - a cross-thread writer raises KeyboardInterrupt in synchronous Python
+  ---
+  duration_ms: 1544.084807
+  type: 'test'
+  ...
+1..4
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 61636.494715

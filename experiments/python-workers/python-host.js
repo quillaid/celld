@@ -33,7 +33,7 @@ export async function verifyArtifact(bytes, sha256) {
 // target execution id (0 = the execution that runs now). A shared buffer is
 // only useful when another thread really writes it. Nothing here assumes that
 // SharedArrayBuffer or cross-thread writers exist.
-export function createPythonHost({ loadRuntime, packages = [], dynamicLibraries = [], signals = null, onEvent = () => {} }) {
+export function createPythonHost({ loadRuntime, packages = [], dynamicLibraries = [], signals = null, onEvent = () => {}, detectTermination = true }) {
   let generation = 0;
   let current = null; // { generation, pyodide, host, idleStack, pending:Set, dead }
   let starting = null;
@@ -43,7 +43,7 @@ export function createPythonHost({ loadRuntime, packages = [], dynamicLibraries 
   function applyBindings(rt, session) {
     const entry = bindings.get(session);
     if (!entry || entry.generation === rt.generation) return;
-    for (const [name, value] of entry.values) rt.host.bind(session, name, value);
+    for (const [name, value] of entry.values) enter(rt, () => rt.host.bind(session, name, value));
     entry.generation = rt.generation;
   }
 
@@ -71,34 +71,55 @@ export function createPythonHost({ loadRuntime, packages = [], dynamicLibraries 
     pyodide.FS.writeFile('/python_host/python_host.py', runnerSource);
     pyodide.runPython("import sys; sys.path.insert(0, '/python_host')");
     const host = pyodide.pyimport('python_host');
+    // Entry marker: incremented around every Python entry the adapter makes
+    // and around every asyncio handle, decremented only on return or throw.
+    // A host termination unwinds without running catch or finally blocks,
+    // so a nonzero value at a top-level host event means Python never
+    // returned. (Confirmed for celld ctx.abort(); see PROGRESS-v0.6.0.md.)
+    const entries = new Int32Array(1);
     let signalTarget = null;
     if (signals) {
       signalTarget = () => Atomics.load(signals, 1);
       pyodide.setInterruptBuffer(signals);
     }
-    host.install(signalTarget);
-    const runtime = { generation: id, pyodide, module, host, idleStack, pending: new Set(), dead: null, startedMs: Date.now() - started };
+    host.install(signalTarget, entries);
+    const runtime = { generation: id, pyodide, module, host, idleStack, entries, pending: new Set(), dead: null, startedMs: Date.now() - started, stackSamples: [] };
     onEvent({ event: 'python_ready', generation: id, elapsedMs: runtime.startedMs });
     return runtime;
   }
 
-  // Emscripten restores its stack pointer whenever control returns from Wasm
-  // to JS. A top-level host event therefore sees the idle value. A different
-  // value means a JS termination unwound Wasm frames that never returned: the
-  // interpreter's C state is not trustworthy and must never be entered again.
+  // Called only at top-level host events (never from JS that Python called).
+  // A nonzero entry marker there means a Python entry was torn down. The
+  // interpreter's C state is then not trustworthy and is never entered again.
+  // The Emscripten stack pointer is sampled for diagnostics only: under JSPI
+  // it drifts in normal operation (see PROGRESS-v0.6.0.md), so it cannot be
+  // the invariant.
   function check(runtime) {
     if (runtime.dead) return false;
-    if (runtime.idleStack === null) return true;
-    const stack = runtime.module._emscripten_stack_get_current();
-    if (stack === runtime.idleStack) return true;
-    invalidate(runtime, `interpreter stack not unwound (${stack} != ${runtime.idleStack})`);
+    if (runtime.idleStack !== null) {
+      runtime.stackSamples.push(runtime.module._emscripten_stack_get_current());
+      if (runtime.stackSamples.length > 16) runtime.stackSamples.shift();
+    }
+    if (!detectTermination || runtime.entries[0] === 0) return true;
+    invalidate(runtime, `Python entry did not return (marker ${runtime.entries[0]}); the host terminated execution inside Python`);
     return false;
   }
 
-  function invalidate(runtime, reason) {
+  // Every adapter call into Python goes through here. Deliberately not
+  // try/finally: the decrement must not run when a termination unwinds.
+  function enter(runtime, call) {
+    runtime.entries[0]++;
+    let result;
+    try { result = call(); }
+    catch (error) { runtime.entries[0]--; throw error; }
+    runtime.entries[0]--;
+    return result;
+  }
+
+  function invalidate(runtime, reason, detail = undefined) {
     if (runtime.dead) return;
     runtime.dead = reason;
-    invalidations.push({ generation: runtime.generation, reason, at: new Date().toISOString() });
+    invalidations.push({ generation: runtime.generation, reason, detail, at: new Date().toISOString() });
     onEvent({ event: 'python_invalidated', generation: runtime.generation, reason });
     for (const settle of runtime.pending) settle({ status: 'invalidated', generation: runtime.generation, reason });
     runtime.pending.clear();
@@ -134,23 +155,26 @@ export function createPythonHost({ loadRuntime, packages = [], dynamicLibraries 
           suspended: 'task-cancel',
           running: signals ? 'signal-buffer' : 'unavailable-without-cross-thread-writer',
         },
-        termination: { detection: 'emscripten-stack-invariant', recovery: 'new-interpreter', namespacesPreserved: false },
+        termination: { detection: 'python-entry-marker', recovery: 'new-interpreter', namespacesPreserved: false },
         host: {
           sharedArrayBuffer: typeof SharedArrayBuffer === 'function',
           crossOriginIsolated: globalThis.crossOriginIsolated ?? null,
-          jspi: typeof WebAssembly.Suspending === 'function',
+          jspi: typeof globalThis.WebAssembly?.Suspending === 'function',
         },
+        // Whether this interpreter uses stack switching (the bundle may hide
+        // host JSPI from Pyodide; see runtime-assets.js).
+        stackSwitching: current ? !!current.module.jspiSupported : null,
       };
     },
     async ready() {
       const rt = await runtime();
-      const version = rt.pyodide.runPython('import sys; sys.version.split()[0]');
+      const version = enter(rt, () => rt.pyodide.runPython('import sys; sys.version.split()[0]'));
       return { generation: rt.generation, python: version, pyodide: rt.pyodide.version, startedMs: rt.startedMs };
     },
     async execute(session, code) {
       const rt = await runtime();
       applyBindings(rt, session);
-      const started = rt.host.execute(session, code);
+      const started = enter(rt, () => rt.host.execute(session, code));
       let id, task;
       try { [id, task] = started.toJs({ depth: 1 }); }
       finally { started.destroy(); }
@@ -166,14 +190,16 @@ export function createPythonHost({ loadRuntime, packages = [], dynamicLibraries 
     },
     async interrupt(session) {
       if (!current || !check(current)) return { interrupted: [], generation: current?.generation ?? null };
-      const ids = current.host.interrupt(session);
-      try { return { interrupted: ids.toJs(), generation: current.generation, mode: 'task-cancel' }; }
+      const rt = current;
+      const ids = enter(rt, () => rt.host.interrupt(session));
+      try { return { interrupted: ids.toJs(), generation: rt.generation, mode: 'task-cancel' }; }
       finally { ids.destroy(); }
     },
     // For hosts with a cross-thread writer: the id that thread should target.
     runningExecution(session) {
       if (!current || !check(current)) return 0;
-      return current.host.running_execution(session);
+      const rt = current;
+      return enter(rt, () => rt.host.running_execution(session));
     },
     // Expose one host object to one session. Notebook code sees only what the
     // host binds; the adapter never injects host globals on its own.
@@ -186,17 +212,22 @@ export function createPythonHost({ loadRuntime, packages = [], dynamicLibraries 
     },
     async session(session) {
       const rt = await runtime();
-      const info = rt.host.session_info(session);
+      const info = enter(rt, () => rt.host.session_info(session));
       try { return { generation: rt.generation, info: info?.toJs({ dict_converter: Object.fromEntries }) ?? null }; }
       finally { info?.destroy?.(); }
     },
     async dispose(session) {
       bindings.delete(session);
       if (!current || !check(current)) return false;
-      return current.host.dispose(session);
+      const rt = current;
+      return enter(rt, () => rt.host.dispose(session));
     },
     status() {
-      return { generation: current?.generation ?? null, alive: !!current && !current.dead, invalidations: [...invalidations] };
+      return {
+        generation: current?.generation ?? null, alive: !!current && !current.dead, invalidations: [...invalidations],
+        entries: current ? current.entries[0] : null,
+        stack: current ? { idle: current.idleStack, base: current.module._emscripten_stack_get_base?.(), samples: [...current.stackSamples] } : null,
+      };
     },
     // Test and host hook: run a JS function with the interpreter's module,
     // for example to request a destructive termination from inside Python.

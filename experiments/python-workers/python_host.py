@@ -179,9 +179,22 @@ def _on_sigint(signum, frame):
             execution.task.cancel(INTERRUPT_MESSAGE)
 
 
-def install(signal_target=None):
+def install(signal_target=None, entries=None):
     global _signal_target
     _signal_target = signal_target
+    if entries is not None:
+        # Mark every event-loop callback as a Python entry (see python-host.js).
+        # A host termination skips this finally block, leaving the mark set.
+        original = asyncio.events.Handle._run
+
+        def _run(self):
+            entries[0] = entries[0] + 1
+            try:
+                return original(self)
+            finally:
+                entries[0] = entries[0] - 1
+
+        asyncio.events.Handle._run = _run
     sys.stdout = _Stream("stdout", sys.__stdout__)
     sys.stderr = _Stream("stderr", sys.__stderr__)
     signal.signal(signal.SIGINT, _on_sigint)
