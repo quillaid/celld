@@ -1,0 +1,47 @@
+{
+  "name": "celld-python-workers-spike",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs && npm run build:sdk",
+    "test": "node --test --test-concurrency=2 smoke.test.mjs async-wasm.test.mjs resources.test.mjs pool-lifecycle.test.mjs durable.test.mjs persistence.test.mjs transaction-contract.test.mjs workflow-regression.test.mjs sdk.test.mjs native.test.mjs reload.test.mjs native-durable.test.mjs microtask-contract.test.mjs native-packages.test.mjs package-reload.test.mjs package-reference.test.mjs native-extension.test.mjs native-rpc.test.mjs websocket-pair-contract.test.mjs native-websocket.test.mjs socket-eviction.test.mjs socket-idle.test.mjs native-pressure.test.mjs shared-heap.test.mjs proxy-lifecycle.test.mjs finalizer-limit.test.mjs native-asgi.test.mjs native-fastapi.test.mjs import-patches.test.mjs asgi-stream.test.mjs",
+    "test:durable": "node --test durable.test.mjs",
+    "test:smoke": "node --test smoke.test.mjs",
+    "test:wasm": "node --test async-wasm.test.mjs",
+    "test:resources": "node --test resources.test.mjs",
+    "test:persistence": "node --test persistence.test.mjs",
+    "test:transactions": "node --test transaction-contract.test.mjs workflow-regression.test.mjs",
+    "build:sdk": "node fetch-sdk.mjs && PYTHON_FIXTURE_ENTRY=sdk-worker.js PYTHON_FIXTURE_OUTPUT=dist/sdk.js node build.mjs",
+    "test:sdk": "node --test sdk.test.mjs",
+    "test:native": "node --test native.test.mjs",
+    "test:reload": "node --test reload.test.mjs",
+    "test:native-durable": "node --test native-durable.test.mjs",
+    "test:packages": "node --test packages.test.mjs",
+    "test:native-packages": "node --test native-packages.test.mjs",
+    "test:package-lifecycle": "node --test --test-concurrency=2 package-reload.test.mjs package-reference.test.mjs",
+    "test:native-extension": "node --test native-extension.test.mjs",
+    "test:native-rpc": "node --test native-rpc.test.mjs",
+    "test:websocket": "node --test --test-concurrency=2 websocket-pair-contract.test.mjs native-websocket.test.mjs",
+    "test:socket-eviction": "node --test socket-eviction.test.mjs",
+    "test:socket-lifecycle": "node --test --test-concurrency=2 socket-eviction.test.mjs socket-idle.test.mjs",
+    "test:native-pressure": "node --test native-pressure.test.mjs",
+    "test:proxy-lifecycle": "node --test proxy-lifecycle.test.mjs",
+    "test:finalizer-limit": "node --test finalizer-limit.test.mjs",
+    "test:asgi": "node --test native-asgi.test.mjs",
+    "test:fastapi": "node --test native-fastapi.test.mjs",
+    "test:import-patches": "node --test import-patches.test.mjs",
+    "test:asgi-stream": "node --test asgi-stream.test.mjs",
+    "probe:asgi-upload": "node --test asgi-upload.probe.mjs",
+    "probe:asgi-upload-candidate": "CELLD_ASGI_UPLOAD_CANDIDATE=1 node --test asgi-upload.probe.mjs",
+    "probe:asgi-upload-lifecycle": "node --test asgi-upload-lifecycle.probe.mjs"
+  },
+  "dependencies": {
+    "pyodide": "0.28.3"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "miniflare": "5.20260921.0-alpha",
+    "workerd": "1.20260922.1",
+    "ws": "8.21.3"
+  }
+}
