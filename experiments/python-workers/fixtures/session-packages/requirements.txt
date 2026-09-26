@@ -1,0 +1,2 @@
+humanize==4.12.3
+markupsafe==3.0.2

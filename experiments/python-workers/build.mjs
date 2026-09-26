@@ -42,6 +42,12 @@ if (process.env.PYTHON_PROJECT_FILE) {
   classes.forEach((name, index) => {
     generatedEntry += 'const _durable' + index + ' = deployment.durableObject(' + JSON.stringify(name) + ');\nexport { _durable' + index + ' as ' + name + ' };\n';
   });
+} else if (process.env.PYTHON_PACKAGES_ROOT) {
+  // Fixture entries (for example the python-host session fixture) consume the
+  // same verified lock as native projects, through `celld-python-packages`.
+  const consumed = await consumePackages(resolve(process.env.PYTHON_PACKAGES_ROOT));
+  packageArtifacts = consumed.artifacts;
+  packageDescriptor = consumed.descriptor;
 }
 const runtime = 'node_modules/pyodide/';
 const runtimeLock = JSON.parse(await readFile('runtime-lock.json', 'utf8'));
@@ -50,14 +56,16 @@ for (const [name, expected] of Object.entries(runtimeLock.assets)) {
   const bytes = await readFile(runtime + name);
   if (createHash('sha256').update(bytes).digest('hex') !== expected.sha256) throw new Error('Pinned Python runtime hash mismatch: ' + name);
 }
-if (projectSources) {
+if (projectSources || packageArtifacts.length) {
   // Validate with exactly the target CPython, without executing application
   // top-level code or relying on the build machine's Python installation.
   const { loadPyodide } = await import('pyodide');
   const validator = await loadPyodide({ indexURL: resolve(runtime) + '/' });
-  validator.globals.set('_celld_sources_json', JSON.stringify(projectSources));
-  const sdkLock = JSON.parse(await readFile('sdk-lock.json', 'utf8'));
-  validator.unpackArchive(new Uint8Array(await readFile('.celld/' + sdkLock.filename)), 'zip', { extractDir: '/sdk' });
+  if (projectSources) {
+    validator.globals.set('_celld_sources_json', JSON.stringify(projectSources));
+    const sdkLock = JSON.parse(await readFile('sdk-lock.json', 'utf8'));
+    validator.unpackArchive(new Uint8Array(await readFile('.celld/' + sdkLock.filename)), 'zip', { extractDir: '/sdk' });
+  }
   validator.FS.mkdirTree('/wheel-input');
   packageArtifacts.forEach((artifact, index) => validator.FS.writeFile(`/wheel-input/${index}.whl`, artifact.bytes));
   validator.globals.set('_celld_wheel_count', packageArtifacts.length);
@@ -74,12 +82,12 @@ if (projectSources) {
     await writeFile(join(outdir, module), bytes);
     dynamicLibraries.push({ path, module, sha256, bytes });
   }
-  for (const [name, source] of Object.entries(projectSources)) {
+  for (const [name, source] of Object.entries(projectSources ?? {})) {
     if (!/^(?:[A-Za-z_][A-Za-z_0-9]*\/)*[A-Za-z_][A-Za-z_0-9]*\.py$/.test(name)) throw new Error('Invalid Python module path: ' + name);
     validator.FS.mkdirTree('/app/' + name.split('/').slice(0, -1).join('/'));
     validator.FS.writeFile('/app/' + name, source);
   }
-  validator.runPython(await readFile('validate-sources.py', 'utf8'));
+  if (projectSources) validator.runPython(await readFile('validate-sources.py', 'utf8'));
 }
 // Pyodide embeds one tiny GC sentinel Wasm program in its JS loader. Give it
 // the same compiled-module treatment as the main interpreter. Fail on a changed
@@ -114,6 +122,11 @@ await build({
       if (!artifact) throw new Error('Unknown Python dynamic library');
       return { contents: artifact.bytes, loader: 'binary' };
     });
+    builder.onResolve({ filter: /^celld-python-packages$/ }, () => ({ path: 'packages', namespace: 'python-packages' }));
+    builder.onLoad({ filter: /.*/, namespace: 'python-packages' }, () => ({ contents:
+      packageArtifacts.map((artifact, index) => `import w${index} from ${JSON.stringify('celld-python-wheel/' + basename(artifact.path))};\n`).join('') +
+      'export const packages = [' + packageArtifacts.map((artifact, index) => `{filename:${JSON.stringify(artifact.filename)},sha256:${JSON.stringify(basename(artifact.path).split('.')[0])},kind:${JSON.stringify(artifact.kind || 'wheel')},bytes:w${index}}`).join(',') + '];\n' +
+      'export const dynamicLibraries = ' + JSON.stringify(dynamicLibraries.map(item => item.path)) + ';\n', loader: 'js' }));
     builder.onResolve({ filter: /^pyodide-sentinel-bytes$/ }, () => ({ path: 'sentinel', namespace: 'sentinel' }));
     builder.onLoad({ filter: /.*/, namespace: 'sentinel' }, () => ({ contents: sentinel, loader: 'binary' }));
     // Stable content-addressed module names keep local cache paths out of the
